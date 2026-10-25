@@ -1,0 +1,7 @@
+# Line endings: LF in the repository and in the working tree, independent of core.autocrlf.
+# Git detects binary files itself and leaves them untouched.
+* text=auto eol=lf
+
+# Windows scripts need CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
