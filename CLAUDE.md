@@ -30,12 +30,16 @@ progress.
 ## Technology Decisions
 
 - **Do not introduce new technologies or libraries on your own.** If a task depends on an open
-  decision: ask, or record it as a proposal for J to decide.
+  decision (see [docu/adr/open-decisions.md](docu/adr/open-decisions.md)): ask, or record it as a
+  proposal for J to decide.
 
 ## Verification
 
 - Verify your own changes yourself, limited to the scope of the current change. No broad test runs
   over unchanged areas.
+- **Keep tests lean.** The application is not critical: test non-trivial rules, but add no coverage
+  thresholds and no end-to-end tests. A proper testing strategy is developed in MS 3 (see the
+  [roadmap](docu/product_backlog/roadmap.md)).
 - Report the results in the final summary; open findings are fixed or named.
 
 ## Documentation

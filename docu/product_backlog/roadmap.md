@@ -41,8 +41,8 @@ Milestone status: `DRAFT` (outlined, no epics yet) · `PLANNED` (epics cut) · `
 |---|------|-----------------|------------|--------|
 | 1 | [TWA-1](backlog.md#epic-twa-1--vision--goals) | Vision, problem, target audience, goals, non-goals and success criteria are agreed | – | DONE |
 | 2 | [TWA-2](backlog.md#epic-twa-2--working-rules--documentation-structure) | Rules for agents, workflow and documentation structure are in place | – | IN PROGRESS |
-| 3 | [TWA-3](backlog.md#epic-twa-3--mandatory-decisions-before-the-first-code) | The decisions needed before the first code are made and recorded as ADRs | TWA-1 | TODO |
-| 4 | [TWA-4](backlog.md#epic-twa-4--runnable-project-skeleton) | Bounded contexts, services and frontend exist as a runnable skeleton | TWA-1, TWA-3 | TODO |
+| 3 | [TWA-3](backlog.md#epic-twa-3--mandatory-decisions-before-the-first-code) | The decisions needed before the first code are made and recorded as ADRs | TWA-1 | DONE |
+| 4 | [TWA-4](backlog.md#epic-twa-4--runnable-project-skeleton) | Bounded contexts, backend and frontend exist as a runnable skeleton | TWA-1, TWA-3 | TODO |
 
 **Done when:** all four epics are `DONE` – the project skeleton is runnable and the planning
 (vision, roadmap, backlog) is in place.
@@ -71,9 +71,22 @@ MS 1 is done.
 
 ## MS 3 – Polished Game (draft)
 
-**Status:** DRAFT – expected results are outlined when MS 2 is planned.
+**Status:** DRAFT – further expected results are outlined when MS 2 is planned.
 
 **Goal:** the game is polished and fun to play.
+
+**Expected results:**
+
+- A colour concept for the frontend with roles (primary, secondary, accent, …) for light and
+  dark mode, developed in this milestone and applied to the frontend by an agent in the workflow
+  (open decision TD-31, ADR-0003).
+- A sensible testing strategy that is not too expensive: the application is not critical, so it
+  decides which levels are worth testing (unit, integration with a real database, frontend,
+  end-to-end) and how coverage is handled. Open decisions TD-02, TD-03, TD-26 and TD-27; input are
+  the ADRs of the Tech Tool Trainer and the Agentic Ticket System.
+
+Until then tests stay lean: only non-trivial rules are tested, without coverage thresholds and
+without end-to-end tests.
 
 ---
 
