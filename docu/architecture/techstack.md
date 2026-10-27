@@ -54,13 +54,26 @@ Decided in [ADR-0003](../adr/0003-frontend-stack.md) on 2026-10-25. Exact versio
 | Approach and framework | SPA with React + TypeScript (strict) in `frontend/` | TD-22 |
 | Build and tooling | Vite, npm, ESLint, Prettier | TD-24, TD-01 (frontend part) |
 | UI components and styling | Tailwind CSS + shadcn/ui, icons `lucide-react` | TD-25 |
-| Design | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; the colour concept is developed in MS 3 | TD-31 |
+| Design | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; design concept in [design-concept.md](design-concept.md), dark mode as default | TD-31 |
 
 ## Proposed
 
 No proposals are open. A decision that is proposed in an ADR is listed here until J accepts it.
 
 ## Open
+
+### Frontend
+
+| Area | Open decisions | When |
+|------|----------------|------|
+| Tool icons (logo source) | TD-33 | before TWA-4.4 |
+| Translation of the UI (English) | TD-34 | MS 3 |
+
+### Local Environment
+
+| Area | Open decisions | When |
+|------|----------------|------|
+| Local container runtime and compose tooling | Docker with Docker Compose, accepted in [ADR-0004](../adr/0004-local-environment.md) | TD-35 |
 
 ### Testing
 

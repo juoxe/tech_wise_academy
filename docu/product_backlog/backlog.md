@@ -11,9 +11,10 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-1](#epic-twa-1--vision--goals) | Vision & Goals | MS 1 | DONE |
 | [TWA-2](#epic-twa-2--working-rules--documentation-structure) | Working Rules & Documentation Structure | MS 1 | IN PROGRESS |
 | [TWA-3](#epic-twa-3--mandatory-decisions-before-the-first-code) | Mandatory Decisions Before the First Code | MS 1 | DONE |
-| [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | TODO |
+| [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
+| [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
 
-**Next free epic number: 5**
+**Next free epic number: 6**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -518,7 +519,8 @@ It is not decided whether and how APIs are versioned. Changing paths later break
 in the path, compatible changes only.
 
 **Carry-over:** the rule is referenced in the API documentation template. That acceptance
-criterion moves to the story that creates the API documentation.
+criterion moved to [TWA-4.3](#twa-43--backend-skeleton-and-tool-api), which creates the API
+documentation.
 
 ---
 
@@ -553,83 +555,244 @@ complement.
 
 ## Epic TWA-4 – Runnable Project Skeleton
 
-**Status:** TODO · **Milestone:** MS 1 – Project Initialisation
+**Status:** DONE · **Milestone:** MS 1 – Project Initialisation
 
 **Description**
 
-As a team, we want a runnable skeleton with backend, frontend and local environment, so that
-functional epics can build on it directly. The skeleton is created according to the decisions
-from TWA-3 and contains no functional code yet.
+As a team, we want a runnable skeleton with backend, frontend, database and local environment, with
+one first entity (the Tool) working end to end, so that functional epics can build on a proven
+chain: database, API and frontend. The skeleton is created according to the decisions from TWA-3.
+Its only functional content is the entity Tool with read access; existing code of the Tech Tool
+Trainer is not taken over. The first slice is German; English follows in MS 3.
 
 **Affected components:** repository, backend, frontend
 
+**Working documents:** [data model](../data_model/learning-content-data-model.md),
+[context map](../architecture/context-map.md), [API documentation](../api/learning-content-api.md)
+
+### Order
+
+| # | Story | Result | Depends on |
+|---|-------|--------|------------|
+| 1 | [TWA-4.1](#twa-41--bounded-contexts) | Bounded contexts and module names | TWA-1 |
+| 2 | [TWA-4.2](#twa-42--data-model-of-the-first-entity) | Data model of the Tool, **approved by J before any setup** | – |
+| 3 | [TWA-4.3](#twa-43--backend-skeleton-and-tool-api) | Backend with the Tool API and German seed data | TWA-4.1, TWA-4.2 |
+| 4 | [TWA-4.4](#twa-44--frontend-skeleton-with-data-sets-tab) | Frontend with the Data-Sets tab (list of terms), German UI | TWA-4.3, TD-33 |
+| 5 | [TWA-4.5](#twa-45--local-environment-with-one-command) | Everything starts with one command | TWA-4.3, TWA-4.4, TD-35 |
+
+**Moved to MS 3:** the English content and UI (see the [roadmap](roadmap.md)). The story number
+TWA-4.6 is retired, because it was never started.
+
 ---
 
-### TWA-4.1 – Domain Map and Bounded Contexts
+### TWA-4.1 – Bounded Contexts
 
-**Status:** TODO · **Depends on:** TWA-1
+**Status:** DONE · **Depends on:** TWA-1
 
 **Problem Description**
 
-It is not defined which bounded contexts exist and which context owns which data, so neither the
-module structure nor the skeleton can be planned.
+It is not defined which bounded contexts exist and which module owns which data, so the module
+structure of the backend and the home of the first entity are unclear.
 
 **Action Steps**
 
-1. Derive core, supporting and generic domains from the approved vision.
-2. Cut the bounded contexts and give each a responsibility and a module name (or service name,
-   depending on the service cut in ADR-0001).
-3. Describe the relationships between the contexts in a context map.
+1. Derive the bounded contexts from the approved vision. Proposal: Learning Content (tools, later
+   learning packs) and Training (game rounds, learning progress; MS 2).
+2. Give each context a responsibility and a module name; only `learning_content` gets code in this
+   epic.
+3. Describe the relationship between the contexts in the
+   [context map](../architecture/context-map.md) (draft is written).
 4. Agree the result with J.
 
 **Acceptance Criteria**
 
-- Core, supporting and generic domains are named.
-- Each bounded context has a responsibility and a module or service name.
-- A context map describes the relationships between the contexts.
+- Each bounded context has a responsibility and a module name.
+- The context map describes the relationship between the contexts.
+- It is stated which module owns the entity Tool.
+
+**Result:** bounded contexts agreed by J on 2026-10-27: Learning Content (`learning_content`), Training (`training`, designed in MS 2) and Identity and Access (TD-17). Details in the [context map](../architecture/context-map.md).
 
 ---
 
-### TWA-4.2 – Backend and Frontend as Skeleton
+### TWA-4.2 – Data Model of the First Entity
 
-**Status:** TODO · **Depends on:** TWA-3, TWA-4.1
+**Status:** DONE
 
 **Problem Description**
 
-There is no buildable code base yet, so functional code has no fixed place.
+The first entity must be modelled before anything is set up, because the migration, the API and the
+frontend all depend on it. The Tool of the Tech Tool Trainer has more fields than the first slice
+needs.
 
 **Action Steps**
 
-1. Create the backend with one module per bounded context according to the architecture concept. Pin the
-   dependency versions with `uv.lock`.
-2. Create the frontend according to the frontend ADRs.
-3. Add the automatic architecture tests for the backend rules.
-4. Add the commands for build, test and start to the rules.
+1. Document the entity Tool with its hints, examples and alternatives in the
+   [data model](../data_model/learning-content-data-model.md) (draft is written).
+2. Go through the draft with J and settle the open points.
+3. J approves the data model. No backend, frontend or database setup starts before this approval.
 
 **Acceptance Criteria**
 
-- Backend and frontend build and their (empty) tests pass.
-- The backend structure is documented and has automatic architecture tests.
-- The rules contain the commands for build, test and start.
+- The data model lists the tables, fields, types, required fields, relations, the category values
+  and the seed tools.
+- The open points of the data model are decided.
+- J has approved the data model.
 
+**Result:** [data model](../data_model/learning-content-data-model.md) approved by J on 2026-10-25
+(five tables, German first, one category per tool, seven seed tools).
 ---
 
-### TWA-4.3 – Local Environment with One Command
+### TWA-4.3 – Backend Skeleton and Tool API
 
-**Status:** TODO · **Depends on:** TWA-4.2
+**Status:** DONE · **Depends on:** TWA-4.1, TWA-4.2
 
 **Problem Description**
 
-Starting databases, migrations and services requires manual steps, which slows down development
-and leads to different local setups.
+There is no backend code yet, so functional code has no fixed place and the architecture rules are
+not yet proven.
 
 **Action Steps**
 
-1. Describe databases, migrations and services in one compose file.
-2. Provide an example environment file with all local values.
-3. Document the start command in the rules.
+1. Create the backend with uv and FastAPI and pin the dependency versions with `uv.lock`. Create
+   the module `learning_content` with the layers `api`, `service` and `repository` according to
+   [ADR-0001](../adr/0001-architecture-concept.md).
+2. Configure Ruff and ty, and add the automatic architecture tests (import-linter) for the layers
+   and the module boundaries.
+3. Connect PostgreSQL via environment variables and write the Alembic migration for the approved
+   data model, including the seed tools with their German texts.
+4. Implement read access as described in the [API documentation](../api/learning-content-api.md):
+   list the tools and get one tool by key, with hints, examples and alternatives. The `lang`
+   parameter defaults to German. Export the OpenAPI description.
+5. Add lean tests for the non-trivial rules: alternatives are returned from both sides of a pair,
+   and no hint contains the name of its tool.
+6. Finalise the API documentation and state the versioning rule of ADR-0001 in it.
+7. Add the commands for build, test and start to the rules.
+
+**Acceptance Criteria**
+
+- The backend starts and returns the seed tools with German hints, examples and alternatives.
+- The API accepts the `lang` parameter and returns German texts by default.
+- The architecture tests pass and fail when a layer or module rule is violated.
+- Ruff and ty report no findings.
+- The OpenAPI description can be exported.
+- The API documentation describes the endpoints and states the versioning rule of ADR-0001
+  (carry-over from TWA-3.6).
+- The commands for build, test and start are in the rules.
+
+**Result:** implemented: uv project in `backend/`, module `learning_content` with layers, Alembic migration `0001` with seed tools, read API with `lang`; 11 tests, Ruff, ty and import-linter pass; API checked against PostgreSQL.
+
+---
+
+### TWA-4.4 – Frontend Skeleton with Data-Sets Tab
+
+**Status:** DONE · **Depends on:** TWA-4.3, TD-33
+
+**Problem Description**
+
+There is no frontend yet, so the chain from database to screen is not proven and the module
+structure of the frontend is not yet in place.
+
+**Action Steps**
+
+1. Decide the icon source with J (TD-33, recorded in an ADR) before the page is built.
+2. Create the frontend according to [ADR-0003](../adr/0003-frontend-stack.md): Vite, React,
+   TypeScript strict, Tailwind CSS with shadcn/ui, ESLint and Prettier.
+3. Create the feature module `tools` according to the frontend structure of
+   [ADR-0001](../adr/0001-architecture-concept.md) and add the ESLint rules for the module
+   boundaries.
+4. Generate the API types from the exported OpenAPI description.
+5. Add a tab "Data-Sets" that shows a list of the terms, i.e. the names of the tools,
+   each with its icon or, if it has none, the icon of its category. The UI texts are German.
+   Further tabs and a detail page follow later.
+6. Add the commands for build, lint and start to the rules.
+
+**Acceptance Criteria**
+
+- Type check, lint and format check pass.
+- The tab "Toolübersicht" lists the seed tools from the running backend.
+- Terms with an icon show it; the others show the icon of their category.
+- The API types are generated, not written by hand.
+- The ESLint rules for the module boundaries are active.
+- The UI texts are German.
+
+**Result:** implemented: Vite, React, TypeScript, Tailwind, ESLint boundary rules, Data-Sets tab with icons ([ADR-0005](../adr/0005-tool-icons.md)); typecheck, lint, format and build pass.
+
+---
+
+### TWA-4.5 – Local Environment with One Command
+
+**Status:** DONE · **Depends on:** TWA-4.3, TWA-4.4, TD-35
+
+**Problem Description**
+
+Starting the database, the migration, the backend and the frontend requires manual steps, which
+slows down development and leads to different local setups. The tooling for containers is not yet
+decided (TD-35), so the compose file cannot be written.
+
+**Action Steps**
+
+1. Decide the local container runtime and the compose tooling with J (TD-35, recorded in an ADR).
+2. Describe database, migration, backend and frontend in one compose file.
+3. Provide an example environment file with all local values.
+4. Document the start command in the rules.
 
 **Acceptance Criteria**
 
 - One command starts everything in the right order; ports are bound to `127.0.0.1` only.
 - No secrets in the repository; local values come from an example environment file.
+- The start command is in the rules.
+
+**Result:** implemented: `compose.yaml` with database, backend (migration on start) and frontend; `.env.example`; all services start and answer through the proxy ([ADR-0004](../adr/0004-local-environment.md)).
+
+## Epic TWA-5 – Playable Game
+
+**Status:** REJECTED · **Milestone:** MS 1 – Project Initialisation
+
+**Description**
+
+As a learner, we want to find out in which areas we already know the tools, so that we know where to
+learn. In MS 1 a dummy game (Level 0) checks this by sorting the cards; the full game with several
+levels and content follows in MS 2. The rules of the game are documented only in
+[game-play.md](../game-play.md); this epic and its stories refer to that document and do not repeat
+the rules.
+
+**Affected components:** frontend (Game tab, app shell, feature `game`), documentation
+
+**Working documents:** [game-play](../game-play.md)
+
+---
+
+### TWA-5.1 – Level 0: Knowledge Check
+
+**Status:** REJECTED
+
+**Problem Description**
+
+Nothing shows which of the five areas a learner already knows. The tools are only listed in a table,
+and the menu has no tab for a game next to the tool overview.
+
+**Action Steps**
+
+1. Add a menu bar with tabs; the Game tab comes first, before the tool overview, and starts the game
+   when it is selected.
+2. Implement Level 0 as described in [game-play.md](../game-play.md): the cards are sorted onto the
+   piles of their categories, by drag or by click.
+3. Show the result per area: how many tools were sorted correctly on the first try.
+4. Let the tool list use the full width of the screen.
+5. Review the implementation and the rules with J; open points in game-play.md are decided by J.
+
+**Acceptance Criteria**
+
+- The menu bar has the tabs "Game" and "Toolübersicht", in this order; "Game" is selected at start.
+- Selecting the Game tab starts Level 0 with all tools.
+- A card can be sorted onto its category pile by drag and by click; the category is shown after
+  placement.
+- A wrong pile keeps the card in the hand, counts a wrong attempt and shows the message.
+- When all cards are sorted, the result shows per area how many tools were sorted correctly on the
+  first try, the wrong attempts, and offers to play again.
+- The tool list spans the full width of the screen.
+- The game rules are documented only in [game-play.md](../game-play.md); the story does not repeat them.
+- Type check, lint, format check and build pass.
+
+**Result:** rejected as a separate epic. The code of Level 0 is committed together with the project
+skeleton in TWA-4 ("TWA-4: Add project skeleton"); the number TWA-5 stays taken.

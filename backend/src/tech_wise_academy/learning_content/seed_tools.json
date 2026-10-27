@@ -1,0 +1,109 @@
+{
+  "tools": [
+    {
+      "key": "docker",
+      "name": "Docker",
+      "category": "DEVOPS",
+      "documentation_url": "https://docs.docker.com/",
+      "icon": "docker",
+      "summary_de": "Packt Anwendungen mit allen Abhängigkeiten in Container, die überall gleich laufen.",
+      "hints_de": [
+        "Eine Laufzeit, die Images baut und daraus Container startet.",
+        "Die Konfiguration steht in einer Textdatei neben dem Projekt.",
+        "Ein Image ist eine Vorlage, ein Container ist eine laufende Instanz davon."
+      ],
+      "examples": ["docker run -p 8080:80 nginx"],
+      "alternatives": ["podman"]
+    },
+    {
+      "key": "podman",
+      "name": "Podman",
+      "category": "DEVOPS",
+      "documentation_url": "https://podman.io/docs",
+      "icon": "podman",
+      "summary_de": "Startet Container ohne dauerhaft laufenden Hintergrunddienst, auch ohne Root-Rechte.",
+      "hints_de": [
+        "Die Befehle sind weitgehend identisch zu einem bekannten Werkzeug für Container.",
+        "Läuft ohne zentralen Hintergrunddienst.",
+        "Kann mehrere Container als Einheit gruppieren."
+      ],
+      "examples": ["podman run -p 8080:80 nginx"],
+      "alternatives": ["docker"]
+    },
+    {
+      "key": "gradle",
+      "name": "Gradle",
+      "category": "BACKEND",
+      "documentation_url": "https://docs.gradle.org/",
+      "icon": "gradle",
+      "summary_de": "Build-Werkzeug für JVM-Projekte, das Abhängigkeiten auflöst und Build-Schritte steuert.",
+      "hints_de": [
+        "Die Build-Beschreibung ist ein Skript, meist in Kotlin oder Groovy.",
+        "Ein Wrapper im Projekt sorgt dafür, dass alle dieselbe Version nutzen.",
+        "Abhängigkeiten werden aus Repositorys geladen und zwischengespeichert."
+      ],
+      "examples": ["./gradlew build"],
+      "alternatives": ["maven"]
+    },
+    {
+      "key": "maven",
+      "name": "Maven",
+      "category": "BACKEND",
+      "documentation_url": "https://maven.apache.org/",
+      "icon": "apachemaven",
+      "summary_de": "Build-Werkzeug für Java-Projekte, das Abhängigkeiten über eine XML-Datei verwaltet.",
+      "hints_de": [
+        "Die Projektbeschreibung steht in einer XML-Datei im Wurzelverzeichnis.",
+        "Die Lebenszyklen compile, test und package sind fest vorgegeben.",
+        "Plugins erweitern den Build um zusätzliche Schritte."
+      ],
+      "examples": ["mvn clean verify"],
+      "alternatives": ["gradle"]
+    },
+    {
+      "key": "vite",
+      "name": "Vite",
+      "category": "FRONTEND",
+      "documentation_url": "https://vite.dev/",
+      "icon": "vite",
+      "summary_de": "Entwicklungsserver und Build-Werkzeug für Frontend-Projekte, das Änderungen sofort im Browser zeigt.",
+      "hints_de": [
+        "Startet in Sekunden, weil Module nur bei Bedarf übersetzt werden.",
+        "Baut die fertige Anwendung zu statischen Dateien.",
+        "Die Konfiguration steht in einer Datei im Wurzelverzeichnis des Projekts."
+      ],
+      "examples": ["npm run dev"],
+      "alternatives": []
+    },
+    {
+      "key": "trivy",
+      "name": "Trivy",
+      "category": "SECURITY",
+      "documentation_url": "https://trivy.dev/",
+      "icon": "trivy",
+      "summary_de": "Scanner, der Container-Images, Dateisysteme und Abhängigkeiten auf bekannte Schwachstellen prüft.",
+      "hints_de": [
+        "Prüft Container-Images und Projektabhängigkeiten gegen Datenbanken bekannter Schwachstellen.",
+        "Läuft lokal und lässt sich leicht in eine Pipeline einbauen.",
+        "Meldet Schweregrade wie LOW, MEDIUM, HIGH und CRITICAL."
+      ],
+      "examples": ["trivy image nginx:latest"],
+      "alternatives": []
+    },
+    {
+      "key": "pandas",
+      "name": "pandas",
+      "category": "AI_DATA",
+      "documentation_url": "https://pandas.pydata.org/",
+      "icon": null,
+      "summary_de": "Bibliothek für Python, mit der sich tabellarische Daten laden, bereinigen und auswerten lassen.",
+      "hints_de": [
+        "Die zentrale Datenstruktur ist eine Tabelle mit Zeilen und benannten Spalten.",
+        "Liest unter anderem CSV- und Excel-Dateien und arbeitet mit den Daten im Speicher.",
+        "Viele Operationen laufen vektorisiert und sind damit schnell."
+      ],
+      "examples": ["df = pd.read_csv('daten.csv')"],
+      "alternatives": []
+    }
+  ]
+}

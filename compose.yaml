@@ -1,0 +1,46 @@
+# Local environment (ADR-0004): one command starts the database, the migration, the backend and the frontend.
+#   cp .env.example .env
+#   docker compose up --build
+# Ports are bound to 127.0.0.1 only.
+
+services:
+  tools-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - tools-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tools-db:5432/${POSTGRES_DB}
+    depends_on:
+      tools-db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    environment:
+      API_TARGET: http://backend:8000
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:5173:5173"
+
+volumes:
+  tools-db-data:

@@ -1,0 +1,1 @@
+"""Tech Wise Academy backend."""

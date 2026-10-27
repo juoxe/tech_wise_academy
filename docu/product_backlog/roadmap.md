@@ -42,9 +42,10 @@ Milestone status: `DRAFT` (outlined, no epics yet) · `PLANNED` (epics cut) · `
 | 1 | [TWA-1](backlog.md#epic-twa-1--vision--goals) | Vision, problem, target audience, goals, non-goals and success criteria are agreed | – | DONE |
 | 2 | [TWA-2](backlog.md#epic-twa-2--working-rules--documentation-structure) | Rules for agents, workflow and documentation structure are in place | – | IN PROGRESS |
 | 3 | [TWA-3](backlog.md#epic-twa-3--mandatory-decisions-before-the-first-code) | The decisions needed before the first code are made and recorded as ADRs | TWA-1 | DONE |
-| 4 | [TWA-4](backlog.md#epic-twa-4--runnable-project-skeleton) | Bounded contexts, backend and frontend exist as a runnable skeleton | TWA-1, TWA-3 | TODO |
+| 4 | [TWA-4](backlog.md#epic-twa-4--runnable-project-skeleton) | A runnable skeleton with backend, frontend and database and the first entity (Tool) working end to end | TWA-1, TWA-3 | DONE |
+| 5 | [TWA-5](backlog.md#epic-twa-5--playable-game) | Level 0 of the game (knowledge check per area) – rejected as a separate epic, code committed with TWA-4 | TWA-4 | REJECTED |
 
-**Done when:** all four epics are `DONE` – the project skeleton is runnable and the planning
+**Done when:** all epics are `DONE` or `REJECTED` – the project skeleton is runnable and the planning
 (vision, roadmap, backlog) is in place.
 
 ---
@@ -77,6 +78,9 @@ MS 1 is done.
 
 **Expected results:**
 
+- English content and UI: the English summaries and hints of the tools, the translation of the
+  UI (TD-34) and the language switch. The data model and the API already prepare the language
+  parameter; the first slice is German.
 - A colour concept for the frontend with roles (primary, secondary, accent, …) for light and
   dark mode, developed in this milestone and applied to the frontend by an agent in the workflow
   (open decision TD-31, ADR-0003).

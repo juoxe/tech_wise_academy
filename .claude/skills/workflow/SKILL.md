@@ -36,6 +36,8 @@ is not available, make the changes yourself following `docu/product_backlog/CLAU
 ## 3. Verify
 
 - Check the change yourself, limited to its scope.
+- Changes under `frontend/src/`: let the sub-agent **`design-token-checker`** check colours and
+  contrast against `docu/architecture/design-concept.md`, and fix what it reports.
 - Go through the acceptance criteria one by one. Criteria that need J's approval stay open until
   J has approved.
 

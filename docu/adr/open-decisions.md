@@ -15,24 +15,26 @@ Sorted by what is due next. Status: `TODO` (no proposal yet) · `IN PROGRESS` (p
 
 | # | ID | Topic | Example options | Affected | Due | Status |
 |--:|----|-------|-----------------|----------|-----|--------|
-| 1 | TD-06 | Code hosting and review tool | GitHub, GitLab, Bitbucket, Azure DevOps | PR template, CODEOWNERS | before the first collaboration or merge | TODO |
-| 2 | TD-07 | CI/CD platform | GitHub Actions, GitLab CI, Jenkins, Azure Pipelines | CI/CD | before the first merge to the main branch | TODO |
-| 3 | TD-23 | Markdown linter / formatter | markdownlint, Prettier, dprint, none | markdown style | when markdown checks are automated | TODO |
-| 4 | TD-26 | Frontend tests (unit, component) | Vitest, Jest; Testing Library; network mocks | frontend | MS 3 (testing strategy) | TODO |
-| 5 | TD-03 | Database for integration tests | Testcontainers, test DB via compose, in-memory DB | tests | MS 3 (testing strategy) | TODO |
-| 6 | TD-02 | Test coverage and threshold | report + ratchet, fixed threshold, none | tests | MS 3 (testing strategy) | TODO |
-| 7 | TD-27 | End-to-end tests | Playwright, Cypress, API end-to-end only, none | `e2e/`, CI/CD | MS 3 (testing strategy) | TODO |
-| 8 | TD-17 | Identity provider and authentication | Keycloak, Auth0, Entra ID, none | backend, security model | before the first protected endpoint | TODO |
-| 9 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
-| 10 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
-| 11 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
-| 12 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
-| 13 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
-| 14 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
-| 15 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
-| 16 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
-| 17 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
-| 18 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
+| 1 | TD-33 | Tool icons (logo source) | Simple Icons, devicon, own files, none (category icon only) | frontend, `tool.icon` | before TWA-4.4 (frontend skeleton) | TODO |
+| 2 | TD-06 | Code hosting and review tool | GitHub, GitLab, Bitbucket, Azure DevOps | PR template, CODEOWNERS | before the first collaboration or merge | TODO |
+| 3 | TD-07 | CI/CD platform | GitHub Actions, GitLab CI, Jenkins, Azure Pipelines | CI/CD | before the first merge to the main branch | TODO |
+| 4 | TD-23 | Markdown linter / formatter | markdownlint, Prettier, dprint, none | markdown style | when markdown checks are automated | TODO |
+| 5 | TD-26 | Frontend tests (unit, component) | Vitest, Jest; Testing Library; network mocks | frontend | MS 3 (testing strategy) | TODO |
+| 6 | TD-03 | Database for integration tests | Testcontainers, test DB via compose, in-memory DB | tests | MS 3 (testing strategy) | TODO |
+| 7 | TD-02 | Test coverage and threshold | report + ratchet, fixed threshold, none | tests | MS 3 (testing strategy) | TODO |
+| 8 | TD-27 | End-to-end tests | Playwright, Cypress, API end-to-end only, none | `e2e/`, CI/CD | MS 3 (testing strategy) | TODO |
+| 9 | TD-34 | Frontend translation of the UI (English, MS 3) | react-i18next, FormatJS (react-intl), Lingui, own dictionary | frontend | MS 3 (English UI) | TODO |
+| 10 | TD-17 | Identity provider and authentication | Keycloak, Auth0, Entra ID, none | backend, security model | before the first protected endpoint | TODO |
+| 11 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
+| 12 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
+| 13 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
+| 14 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
+| 15 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
+| 16 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
+| 17 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
+| 18 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
+| 19 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
+| 20 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
 
 ## 2. Decision Record
 
@@ -41,6 +43,7 @@ Decisions that have been made, newest first. All were decided by J on 2026-10-25
 
 | ID | Topic | Decision | ADR | Story |
 |----|-------|----------|-----|-------|
+| TD-35 | Local container runtime and compose tooling | Docker with Docker Compose (see [ADR-0004](0004-local-environment.md)) | [ADR-0004](0004-local-environment.md) | TWA-4.5 |
 | TD-31 | Frontend design: colours, font, layout | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; the colour concept is developed in MS 3 | [ADR-0003](0003-frontend-stack.md) | TWA-3.3 |
 | TD-25 | UI components and styling | Tailwind CSS + shadcn/ui | [ADR-0003](0003-frontend-stack.md) | TWA-3.3 |
 | TD-24 | Frontend build and tooling | Vite, npm, TypeScript strict, ESLint, Prettier | [ADR-0003](0003-frontend-stack.md) | TWA-3.3 |
@@ -54,4 +57,4 @@ Decisions that have been made, newest first. All were decided by J on 2026-10-25
 | TD-21 | Service cut and communication | One backend with modules, one database; modules call each other through a public interface | [ADR-0001](0001-architecture-concept.md) | TWA-3.4 |
 | TD-20 | API versioning | No version in the path, compatible changes only; path version when external clients appear | [ADR-0001](0001-architecture-concept.md) | TWA-3.6 |
 
-**Next free TD number: TD-33**
+**Next free TD number: TD-36**
