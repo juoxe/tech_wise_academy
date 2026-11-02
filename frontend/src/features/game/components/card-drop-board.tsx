@@ -25,10 +25,10 @@ const FALL_MS = 500;
 const FLASH_MS = 600;
 
 const CONTROL =
-  "rounded-md border border-border bg-card px-4 py-2 text-lg font-semibold hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary";
+  "rounded-md border border-border bg-card px-4 py-2 text-lg font-semibold hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring";
 
 const REVIEW_BUTTON =
-  "rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-primary";
+  "rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-ring";
 
 function formatTime(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -193,7 +193,7 @@ export function CardDropBoard({
                 type="button"
                 onClick={() => setDrop((current) => placeAt(current, column))}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 rounded-md bg-muted p-2 transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary",
+                  "flex flex-col items-center justify-center gap-1 rounded-md bg-muted p-2 transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring",
                   flash && outcome.correct && "bg-status-done/30",
                   flash && !outcome.correct && "bg-destructive/30",
                 )}
@@ -279,7 +279,7 @@ function Summary({
         <button
           type="button"
           onClick={onPlayAgain}
-          className="inline-flex items-center rounded-md bg-status-done px-4 py-2 text-base font-semibold text-background focus-visible:outline-2 focus-visible:outline-primary"
+          className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring"
         >
           Nochmal spielen
         </button>
@@ -370,7 +370,7 @@ function Summary({
                 <button
                   type="button"
                   onClick={() => setReview(index)}
-                  className="flex w-full flex-col gap-1 rounded-md border border-border bg-card px-4 py-3 text-left hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary"
+                  className="flex w-full flex-col gap-1 rounded-md border border-border bg-card px-4 py-3 text-left hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   <span className="font-semibold">{entry.tool.name}</span>
                   <span className="text-muted-foreground">

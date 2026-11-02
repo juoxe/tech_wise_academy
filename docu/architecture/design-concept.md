@@ -3,7 +3,9 @@
 Status: applied in `frontend/src/styles/globals.css`. Basis: Tech Tool Trainer
 [ADR-0008](../../../Tech_Tool_Trainer/docu/adr/0008-frontend-design.md) (colours, dark mode as
 default, base size 17 px). Decision for Tech Wise Academy: see [ADR-0003](../adr/0003-frontend-stack.md),
-TD-31. The dark-mode greens `#a1cfb8` and `#a0bf76` and the orange for wrong answers were chosen by J.
+TD-31. The greens and the orange for wrong answers were chosen by J. On 2026-11-02 J asked for
+stronger greens, for the green instead of the olive as the primary colour and for a sunflower
+yellow focus ring.
 
 ## Rules
 
@@ -19,13 +21,18 @@ TD-31. The dark-mode greens `#a1cfb8` and `#a0bf76` and the orange for wrong ans
 
 | Role | Dark mode | Light mode |
 |------|-----------|------------|
-| `primary` | `#a0bf76` (olive green) | teal, see `globals.css` |
-| `ring` | `#a1cfb8` (light mint) | teal, see `globals.css` |
-| `status-done` (correct answers, done) | `#a0bf76` (olive green) | green, see `globals.css` |
+| `primary` | `#27ae60` (green) | `#15803d` (dark green) |
+| `ring` | `#f1c40f` (sunflower yellow) | `#a68408` (dark gold, for contrast on white) |
+| `status-done` (correct answers, done) | `#8bc34a` (olive green) | green, see `globals.css` |
 | `destructive` (wrong answers, errors) | `#f97316` (saturated orange) | `#c2410c` (darker orange, for contrast on white) |
 
-The logo `frontend/public/logo.svg` uses both greens: mint and olive. It is shown next to the app
+The logo `frontend/public/logo.svg` uses both greens: the primary green `#27ae60` and the olive
+`#8bc34a`. It is shown next to the app
 title and as the browser icon. It is a brand asset, not a component colour.
+
+Main actions (Starten, Nochmal spielen, Nächste Runde) and the page heading of the Game tab use
+`primary`. `status-done` is only used for status: progress bars and correct answers. Focus outlines use
+`ring` (sunflower yellow), so the focus stands out from the green actions.
 
 The other roles are taken from the Tech Tool Trainer as they are in `globals.css`.
 

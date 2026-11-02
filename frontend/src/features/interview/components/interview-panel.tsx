@@ -12,9 +12,9 @@ import { QueryState } from "@/components/shared/query-state";
 const MIN_LENGTH = 50;
 const SERVICE_DOWN_STATUS = 503;
 const BUTTON =
-  "inline-flex items-center gap-2 rounded-md bg-status-done px-4 py-2 text-base font-semibold text-background focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50";
+  "inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50";
 const BUTTON_QUIET =
-  "rounded-md border border-border px-3 py-1 text-base hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary";
+  "rounded-md border border-border px-3 py-1 text-base hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring";
 
 function createErrorMessage(error: Error & { status?: number }): string {
   if (error.status === SERVICE_DOWN_STATUS) {
@@ -68,7 +68,7 @@ export function InterviewPanel({
           maxLength={20000}
           value={jobAd}
           onChange={(event) => setJobAd(event.target.value)}
-          className="w-full rounded-md border border-input bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-primary"
+          className="w-full rounded-md border border-input bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-ring"
         />
         <div className="flex flex-wrap items-center gap-3">
           <button
@@ -107,7 +107,7 @@ export function InterviewPanel({
                   type="button"
                   aria-pressed={set.id === selectedId}
                   onClick={() => onSelect(set.id)}
-                  className="flex min-w-0 flex-col text-left focus-visible:outline-2 focus-visible:outline-primary"
+                  className="flex min-w-0 flex-col text-left focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   <span
                     className={

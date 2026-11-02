@@ -9,9 +9,11 @@ export function App() {
       className="min-h-screen gap-0 bg-background text-foreground"
     >
       <header className="border-b border-border px-6 pt-4">
-        <h1 className="flex items-center gap-3 text-xl font-semibold">
-          <img src="/logo.svg" alt="" className="size-8" />
-          Tech Wise Academy
+        <h1 className="flex items-center gap-3 text-3xl font-bold">
+          <img src="/logo.svg" alt="" className="size-11" />
+          <span>
+            Tech <span className="text-primary">Wise</span> Academy
+          </span>
         </h1>
         <TabsList className="mt-3 h-auto justify-start gap-6 rounded-none bg-transparent p-0">
           <TabsTrigger

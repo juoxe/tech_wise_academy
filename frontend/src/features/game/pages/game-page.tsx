@@ -84,9 +84,9 @@ type Status = {
 };
 
 const BUTTON_ON =
-  "inline-flex items-center gap-2 rounded-md bg-status-done px-4 py-2 text-base font-semibold text-background focus-visible:outline-2 focus-visible:outline-primary";
+  "inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring";
 const BUTTON_OFF =
-  "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary";
+  "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring";
 
 /* The level is set automatically: the first open level whose tools are not all learned yet. A level
    opens when every tool of the level before it is learned. Level 1 is always open. */
@@ -208,7 +208,7 @@ export function GamePage() {
   if (!playing) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h1 className="text-3xl font-bold text-status-done">
+        <h1 className="text-3xl font-bold text-primary">
           Welches Game willst du spielen?
         </h1>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Set">
