@@ -68,7 +68,7 @@ export function InterviewPanel({
           maxLength={20000}
           value={jobAd}
           onChange={(event) => setJobAd(event.target.value)}
-          className="w-full rounded-md border border-input bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-primary"
+          className="w-full rounded-md border border-muted-foreground bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-primary"
         />
         <div className="flex flex-wrap items-center gap-3">
           <button
@@ -113,7 +113,7 @@ export function InterviewPanel({
                   <span
                     className={
                       set.id === selectedId
-                        ? "text-base font-semibold text-status-done"
+                        ? "text-base font-semibold text-primary underline"
                         : "text-base font-semibold"
                     }
                   >

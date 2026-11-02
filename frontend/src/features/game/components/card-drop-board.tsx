@@ -201,7 +201,12 @@ export function CardDropBoard({
                 <span className="break-words text-center text-lg font-semibold">
                   {areaLabel(category)}
                 </span>
-                <span className="text-base text-muted-foreground">
+                <span
+                  className={cn(
+                    "text-base text-muted-foreground",
+                    flash && "text-foreground",
+                  )}
+                >
                   {area?.learned ?? 0} von {area?.total ?? 0} gelernt
                 </span>
                 {flash && (
