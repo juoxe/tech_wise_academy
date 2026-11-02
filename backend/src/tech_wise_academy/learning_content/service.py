@@ -18,6 +18,7 @@ class ToolSummary:
     key: str
     name: str
     category: Category
+    level: int
     summary: str
     language: str
     icon: str | None
@@ -34,6 +35,7 @@ class ToolDetail:
     key: str
     name: str
     category: Category
+    level: int
     summary: str
     language: str
     icon: str | None
@@ -70,6 +72,7 @@ class ToolService:
                     key=tool.key,
                     name=tool.name,
                     category=tool.category,
+                    level=tool.level,
                     summary=summary,
                     language=used_language,
                     icon=tool.icon,
@@ -98,6 +101,7 @@ class ToolService:
             key=tool.key,
             name=tool.name,
             category=tool.category,
+            level=tool.level,
             summary=summary,
             language=used_language,
             icon=tool.icon,

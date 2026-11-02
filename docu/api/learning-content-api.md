@@ -35,7 +35,8 @@ frontend of the first slice uses only the list; the detail endpoint is available
 |-------|-------------|
 | key | Readable short name |
 | name | Display name |
-| category | Category code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY` or `AI_DATA` |
+| category | Category code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY` or `AI_DATA`; for the programming languages `OBJECT_ORIENTED`, `FUNCTIONAL`, `PROCEDURAL`, `DECLARATIVE` or `MULTI_PARADIGM` |
+| level | Level of the tool: `1` (know), `2` (intermediate) or `3` (expert), see [Level](../data_model/learning-content-data-model.md#level) |
 | summary | One sentence: what is it? (in the selected language) |
 | language | Language of the returned texts |
 | icon | Icon identifier; empty if the tool has none |

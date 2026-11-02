@@ -11,7 +11,7 @@ and modules call each other only through a small public interface.
 | Context | Module | Responsibility | Owns | Status |
 |---------|--------|----------------|------|--------|
 | Learning Content | `learning_content` | The content users learn from: tools with hints, code examples and alternatives; later learning packs and paths | `tool`, `tool_hint`, `tool_example`, `tool_alternative` ([data model](../data_model/learning-content-data-model.md)) | first code in TWA-4 |
-| Training | `training` | Game rounds and the learning progress of each user | – | named only; designed in MS 2 |
+| Training | `training` | Game rounds and the learning progress of each user | `learning_progress` | first version for Level 0 (answers per tool and profile); rounds and more games follow in MS 2 |
 | Identity and Access | – | Users and the roles USER and ADMIN | – | not a module yet; depends on TD-17 |
 
 ## Relationships

@@ -16,6 +16,7 @@ tool_table = sa.Table(
     sa.Column("key", sa.Text, nullable=False, unique=True),
     sa.Column("name", sa.Text, nullable=False),
     sa.Column("category", sa.Text, nullable=False),
+    sa.Column("level", sa.Integer, nullable=False),
     sa.Column("documentation_url", sa.Text, nullable=False),
     sa.Column("icon", sa.Text),
 )
@@ -108,6 +109,7 @@ class ToolRepository:
                 key=row["key"],
                 name=row["name"],
                 category=Category(row["category"]),
+                level=row["level"],
                 documentation_url=row["documentation_url"],
                 icon=row["icon"],
                 summaries=summaries.get(row["id"], {}),

@@ -1,9 +1,14 @@
 import {
+  Boxes,
   Brain,
   Container,
+  FileText,
   LayoutDashboard,
+  ListOrdered,
   Server,
   ShieldCheck,
+  Shapes,
+  Sigma,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -20,6 +25,11 @@ const CATEGORY_ICONS: Readonly<
   FRONTEND: LayoutDashboard,
   SECURITY: ShieldCheck,
   AI_DATA: Brain,
+  OBJECT_ORIENTED: Boxes,
+  FUNCTIONAL: Sigma,
+  PROCEDURAL: ListOrdered,
+  DECLARATIVE: FileText,
+  MULTI_PARADIGM: Shapes,
 };
 
 /* Logo of the tool if it has one, otherwise the icon of its category (ADR-0005). */

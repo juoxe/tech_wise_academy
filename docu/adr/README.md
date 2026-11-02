@@ -20,4 +20,4 @@ the options in a decision matrix and records the outcome per topic.
 | [0003](0003-frontend-stack.md) | Frontend stack | accepted | TD-22, TD-24, TD-25, TD-31, TD-01 | TWA-3.3, TWA-3.5 |
 | [0004](0004-local-environment.md) | Local environment | accepted | TD-35 | TWA-4.5 |
 
-**Next free ADR number: 0005**
+**Next free ADR number: 0006**

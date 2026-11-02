@@ -13,8 +13,10 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-3](#epic-twa-3--mandatory-decisions-before-the-first-code) | Mandatory Decisions Before the First Code | MS 1 | DONE |
 | [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
+| [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
+| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | – | IN PROGRESS |
 
-**Next free epic number: 6**
+**Next free epic number: 8**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -796,3 +798,42 @@ and the menu has no tab for a game next to the tool overview.
 
 **Result:** rejected as a separate epic. The code of Level 0 is committed together with the project
 skeleton in TWA-4 ("TWA-4: Add project skeleton"); the number TWA-5 stays taken.
+
+---
+
+## Epic TWA-6 – Statistics
+
+**Status:** IDEA
+
+**Description**
+
+As a learner, we want to see how my learning progress develops per game and per area, so that I can
+judge where I stand and what to learn next.
+
+**Affected components:** frontend (Game tab, statistics page), backend (feature `training`),
+documentation
+
+**Note:** the statistics page per user is an expected result of MS 2 (see the [roadmap](roadmap.md)).
+The epic has no milestone and no stories yet; it is planned in detail when MS 2 is planned.
+
+---
+
+## Epic TWA-7 – Knowledge Games
+
+**Status:** IN PROGRESS
+
+**Description**
+
+As a learner, we want to find out which tools we already know by playing two games, so that we know
+where to learn. The games are Wissens-Check (falling cards onto the areas) and Karten abräumen
+(clearing the field by naming the tool from its hints). Each game has three levels; the level is set
+automatically, and the level after one is open when every tool of the level before is learned.
+
+**Affected components:** frontend (Game tab, feature `game`), backend (feature `training`),
+documentation
+
+**Working documents:** [game-play](../game-play.md)
+
+**Note:** the rules are documented only in [game-play.md](../game-play.md). The games are built ahead
+of MS 2 so they can be tested; the milestone is not assigned yet. Stories are added when the epic is
+reviewed.

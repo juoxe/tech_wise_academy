@@ -24,17 +24,16 @@ Sorted by what is due next. Status: `TODO` (no proposal yet) · `IN PROGRESS` (p
 | 7 | TD-02 | Test coverage and threshold | report + ratchet, fixed threshold, none | tests | MS 3 (testing strategy) | TODO |
 | 8 | TD-27 | End-to-end tests | Playwright, Cypress, API end-to-end only, none | `e2e/`, CI/CD | MS 3 (testing strategy) | TODO |
 | 9 | TD-34 | Frontend translation of the UI (English, MS 3) | react-i18next, FormatJS (react-intl), Lingui, own dictionary | frontend | MS 3 (English UI) | TODO |
-| 10 | TD-17 | Identity provider and authentication | Keycloak, Auth0, Entra ID, none | backend, security model | before the first protected endpoint | TODO |
-| 11 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
-| 12 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
-| 13 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
-| 14 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
-| 15 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
-| 16 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
-| 17 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
-| 18 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
-| 19 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
-| 20 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
+| 10 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
+| 11 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
+| 12 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
+| 13 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
+| 14 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
+| 15 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
+| 16 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
+| 17 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
+| 18 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
+| 19 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
 
 ## 2. Decision Record
 
@@ -43,6 +42,7 @@ Decisions that have been made, newest first. All were decided by J on 2026-10-25
 
 | ID | Topic | Decision | ADR | Story |
 |----|-------|----------|-----|-------|
+| TD-17 | Identity provider and authentication | Keycloak (self-hosted, OpenID Connect); recorded without ADR on J's request | – | – |
 | TD-35 | Local container runtime and compose tooling | Docker with Docker Compose (see [ADR-0004](0004-local-environment.md)) | [ADR-0004](0004-local-environment.md) | TWA-4.5 |
 | TD-31 | Frontend design: colours, font, layout | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; the colour concept is developed in MS 3 | [ADR-0003](0003-frontend-stack.md) | TWA-3.3 |
 | TD-25 | UI components and styling | Tailwind CSS + shadcn/ui | [ADR-0003](0003-frontend-stack.md) | TWA-3.3 |

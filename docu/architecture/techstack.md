@@ -56,6 +56,14 @@ Decided in [ADR-0003](../adr/0003-frontend-stack.md) on 2026-10-25. Exact versio
 | UI components and styling | Tailwind CSS + shadcn/ui, icons `lucide-react` | TD-25 |
 | Design | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; design concept in [design-concept.md](design-concept.md), dark mode as default | TD-31 |
 
+### Identity and access
+
+Decided by J on 2026-10-27 (TD-17, without ADR).
+
+| Area | Decision | Open decision |
+|------|----------|---------------|
+| Identity provider | Keycloak (self-hosted, OpenID Connect) | TD-17 |
+
 ## Proposed
 
 No proposals are open. A decision that is proposed in an ADR is listed here until J accepts it.

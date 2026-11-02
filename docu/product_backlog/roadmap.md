@@ -66,7 +66,7 @@ MS 1 is done.
   cards).
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
-- A statistics page per user.
+- A statistics page per user (idea [TWA-6](backlog.md#epic-twa-6--statistics), not yet planned).
 
 ---
 

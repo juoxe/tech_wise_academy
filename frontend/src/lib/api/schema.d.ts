@@ -4,181 +4,312 @@
  */
 
 export interface paths {
-  "/api/tools": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tools */
+        get: operations["list_tools_api_tools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** List Tools */
-    get: operations["list_tools_api_tools_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/tools/{key}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/tools/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Tool */
+        get: operations["get_tool_api_tools__key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** Get Tool */
-    get: operations["get_tool_api_tools__key__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/api/training/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Answer */
+        post: operations["record_answer_api_training_answers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/training/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Progress */
+        get: operations["list_progress_api_training_progress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /** AlternativeOut */
-    AlternativeOut: {
-      /** Key */
-      key: string;
-      /** Name */
-      name: string;
+    schemas: {
+        /** AlternativeOut */
+        AlternativeOut: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** AnswerIn */
+        AnswerIn: {
+            /**
+             * Game
+             * @enum {string}
+             */
+            game: "level0" | "clearing";
+            /** Tool Key */
+            tool_key: string;
+            /** Correct */
+            correct: boolean;
+        };
+        /**
+         * Category
+         * @enum {string}
+         */
+        Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA" | "OBJECT_ORIENTED" | "FUNCTIONAL" | "PROCEDURAL" | "DECLARATIVE" | "MULTI_PARADIGM";
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ProgressOut */
+        ProgressOut: {
+            /** Tool Key */
+            tool_key: string;
+            /** Correct In A Row */
+            correct_in_a_row: number;
+            /** Learned */
+            learned: boolean;
+            /** Correct Total */
+            correct_total: number;
+            /** Wrong Total */
+            wrong_total: number;
+        };
+        /** ToolDetailOut */
+        ToolDetailOut: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            category: components["schemas"]["Category"];
+            /** Level */
+            level: number;
+            /** Summary */
+            summary: string;
+            /** Language */
+            language: string;
+            /** Icon */
+            icon: string | null;
+            /** Documentation Url */
+            documentation_url: string;
+            /** Hints */
+            hints: string[];
+            /** Examples */
+            examples: string[];
+            /** Alternatives */
+            alternatives: components["schemas"]["AlternativeOut"][];
+        };
+        /** ToolSummaryOut */
+        ToolSummaryOut: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            category: components["schemas"]["Category"];
+            /** Level */
+            level: number;
+            /** Summary */
+            summary: string;
+            /** Language */
+            language: string;
+            /** Icon */
+            icon: string | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
     };
-    /**
-     * Category
-     * @enum {string}
-     */
-    Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA";
-    /** HTTPValidationError */
-    HTTPValidationError: {
-      /** Detail */
-      detail?: components["schemas"]["ValidationError"][];
-    };
-    /** ToolDetailOut */
-    ToolDetailOut: {
-      /** Key */
-      key: string;
-      /** Name */
-      name: string;
-      category: components["schemas"]["Category"];
-      /** Summary */
-      summary: string;
-      /** Language */
-      language: string;
-      /** Icon */
-      icon: string | null;
-      /** Documentation Url */
-      documentation_url: string;
-      /** Hints */
-      hints: string[];
-      /** Examples */
-      examples: string[];
-      /** Alternatives */
-      alternatives: components["schemas"]["AlternativeOut"][];
-    };
-    /** ToolSummaryOut */
-    ToolSummaryOut: {
-      /** Key */
-      key: string;
-      /** Name */
-      name: string;
-      category: components["schemas"]["Category"];
-      /** Summary */
-      summary: string;
-      /** Language */
-      language: string;
-      /** Icon */
-      icon: string | null;
-    };
-    /** ValidationError */
-    ValidationError: {
-      /** Location */
-      loc: (string | number)[];
-      /** Message */
-      msg: string;
-      /** Error Type */
-      type: string;
-      /** Input */
-      input?: unknown;
-      /** Context */
-      ctx?: Record<string, never>;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  list_tools_api_tools_get: {
-    parameters: {
-      query?: {
-        lang?: "de";
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
+    list_tools_api_tools_get: {
+        parameters: {
+            query?: {
+                lang?: "de";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolSummaryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    get_tool_api_tools__key__get: {
+        parameters: {
+            query?: {
+                lang?: "de";
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["ToolSummaryOut"][];
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
     };
-  };
-  get_tool_api_tools__key__get: {
-    parameters: {
-      query?: {
-        lang?: "de";
-      };
-      header?: never;
-      path: {
-        key: string;
-      };
-      cookie?: never;
+    record_answer_api_training_answers_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    list_progress_api_training_progress_get: {
+        parameters: {
+            query: {
+                game: "level0" | "clearing";
+            };
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["ToolDetailOut"];
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
     };
-  };
 }

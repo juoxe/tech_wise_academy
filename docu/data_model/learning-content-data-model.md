@@ -50,6 +50,7 @@ Decided by J on 2026-10-25: the **first slice is German**; English follows in MS
 | key | text, unique | ✓ | input | Readable short name (`kubernetes`): lowercase letters, digits and hyphens; stable for links and seed data |
 | name | text | ✓ | input | Display name (`Kubernetes`); the same in all languages |
 | category | enum `Category` | ✓ | input | The main category of the tool, one value, see [Category](#category) |
+| level | integer `1` to `3` | ✓ | input | The level of the tool in the game, see [Level](#level) |
 | documentation_url | text | ✓ | input | Link to the official documentation, for reading on |
 | icon | text, optional | | input | Identifier of the tool's icon in the icon source (open decision TD-33). Empty = the frontend shows the icon of the category |
 
@@ -128,12 +129,42 @@ migration.
 | `SECURITY` | Security (DevSecOps) |
 | `AI_DATA` | AI and data |
 
+The second set, the **programming languages**, uses the same enum with five **paradigms** instead of
+areas (migration 0007). A language has exactly one main paradigm; a language that is taught in
+several styles is `MULTI_PARADIGM`. The set of a tool is derived from its category, so there is no
+extra column.
+
+| Code | Meaning |
+|------|---------|
+| `OBJECT_ORIENTED` | Object-oriented (Java, C#, Kotlin, Swift, Ruby) |
+| `FUNCTIONAL` | Functional (Haskell, Elixir, Clojure, Erlang) |
+| `PROCEDURAL` | Procedural (C, Go, Bash, PHP) |
+| `DECLARATIVE` | Declarative (SQL, HTML, CSS, Prolog) |
+| `MULTI_PARADIGM` | Several paradigms (Python, JavaScript, TypeScript, Rust, Scala, C++) |
+
+All languages have level 1; the levels are only used in the set of the tools. TypeScript moved from
+`FRONTEND` to this set.
+
+## Level
+
+The level of a tool in the game: `1` (should be known), `2` (intermediate) or `3` (expert). Each tool
+has exactly one level. The level is taken from the sets of the Tech Tool Trainer: set 1 (the 20 most
+important tools per path) is level 1, set 2 is level 2, set 3 is level 3. A tool that belongs to
+several paths gets the **lowest** set number, so the most known place counts. The result is 93 tools
+in level 1, 94 in level 2 and 90 in level 3. Migration 0004 stores the level in the column `tool.level`
+(check: `1` to `3`); the value per tool is in the seed data. Migration 0006 adds eight AI models and
+media tools of J's own choice (Llama, Gemma, Qwen, Mistral, FLUX.2 Klein, SDXL, Whisper, ComfyUI) with
+a level each. Together with the 23 programming languages of migration 0007 (level 1, own set) the
+seed has 307 tools: 94 tools in level 1, 97 in level 2 and 93 in level 3, plus the languages.
+
 ## Seed Data (proposal)
 
-Seven tools delivered with the first migration: a few examples that show the five categories and
-two alternative pairs. The rest of the data of the Tech Tool Trainer is migrated later, in further
-migrations. The texts (German summary, hints, link, examples) are written in TWA-4.3 and reviewed
-by J.
+Migration 0001 delivers the seven first tools; migration 0002 adds all other tools of the Tech Tool Trainer (277 in total, five
+paths, one category per tool; the 16 tools that belong to two or more paths get the category of the
+first path in the order DevOps, backend, frontend, security, AI and data). Hints are written for TWA:
+three per tool, without naming the tool. Summaries, links, icons and examples come from the Tech Tool
+Trainer. From the sets of the Tech Tool Trainer only the set of each tool is taken over, as its
+[level](#level); the must-know flags and stages are not migrated. The texts are to be reviewed by J.
 
 | Key | Name | Category | Alternatives |
 |-----|------|----------|--------------|
@@ -154,6 +185,7 @@ Two alternative pairs, stored once each.
 | 2026-10-25 | One enum `category`, one value per tool (option A of four considered) |
 | 2026-10-25 | The five categories of the Tech Tool Trainer (DevOps, backend, frontend, security, AI and data); the twelve type categories are dropped |
 | 2026-10-25 | One main category per tool; several categories can be added later with a table `tool_category`, without changing the existing data |
+| 2026-10-27 | One level `1` to `3` per tool, taken from the Tech Tool Trainer sets (lowest set over the paths); a column `tool.level` (migration 0004), not a table, because each tool has exactly one level |
 
 ## Not Included Yet
 
@@ -164,7 +196,6 @@ Two alternative pairs, stored once each.
 | Type of tool (e.g. container, CI/CD) | The twelve type categories were dropped for now | when needed |
 | Stages and questions | Part of the game design | MS 2 |
 | Key terms | Material for quiz questions | MS 2 |
-| Difficulty | Not used in the Tech Tool Trainer games, which used sets | when needed |
 | Reviewed-at date | Dropped by J: a content maintenance aid, not needed to function | when content is maintained |
 | Related tools | Different from alternatives; not needed yet | when needed |
 | Users, progress | Part of the training context | MS 2 |
@@ -179,7 +210,7 @@ Two alternative pairs, stored once each.
 | 3 | Rule for hints: the text never contains the name of the tool, and the icon is not shown next to a hint to be guessed | Yes, name checked by a small test of the seed data | **decided** (J, 2026-10-25) |
 | 4 | Examples: only `code`? | Only `code` | **decided** (J, 2026-10-25) |
 | 5 | The start categories | The five categories of the Tech Tool Trainer | **decided** (J, 2026-10-25) |
-| 6 | Seed tools | A few examples (seven), more data later | **decided** (J, 2026-10-25) |
+| 6 | Seed tools | All 277 tools of the Tech Tool Trainer (five paths), taken over on 2026-10-27 by J's decision; the seven first tools stay as they were | **decided** (J, 2026-10-25; extended by J, 2026-10-27) |
 | 7 | API: read access only | Read only | **decided** (J, 2026-10-25) |
 | 8 | Icon: optional field `icon`; which icon source is used | Field decided; source is open decision TD-33 | field decided, source open |
 | 9 | Category kinds | One enum | **decided: option A** (J, 2026-10-25) |

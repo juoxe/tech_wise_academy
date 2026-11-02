@@ -59,3 +59,13 @@ name = "Domain model is free of frameworks"
 type = "forbidden"
 source_modules = ["tech_wise_academy.learning_content.model"]
 forbidden_modules = ["fastapi", "sqlalchemy", "pydantic", "pydantic_settings", "alembic"]
+
+[[tool.importlinter.contracts]]
+name = "Training layers: api > service > repository > model"
+type = "layers"
+layers = [
+    "tech_wise_academy.training.api",
+    "tech_wise_academy.training.service",
+    "tech_wise_academy.training.repository",
+    "tech_wise_academy.training.model",
+]

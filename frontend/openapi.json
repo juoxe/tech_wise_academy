@@ -105,6 +105,119 @@
           }
         }
       }
+    },
+    "/api/training/answers": {
+      "post": {
+        "tags": [
+          "training"
+        ],
+        "summary": "Record Answer",
+        "operationId": "record_answer_api_training_answers_post",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/training/progress": {
+      "get": {
+        "tags": [
+          "training"
+        ],
+        "summary": "List Progress",
+        "operationId": "list_progress_api_training_progress_get",
+        "parameters": [
+          {
+            "name": "game",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "level0",
+                "clearing"
+              ],
+              "type": "string",
+              "title": "Game"
+            }
+          },
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProgressOut"
+                  },
+                  "title": "Response List Progress Api Training Progress Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -127,6 +240,35 @@
         ],
         "title": "AlternativeOut"
       },
+      "AnswerIn": {
+        "properties": {
+          "game": {
+            "type": "string",
+            "enum": [
+              "level0",
+              "clearing"
+            ],
+            "title": "Game"
+          },
+          "tool_key": {
+            "type": "string",
+            "maxLength": 100,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Tool Key"
+          },
+          "correct": {
+            "type": "boolean",
+            "title": "Correct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "game",
+          "tool_key",
+          "correct"
+        ],
+        "title": "AnswerIn"
+      },
       "Category": {
         "type": "string",
         "enum": [
@@ -134,7 +276,12 @@
           "BACKEND",
           "FRONTEND",
           "SECURITY",
-          "AI_DATA"
+          "AI_DATA",
+          "OBJECT_ORIENTED",
+          "FUNCTIONAL",
+          "PROCEDURAL",
+          "DECLARATIVE",
+          "MULTI_PARADIGM"
         ],
         "title": "Category"
       },
@@ -151,6 +298,39 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "ProgressOut": {
+        "properties": {
+          "tool_key": {
+            "type": "string",
+            "title": "Tool Key"
+          },
+          "correct_in_a_row": {
+            "type": "integer",
+            "title": "Correct In A Row"
+          },
+          "learned": {
+            "type": "boolean",
+            "title": "Learned"
+          },
+          "correct_total": {
+            "type": "integer",
+            "title": "Correct Total"
+          },
+          "wrong_total": {
+            "type": "integer",
+            "title": "Wrong Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool_key",
+          "correct_in_a_row",
+          "learned",
+          "correct_total",
+          "wrong_total"
+        ],
+        "title": "ProgressOut"
+      },
       "ToolDetailOut": {
         "properties": {
           "key": {
@@ -163,6 +343,10 @@
           },
           "category": {
             "$ref": "#/components/schemas/Category"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
           },
           "summary": {
             "type": "string",
@@ -214,6 +398,7 @@
           "key",
           "name",
           "category",
+          "level",
           "summary",
           "language",
           "icon",
@@ -236,6 +421,10 @@
           },
           "category": {
             "$ref": "#/components/schemas/Category"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
           },
           "summary": {
             "type": "string",
@@ -262,6 +451,7 @@
           "key",
           "name",
           "category",
+          "level",
           "summary",
           "language",
           "icon"

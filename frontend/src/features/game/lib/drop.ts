@@ -1,0 +1,250 @@
+import type { ToolSummary } from "@/features/tools";
+
+export type Category = ToolSummary["category"];
+
+export const CATEGORIES: readonly Category[] = [
+  "DEVOPS",
+  "BACKEND",
+  "FRONTEND",
+  "SECURITY",
+  "AI_DATA",
+];
+
+/* The areas of the second set, the programming languages: they are sorted by paradigm. */
+export const PARADIGMS: readonly Category[] = [
+  "OBJECT_ORIENTED",
+  "FUNCTIONAL",
+  "PROCEDURAL",
+  "DECLARATIVE",
+  "MULTI_PARADIGM",
+];
+
+const LABELS: Partial<Record<Category, string>> = {
+  OBJECT_ORIENTED: "Objektorientiert",
+  FUNCTIONAL: "Funktional",
+  PROCEDURAL: "Prozedural",
+  DECLARATIVE: "Deklarativ",
+  MULTI_PARADIGM: "Multiparadigma",
+};
+
+/* The name shown for an area; the areas of the tools show their code. */
+export function areaLabel(category: Category): string {
+  return LABELS[category] ?? category;
+}
+
+export const TIME_LIMIT_SECONDS = 90;
+/* Number of rows of the falling area; the floor is the last row. */
+export const ROWS = 24;
+const START_COLUMN = 2;
+/* A card is learned after this many correct placements in a row. */
+const CORRECT_IN_A_ROW = 2;
+
+export type Falling = {
+  tool: ToolSummary;
+  column: number;
+  row: number;
+};
+
+export type Outcome = {
+  tool: ToolSummary;
+  column: number;
+  correct: boolean;
+};
+
+/* One round of Level 0. No card is ever removed: a card is either learned (placed correctly
+   CORRECT_IN_A_ROW times in a row) or open. Each card comes up at most once per round, at random,
+   until every card has come up; after that the open cards come up again at random.
+   The round ends when every card is learned or the time is up. */
+export type Drop = {
+  areas: readonly Category[];
+  cards: ToolSummary[];
+  fresh: ToolSummary[];
+  open: ToolSummary[];
+  falling: Falling | null;
+  streak: Record<string, number>;
+  learned: string[];
+  mistakes: Outcome[];
+  lastOutcome: Outcome | null;
+  secondsLeft: number;
+  timeUp: boolean;
+};
+
+export type AreaProgress = {
+  category: Category;
+  total: number;
+  learned: number;
+  open: number;
+  withMistake: number;
+};
+
+function shuffle<T>(items: readonly T[]): T[] {
+  return items
+    .map((item) => ({ item, order: Math.random() }))
+    .sort((a, b) => a.order - b.order)
+    .map(({ item }) => item);
+}
+
+/* Takes the next card: first each fresh card once, then a random open card. */
+function next(drop: Drop): Drop {
+  if (drop.fresh.length > 0) {
+    const [card, ...rest] = drop.fresh;
+    return {
+      ...drop,
+      fresh: rest,
+      falling: card ? { tool: card, column: START_COLUMN, row: 0 } : null,
+    };
+  }
+  if (drop.open.length === 0) {
+    return { ...drop, falling: null };
+  }
+  const index = Math.floor(Math.random() * drop.open.length);
+  const card = drop.open[index];
+  if (!card) {
+    return { ...drop, falling: null };
+  }
+  return {
+    ...drop,
+    open: drop.open.filter((_, position) => position !== index),
+    falling: { tool: card, column: START_COLUMN, row: 0 },
+  };
+}
+
+/* The saved progress of one tool: the row of correct answers and whether it is learned. */
+export type SavedStreak = {
+  toolKey: string;
+  streak: number;
+  learned: boolean;
+};
+
+/* A round starts with the tools that are not learned yet, each once, at random. Their saved row of
+   correct answers is kept, so a learned tool is never placed again. */
+export function createDrop(
+  tools: readonly ToolSummary[],
+  saved: readonly SavedStreak[] = [],
+  areas: readonly Category[] = CATEGORIES,
+): Drop {
+  const learned = saved
+    .filter((entry) => entry.learned)
+    .map((entry) => entry.toolKey);
+  const streak = Object.fromEntries(
+    saved.map((entry) => [entry.toolKey, entry.streak]),
+  );
+  const unlearned = tools.filter((tool) => !learned.includes(tool.key));
+  return next({
+    areas,
+    cards: [...tools],
+    fresh: shuffle(unlearned),
+    open: [],
+    falling: null,
+    streak,
+    learned,
+    mistakes: [],
+    lastOutcome: null,
+    secondsLeft: TIME_LIMIT_SECONDS,
+    timeUp: false,
+  });
+}
+
+/* The falling card lands in its column and is checked against that area's category. */
+export function land(drop: Drop): Drop {
+  if (!drop.falling) {
+    return drop;
+  }
+  const { tool, column } = drop.falling;
+  const correct = drop.areas[column] === tool.category;
+  const outcome = { tool, column, correct };
+  const base = { ...drop, falling: null, lastOutcome: outcome };
+
+  if (!correct) {
+    return next({
+      ...base,
+      streak: { ...drop.streak, [tool.key]: 0 },
+      open: [...drop.open, tool],
+      mistakes: [...drop.mistakes, outcome],
+    });
+  }
+  const count = (drop.streak[tool.key] ?? 0) + 1;
+  if (count >= CORRECT_IN_A_ROW) {
+    return next({
+      ...base,
+      streak: { ...drop.streak, [tool.key]: count },
+      learned: [...drop.learned, tool.key],
+    });
+  }
+  return next({
+    ...base,
+    streak: { ...drop.streak, [tool.key]: count },
+    open: [...drop.open, tool],
+  });
+}
+
+/* One step down. The card lands on the floor. */
+export function fall(drop: Drop): Drop {
+  if (!drop.falling) {
+    return drop;
+  }
+  if (drop.falling.row >= ROWS - 1) {
+    return land(drop);
+  }
+  return { ...drop, falling: { ...drop.falling, row: drop.falling.row + 1 } };
+}
+
+export function moveBy(drop: Drop, step: number): Drop {
+  if (!drop.falling) {
+    return drop;
+  }
+  const column = Math.min(
+    drop.areas.length - 1,
+    Math.max(0, drop.falling.column + step),
+  );
+  return { ...drop, falling: { ...drop.falling, column } };
+}
+
+/* Places the falling card on the area in this column, at once. */
+export function placeAt(drop: Drop, column: number): Drop {
+  return land(moveBy(drop, column - (drop.falling?.column ?? 0)));
+}
+
+/* One second of the time limit. When the time is up, the round ends with the cards still open. */
+export function tick(drop: Drop): Drop {
+  const secondsLeft = drop.secondsLeft - 1;
+  if (secondsLeft > 0) {
+    return { ...drop, secondsLeft };
+  }
+  return {
+    ...drop,
+    secondsLeft: 0,
+    timeUp: true,
+    falling: null,
+    fresh: [],
+    open: [],
+  };
+}
+
+export function isFinished(drop: Drop): boolean {
+  return (
+    drop.falling === null && drop.fresh.length === 0 && drop.open.length === 0
+  );
+}
+
+/* Per area: how many cards are learned, still open, and how many had a wrong placement. */
+export function areaProgress(drop: Drop): AreaProgress[] {
+  return drop.areas.map((category) => {
+    const inArea = drop.cards.filter((tool) => tool.category === category);
+    const learned = inArea.filter((tool) =>
+      drop.learned.includes(tool.key),
+    ).length;
+    const withMistake = inArea.filter(
+      (tool) =>
+        !drop.learned.includes(tool.key) &&
+        drop.mistakes.some((entry) => entry.tool.key === tool.key),
+    ).length;
+    return {
+      category,
+      total: inArea.length,
+      learned,
+      open: inArea.length - learned,
+      withMistake,
+    };
+  });
+}

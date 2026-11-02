@@ -22,6 +22,7 @@ class ToolSummaryOut(BaseModel):
     key: str
     name: str
     category: Category
+    level: int
     summary: str
     language: str
     icon: str | None
@@ -48,6 +49,7 @@ def _summary_out(summary: ToolSummary) -> ToolSummaryOut:
         key=summary.key,
         name=summary.name,
         category=summary.category,
+        level=summary.level,
         summary=summary.summary,
         language=summary.language,
         icon=summary.icon,
@@ -59,6 +61,7 @@ def _detail_out(detail: ToolDetail) -> ToolDetailOut:
         key=detail.key,
         name=detail.name,
         category=detail.category,
+        level=detail.level,
         summary=detail.summary,
         language=detail.language,
         icon=detail.icon,
