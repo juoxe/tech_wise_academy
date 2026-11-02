@@ -16,6 +16,7 @@ import {
 } from "@/features/interview";
 import {
   useProgress,
+  useResetProgress,
   type ProgressEntry,
   type TrainingGame,
 } from "@/features/training";
@@ -155,6 +156,8 @@ export function GamePage() {
   const [set, setSet] = useState<ToolSet>("tools");
   const [playing, setPlaying] = useState(false);
   const [roundNumber, setRoundNumber] = useState(0);
+  const [confirmReset, setConfirmReset] = useState<TrainingGame | null>(null);
+  const resetProgress = useResetProgress();
   const progressByGame: Record<TrainingGame, ReturnType<typeof useProgress>> = {
     level0: useProgress("level0"),
     clearing: useProgress("clearing"),
@@ -270,15 +273,65 @@ export function GamePage() {
                     />
                   </div>
                 </div>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => start(option.game)}
-                    className={BUTTON_ON}
+                {confirmReset === option.game ? (
+                  <div
+                    role="alertdialog"
+                    aria-label={`Fortschritt ${option.name} zurücksetzen`}
+                    className="flex flex-col gap-3 rounded-md border border-destructive p-4"
                   >
-                    Starten
-                  </button>
-                </div>
+                    <p className="text-base">
+                      Den Fortschritt von „{option.name}“ in allen Sets und
+                      Levels wirklich löschen? Das lässt sich nicht rückgängig
+                      machen.
+                    </p>
+                    {resetProgress.error && (
+                      <p role="alert" className="text-base text-destructive">
+                        Das Zurücksetzen hat nicht geklappt.
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={resetProgress.isPending}
+                        onClick={() =>
+                          resetProgress.mutate(option.game, {
+                            onSuccess: () => setConfirmReset(null),
+                          })
+                        }
+                        className="rounded-md border border-destructive px-4 py-2 text-base font-semibold text-destructive hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+                      >
+                        Ja, zurücksetzen
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          resetProgress.reset();
+                          setConfirmReset(null);
+                        }}
+                        className={BUTTON_OFF}
+                      >
+                        Abbrechen
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => start(option.game)}
+                      className={BUTTON_ON}
+                    >
+                      Starten
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmReset(option.game)}
+                      className={BUTTON_OFF}
+                    >
+                      Fortschritt zurücksetzen
+                    </button>
+                  </div>
+                )}
               </section>
             );
           },

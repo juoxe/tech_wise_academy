@@ -133,6 +133,10 @@ When the round is finished, the summary shows:
   The timer starts again at 90 seconds. Learned tools are not placed again.
 - When every tool of the chosen level is learned, the Game tab shows "Alle Tools dieses Levels sind gelernt".
 - A new round starts with the level that is open now. Progress is not lost: each answer is saved at once.
+- **Zurücksetzen:** every game in the choice of the game has the button "Fortschritt zurücksetzen". After
+  a confirmation that names the game, the saved progress of the player in **this game** is deleted in all
+  sets and levels (answers, rows of correct answers and learned cards). The other game and other players
+  keep their progress; the bars show 0 % afterwards.
 - "Anderes Spiel wählen" returns to the choice of the game. The round in progress is discarded; the
   answers already given are saved.
 - The list of wrong placements is only known within the current visit; after a reload the summary

@@ -989,6 +989,45 @@ no detailed view of a tool in the games.
 
 ---
 
+### TWA-7.6 – Reset the Progress of a Game
+
+**Status:** DONE
+
+**Problem Description**
+
+The progress of a player (answers, rows of correct answers, learned cards) is saved per game and per
+tool, but there is no way to start again: a player who wants to begin a game from scratch, or whose
+progress was saved while testing, cannot delete it.
+
+**Action Steps**
+
+1. Backend: add an endpoint that deletes the saved progress of the player for one game (feature
+   `training`), with a test of the rule.
+2. Frontend: add a button "Fortschritt zurücksetzen" for each game in the choice of the game, with a
+   confirmation that names the game and says that the progress of this game in all sets and levels is
+   deleted; afterwards the progress is loaded again.
+3. Describe the rule in docu/game-play.md (section Saving) and the endpoint in the training API doc,
+   if there is one.
+
+**Acceptance Criteria**
+
+- A player can reset one game and its bars show 0 % afterwards.
+- The other game and other players keep their progress.
+- The reset needs a confirmation.
+- The reset cannot be triggered by accident.
+- The texts are German.
+- Type check, lint, format check and the backend tests pass.
+- The rules are only in game-play.md.
+
+**Result:** implemented and checked on 2026-11-02: endpoint
+`DELETE /api/training/progress?game=` in `backend/src/tech_wise_academy/training/` (api, service,
+repository), test `backend/tests/unit/test_training_api.py`, frontend `useResetProgress` in
+`frontend/src/features/training/` and the button with confirmation in
+`frontend/src/features/game/pages/game-page.tsx`, rule in `docu/game-play.md` (Saving); checked in
+the browser (bars went from 17 % to 0 %, cancel kept the progress).
+
+---
+
 ## Epic TWA-8 – Interview Preparation
 
 **Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP

@@ -55,6 +55,15 @@ class TrainingRepository:
             rows = (await connection.execute(statement)).mappings().all()
         return tuple(_from_row(row) for row in rows)
 
+    async def reset_progress(self, profile_id: uuid.UUID, game: str) -> None:
+        """Deletes all saved progress of one player in one game."""
+        statement = sa.delete(learning_progress_table).where(
+            learning_progress_table.c.profile_id == profile_id,
+            learning_progress_table.c.game == game,
+        )
+        async with self._engine.begin() as connection:
+            await connection.execute(statement)
+
     async def update_progress(
         self,
         profile_id: uuid.UUID,

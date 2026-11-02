@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Header, Query, Request
+from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from pydantic import BaseModel, Field
 
 from tech_wise_academy.training.model import Progress
@@ -66,3 +66,13 @@ async def list_progress(
     game: Annotated[GameName, Query()],
 ) -> list[ProgressOut]:
     return [_out(progress) for progress in await service.list_progress(profile_id, game)]
+
+
+@router.delete("/progress", status_code=204)
+async def reset_progress(
+    profile_id: ProfileHeader,
+    service: ServiceDep,
+    game: Annotated[GameName, Query()],
+) -> Response:
+    await service.reset_progress(profile_id, game)
+    return Response(status_code=204)

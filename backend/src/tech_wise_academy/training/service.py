@@ -1,4 +1,4 @@
-"""Use cases of the training: record an answer and read the progress of a player."""
+"""Use cases of the training: record an answer, read and reset the progress of a player."""
 
 import uuid
 
@@ -26,3 +26,7 @@ class TrainingService:
 
     async def list_progress(self, profile_id: uuid.UUID, game: str) -> tuple[Progress, ...]:
         return await self._repository.list_progress(profile_id, game)
+
+    async def reset_progress(self, profile_id: uuid.UUID, game: str) -> None:
+        """Deletes the progress of the player in one game; other games and players stay."""
+        await self._repository.reset_progress(profile_id, game)

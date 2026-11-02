@@ -1,4 +1,4 @@
-import { getJson, postJson } from "@/lib/api/client";
+import { deleteJson, getJson, postJson } from "@/lib/api/client";
 import { getProfileId } from "@/features/training/lib/profile";
 
 export type TrainingGame = "level0" | "clearing";
@@ -28,6 +28,13 @@ export function recordAnswer(
 /** The saved progress of the current player in one game. */
 export function fetchProgress(game: TrainingGame): Promise<ProgressEntry[]> {
   return getJson(`/api/training/progress?game=${game}`, {
+    "X-Profile-Id": getProfileId(),
+  });
+}
+
+/** Deletes the saved progress of the current player in one game (all sets and levels). */
+export function resetProgress(game: TrainingGame): Promise<void> {
+  return deleteJson(`/api/training/progress?game=${game}`, {
     "X-Profile-Id": getProfileId(),
   });
 }
