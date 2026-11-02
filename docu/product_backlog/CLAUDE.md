@@ -48,6 +48,11 @@ sub-agent [`backlog-manager`](../../.claude/agents/backlog-manager.md).
 Each epic documents its **title**, **description** (goal and benefit, preferably as "As … we want
 …, so that …"), **affected components** and its **user stories**.
 
+**An epic is a real feature or a larger piece of the product** with several stories that a learner
+or the team would notice. A single technology decision, a refactoring, a small improvement or a fix
+is **no epic**: it becomes a story in the epic it belongs to, or an `IDEA` story. Do not create an
+epic for it. (TWA-10 was cut too small and stays as it is, J's decision of 2026-11-02.)
+
 ### User Story ID: `<Epic ID>.<No>`
 
 The number runs sequentially **within the epic**, starting at 1 (`TWA-1.1`, `TWA-1.2`, …).

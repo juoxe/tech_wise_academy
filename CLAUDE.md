@@ -15,6 +15,8 @@ progress.
   skill [`/workflow`](.claude/skills/workflow/SKILL.md) (plan → implement → verify → finish).
 - Backlog and roadmap are maintained by the sub-agent
   [`backlog-manager`](.claude/agents/backlog-manager.md).
+- **Epics are for real features** with several stories. A technology decision, a refactoring, a small
+  improvement or a fix is a story in an existing epic (or an `IDEA` story), not a new epic.
 - Frontend colours are checked by the sub-agent
   [`design-token-checker`](.claude/agents/design-token-checker.md) against the
   [design concept](docu/architecture/design-concept.md).
