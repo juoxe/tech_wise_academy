@@ -2,10 +2,11 @@
 #   cp .env.example .env
 #   docker compose up --build
 # Ports are bound to 127.0.0.1 only.
+# The embedding service runs locally (ADR-0006); its model is downloaded once by `ollama-model`.
 
 services:
   tools-db:
-    image: postgres:16
+    image: pgvector/pgvector:pg16
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -21,11 +22,36 @@ services:
       timeout: 3s
       retries: 20
 
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # One-shot: downloads the embedding model once; after that everything runs without internet.
+  ollama-model:
+    image: ollama/ollama:latest
+    environment:
+      OLLAMA_HOST: ollama:11434
+    command: ["pull", "${EMBEDDING_MODEL:-bge-m3}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+
   backend:
     build: ./backend
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tools-db:5432/${POSTGRES_DB}
+      EMBEDDING_URL: ${EMBEDDING_URL:-http://ollama:11434}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-bge-m3}
     depends_on:
       tools-db:
         condition: service_healthy
@@ -44,3 +70,4 @@ services:
 
 volumes:
   tools-db-data:
+  ollama-models:

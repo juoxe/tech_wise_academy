@@ -15,8 +15,9 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
 | [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | – | IN PROGRESS |
+| [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | – | IN PROGRESS |
 
-**Next free epic number: 8**
+**Next free epic number: 9**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -984,3 +985,186 @@ no detailed view of a tool in the games.
 
 ---
 
+## Epic TWA-8 – Interview Preparation
+
+**Status:** IN PROGRESS
+
+**Description**
+
+As a learner preparing for a job interview, we want to paste a job advertisement and get a card set
+from its tech stack, so that we practise exactly the tools this job asks for. Everything runs in the
+local network; no text leaves it.
+
+**Affected components:** backend (new module `interview`, `learning_content` public interface),
+database (pgvector), compose (`ollama`), frontend (feature `interview`, feature `game`),
+documentation
+
+**Working documents:**
+[ADR-0006](../adr/0006-local-semantic-matching.md),
+[data model](../data_model/interview-data-model.md), [API](../api/interview-api.md),
+[game-play](../game-play.md)
+
+**Note:** the rules of the game are documented only in [game-play.md](../game-play.md).
+
+---
+
+### TWA-8.1 – Decide Vector Store, Embedding Runtime and Model
+
+**Status:** IN PROGRESS · **Depends on:** TWA-8.6
+
+**Problem Description**
+
+Matching a job ad to tools needs vectors, a place to store them and a model that produces them. J
+has set two conditions: everything stays in the local network, and Postgres moves to pgvector. The
+runtime, the model and the matching approach are not decided yet.
+
+**Action Steps**
+
+1. Compare the options in ADR-0006 with decision matrices.
+2. J decides the topics that J has not stated yet (embedding runtime, embedding model, matching
+   approach, stored similarity values).
+3. Mark the topics accepted, move the decisions to chapter 2 of open-decisions.md and update the
+   techstack.
+
+**Acceptance Criteria**
+
+- ADR-0006 names vector store, runtime, model, matching approach and what is stored.
+- Every topic is accepted by J.
+- open-decisions.md and the techstack are up to date.
+
+---
+
+### TWA-8.2 – pgvector and Tool Embeddings
+
+**Status:** IN PROGRESS · **Depends on:** TWA-8.1
+
+**Problem Description**
+
+The database cannot store or compare vectors, and the tools have no embeddings, so no similarity can
+be computed.
+
+**Action Steps**
+
+1. Switch the database image to pgvector.
+2. Add the local embedding service to compose.
+3. Migration with the extension and the tables.
+4. Embed name, summary and hints of each tool; embed again only what changed.
+
+**Acceptance Criteria**
+
+- Migrations run against a real database, including on a database that already holds the earlier
+  migrations.
+- All tools have an embedding per model.
+- A changed text is embedded again on the next generation; unchanged ones are not.
+- No call leaves the local network at runtime.
+
+---
+
+### TWA-8.3 – Generate an Interview Set from a Job Ad
+
+**Status:** IN PROGRESS · **Depends on:** TWA-8.2
+
+**Problem Description**
+
+There is no way to turn a job advertisement into cards. Without it a learner has to pick the
+relevant tools by hand from over 300.
+
+**Action Steps**
+
+1. Split the ad into chunks and embed them.
+2. Find the tools the ad names.
+3. Compute the similarity of every tool in pgvector and rank the cards.
+4. Persist the set, its chunks and all similarity values per profile.
+5. API to create, list, read and delete sets.
+
+**Acceptance Criteria**
+
+- A pasted ad yields a set with the named tools first and fitting tools after them.
+- The similarity of every tool to the ad is stored in Postgres.
+- A set is only visible to its profile.
+- Without the embedding service the API answers 503 and stores nothing.
+
+---
+
+### TWA-8.4 – Play an Interview Set
+
+**Status:** IN PROGRESS · **Depends on:** TWA-8.3
+
+**Problem Description**
+
+A generated set is of no use if it cannot be played. The games only know the two fixed sets, and the
+Wissens-Check has five areas, while an interview set can mix tools and languages.
+
+**Action Steps**
+
+1. Add the set "Interview" to the Game tab with a text field for the ad and the saved sets.
+2. Show the cards with similarity and the sentence of the ad behind them.
+3. Play the set in both games; mixed sets get a sixth area "Sprachen".
+4. Describe the rules in game-play.md.
+
+**Acceptance Criteria**
+
+- Pasting an ad in the UI yields a card set.
+- The set can be played in Wissens-Check and Karten abräumen.
+- Saved sets can be selected and deleted.
+- The UI texts are German.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-8.5 – Tools Missing from the Catalogue
+
+**Status:** IDEA
+
+**Problem Description**
+
+Job ads often name technologies that have no card: the seed has no PostgreSQL, MySQL, Linux, AWS,
+Azure or Google Cloud. An interview set stays silent about them, so the learner does not see the
+gap.
+
+**Action Steps**
+
+1. Collect the terms that real ads name and that have no card.
+2. J decides which get cards.
+3. Add them with a migration, or show the uncovered terms in the set.
+
+**Acceptance Criteria**
+
+- The most common technologies of real ads have a card, or the set shows which terms it does not
+  cover.
+
+---
+
+### TWA-8.6 – Measure the Matching Approaches
+
+**Status:** TODO
+
+**Problem Description**
+
+It is not known which matching approach finds the right tools in real job ads. Without a measurement,
+J would decide TD-37 to TD-41 on assumptions, and an approach with extra cost or extra components
+could be chosen without a real gain.
+
+**Action Steps**
+
+1. J provides 5 real public job ads and labels them. The ads are third-party texts and are not
+   committed.
+2. Write a measurement test with Testcontainers (TD-03, decided by J on 2026-11-02; brought forward
+   from MS 3 for this test only) that runs the ads against four variants: A names plus a curated
+   concept list, B lexical search with English keywords per tool, C
+   paraphrase-multilingual-MiniLM-L12-v2 via ONNX Runtime, E LLM extraction with Claude Haiku 5.5
+   (only with an API key).
+3. Keep the test out of the normal unit test run.
+4. J confirms the success bar proposed in [ADR-0006](../adr/0006-local-semantic-matching.md): at
+   least 50 % of the up to 6 extra cards correct and at least 15 points above B.
+5. Run the measurement and record the results in ADR-0006.
+6. J decides TD-37 to TD-41.
+
+**Acceptance Criteria**
+
+- The measurement test runs variants A, B, C and E (E only with an API key) against the 5 labelled
+  ads in a database started by Testcontainers.
+- The test does not run in the normal unit test run.
+- No job ad is committed.
+- The success bar is confirmed by J.
+- The results are recorded in ADR-0006.

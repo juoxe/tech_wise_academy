@@ -4,9 +4,16 @@ import { CardDropBoard } from "@/features/game/components/card-drop-board";
 import { ClearingBoard } from "@/features/game/components/clearing-board";
 import {
   CATEGORIES,
+  MIXED_AREAS,
   PARADIGMS,
+  type Area,
   type SavedStreak,
 } from "@/features/game/lib/drop";
+import {
+  InterviewPanel,
+  useInterviewSet,
+  useInterviewSets,
+} from "@/features/interview";
 import {
   useProgress,
   type ProgressEntry,
@@ -41,17 +48,28 @@ const LEVELS = [
 
 type Level = (typeof LEVELS)[number]["level"];
 
-/* The two sets of cards: the tools (three levels, sorted by area) and the programming languages
-   (one level, sorted by paradigm). */
+/* The sets of cards: the tools (three levels, sorted by area), the programming languages (one level,
+   sorted by paradigm) and the interview sets generated from a job advertisement (one level). */
 const SETS = [
   { set: "tools", name: "Tools" },
   { set: "languages", name: "Programmiersprachen" },
+  { set: "interview", name: "Interview" },
 ] as const;
 
 type ToolSet = (typeof SETS)[number]["set"];
 
 function isLanguage(tool: ToolSummary): boolean {
   return PARADIGMS.includes(tool.category);
+}
+
+/* The floor of the Wissens-Check. An interview set can mix tools and languages. */
+function areasOf(set: ToolSet, tools: ToolSummary[]): readonly Area[] {
+  if (set === "languages") {
+    return PARADIGMS;
+  }
+  return set === "interview" && tools.some(isLanguage)
+    ? MIXED_AREAS
+    : CATEGORIES;
 }
 
 /* Where the player stands in one game: the level that is played now and its progress. */
@@ -76,19 +94,22 @@ function statusOf(
   allTools: ToolSummary[],
   entries: ProgressEntry[],
   set: ToolSet,
+  interview: { title: string; tools: ToolSummary[] },
 ): Status {
   const learnedKeys = new Set(
     entries.filter((entry) => entry.learned).map((entry) => entry.tool_key),
   );
-  if (set === "languages") {
-    const tools = allTools.filter(isLanguage);
+  if (set !== "tools") {
+    const title = set === "languages" ? "Programmiersprachen" : interview.title;
+    const tools =
+      set === "languages" ? allTools.filter(isLanguage) : interview.tools;
     const learnedCount = tools.filter((tool) =>
       learnedKeys.has(tool.key),
     ).length;
     return {
       level: 1,
-      levelName: "Programmiersprachen",
-      title: "Programmiersprachen",
+      levelName: title,
+      title,
       tools,
       learnedKeys,
       learnedCount,
@@ -139,7 +160,20 @@ export function GamePage() {
   };
   const progress = progressByGame[game];
   const allTools = tools.data ?? [];
-  const status = statusOf(allTools, progress.data ?? [], set);
+  const interviewSets = useInterviewSets();
+  const [chosenSetId, setChosenSetId] = useState<string>();
+  const interviewSetId = chosenSetId ?? interviewSets.data?.[0]?.id;
+  const interviewSet = useInterviewSet(
+    set === "interview" ? interviewSetId : undefined,
+  );
+  const byKey = new Map(allTools.map((tool) => [tool.key, tool]));
+  const interview = {
+    title: interviewSet.data?.title ?? "Interview",
+    tools: (interviewSet.data?.cards ?? []).flatMap(
+      (card) => byKey.get(card.tool_key) ?? [],
+    ),
+  };
+  const status = statusOf(allTools, progress.data ?? [], set, interview);
   const { level, title, learnedKeys, learnedCount, percent } = status;
   const toolList = status.tools;
   const levelKeys = new Set(toolList.map((tool) => tool.key));
@@ -153,6 +187,7 @@ export function GamePage() {
   const allLearned = toolList.length > 0 && learnedCount >= toolList.length;
   const openTools = toolList.filter((tool) => !learnedKeys.has(tool.key));
   const gameName = GAMES.find((option) => option.game === game)?.name;
+  const areas = areasOf(set, toolList);
 
   async function playAgain() {
     await progress.refetch();
@@ -189,54 +224,64 @@ export function GamePage() {
             </button>
           ))}
         </div>
-        {GAMES.map((option) => {
-          const gameStatus = statusOf(
-            allTools,
-            progressByGame[option.game].data ?? [],
-            set,
-          );
-          return (
-            <section
-              key={option.game}
-              className="flex flex-col gap-3 rounded-md border border-border p-6"
-            >
-              <h2 className="text-2xl font-semibold">{option.name}</h2>
-              <p className="text-base text-muted-foreground">
-                {option.description}
-              </p>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap justify-between gap-2 text-base">
-                  <span className="font-semibold">{gameStatus.title}</span>
-                  <span className="text-muted-foreground">
-                    {gameStatus.percent} % gelernt
-                  </span>
-                </div>
-                <div
-                  role="progressbar"
-                  aria-label={`Fortschritt ${option.name}`}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={gameStatus.percent}
-                  className="h-3 w-full overflow-hidden rounded-full bg-muted"
-                >
+        {set === "interview" && (
+          <InterviewPanel
+            tools={allTools}
+            selectedId={interviewSetId}
+            onSelect={setChosenSetId}
+          />
+        )}
+        {(set === "interview" && toolList.length === 0 ? [] : GAMES).map(
+          (option) => {
+            const gameStatus = statusOf(
+              allTools,
+              progressByGame[option.game].data ?? [],
+              set,
+              interview,
+            );
+            return (
+              <section
+                key={option.game}
+                className="flex flex-col gap-3 rounded-md border border-border p-6"
+              >
+                <h2 className="text-2xl font-semibold">{option.name}</h2>
+                <p className="text-base text-muted-foreground">
+                  {option.description}
+                </p>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-wrap justify-between gap-2 text-base">
+                    <span className="font-semibold">{gameStatus.title}</span>
+                    <span className="text-muted-foreground">
+                      {gameStatus.percent} % gelernt
+                    </span>
+                  </div>
                   <div
-                    className="h-full bg-status-done transition-all"
-                    style={{ width: `${gameStatus.percent}%` }}
-                  />
+                    role="progressbar"
+                    aria-label={`Fortschritt ${option.name}`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={gameStatus.percent}
+                    className="h-3 w-full overflow-hidden rounded-full bg-muted"
+                  >
+                    <div
+                      className="h-full bg-status-done transition-all"
+                      style={{ width: `${gameStatus.percent}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => start(option.game)}
-                  className={BUTTON_ON}
-                >
-                  Starten
-                </button>
-              </div>
-            </section>
-          );
-        })}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => start(option.game)}
+                    className={BUTTON_ON}
+                  >
+                    Starten
+                  </button>
+                </div>
+              </section>
+            );
+          },
+        )}
       </div>
     );
   }
@@ -274,28 +319,32 @@ export function GamePage() {
         isLoading={tools.isLoading || progress.isLoading}
         error={tools.error ?? progress.error}
         isEmpty={toolList.length === 0}
-        emptyMessage="Für dieses Level gibt es noch keine Begriffe."
+        emptyMessage="Für dieses Set gibt es noch keine Begriffe."
       >
         {allLearned ? (
           <section className="flex flex-col gap-4">
             <h2 className="text-2xl font-semibold">
-              Alle Tools dieses Levels sind gelernt
+              {set === "interview"
+                ? "Alle Karten dieses Sets sind gelernt"
+                : "Alle Tools dieses Levels sind gelernt"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Für dieses Level gibt es keine offenen Karten mehr.
+              {set === "interview"
+                ? "Für dieses Set gibt es keine offenen Karten mehr."
+                : "Für dieses Level gibt es keine offenen Karten mehr."}
             </p>
           </section>
         ) : game === "level0" ? (
           <CardDropBoard
-            key={`level0-${set}-${level}-${roundNumber}`}
+            key={`level0-${set}-${interviewSetId}-${level}-${roundNumber}`}
             tools={toolList}
             saved={saved}
-            areas={set === "languages" ? PARADIGMS : CATEGORIES}
+            areas={areas}
             onPlayAgain={playAgain}
           />
         ) : (
           <ClearingBoard
-            key={`clearing-${set}-${level}-${roundNumber}`}
+            key={`clearing-${set}-${interviewSetId}-${level}-${roundNumber}`}
             tools={openTools}
             onNextRound={playAgain}
           />

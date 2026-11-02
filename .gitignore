@@ -14,3 +14,6 @@ __pycache__/
 .importlinter_cache/
 node_modules/
 dist/
+
+# Real job ads of the ADR-0006 measurement: third-party texts, kept out of the repository
+backend/tests/measurement/ads/

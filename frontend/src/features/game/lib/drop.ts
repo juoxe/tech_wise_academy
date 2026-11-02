@@ -19,17 +19,28 @@ export const PARADIGMS: readonly Category[] = [
   "MULTI_PARADIGM",
 ];
 
-const LABELS: Partial<Record<Category, string>> = {
+/* An area of the floor. In a mixed set, such as an interview set, the languages share one area. */
+export type Area = Category | "LANGUAGE";
+
+export const MIXED_AREAS: readonly Area[] = [...CATEGORIES, "LANGUAGE"];
+
+const LABELS: Partial<Record<Area, string>> = {
   OBJECT_ORIENTED: "Objektorientiert",
   FUNCTIONAL: "Funktional",
   PROCEDURAL: "Prozedural",
   DECLARATIVE: "Deklarativ",
   MULTI_PARADIGM: "Multiparadigma",
+  LANGUAGE: "Sprachen",
 };
 
 /* The name shown for an area; the areas of the tools show their code. */
-export function areaLabel(category: Category): string {
-  return LABELS[category] ?? category;
+export function areaLabel(area: Area): string {
+  return LABELS[area] ?? area;
+}
+
+/* The area a card belongs to on this floor. */
+export function areaOf(tool: ToolSummary, areas: readonly Area[]): Area {
+  return areas.includes(tool.category) ? tool.category : "LANGUAGE";
 }
 
 export const TIME_LIMIT_SECONDS = 90;
@@ -56,7 +67,7 @@ export type Outcome = {
    until every card has come up; after that the open cards come up again at random.
    The round ends when every card is learned or the time is up. */
 export type Drop = {
-  areas: readonly Category[];
+  areas: readonly Area[];
   cards: ToolSummary[];
   fresh: ToolSummary[];
   open: ToolSummary[];
@@ -70,7 +81,7 @@ export type Drop = {
 };
 
 export type AreaProgress = {
-  category: Category;
+  category: Area;
   total: number;
   learned: number;
   open: number;
@@ -121,7 +132,7 @@ export type SavedStreak = {
 export function createDrop(
   tools: readonly ToolSummary[],
   saved: readonly SavedStreak[] = [],
-  areas: readonly Category[] = CATEGORIES,
+  areas: readonly Area[] = CATEGORIES,
 ): Drop {
   const learned = saved
     .filter((entry) => entry.learned)
@@ -151,7 +162,7 @@ export function land(drop: Drop): Drop {
     return drop;
   }
   const { tool, column } = drop.falling;
-  const correct = drop.areas[column] === tool.category;
+  const correct = drop.areas[column] === areaOf(tool, drop.areas);
   const outcome = { tool, column, correct };
   const base = { ...drop, falling: null, lastOutcome: outcome };
 
@@ -230,7 +241,9 @@ export function isFinished(drop: Drop): boolean {
 /* Per area: how many cards are learned, still open, and how many had a wrong placement. */
 export function areaProgress(drop: Drop): AreaProgress[] {
   return drop.areas.map((category) => {
-    const inArea = drop.cards.filter((tool) => tool.category === category);
+    const inArea = drop.cards.filter(
+      (tool) => areaOf(tool, drop.areas) === category,
+    );
     const learned = inArea.filter((tool) =>
       drop.learned.includes(tool.key),
     ).length;

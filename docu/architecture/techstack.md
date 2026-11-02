@@ -66,7 +66,23 @@ Decided by J on 2026-10-27 (TD-17, without ADR).
 
 ## Proposed
 
-No proposals are open. A decision that is proposed in an ADR is listed here until J accepts it.
+A decision that is proposed in an ADR is listed here until J accepts it.
+
+### Interview Sets (ADR-0006)
+
+Proposed in [ADR-0006](../adr/0006-local-semantic-matching.md) on 2026-11-02 for
+[TWA-8](../product_backlog/backlog.md#epic-twa-8--interview-preparation). Local processing is a
+criterion, not a fixed constraint; hosted APIs are compared too. The vector store follows J's
+direction; the other topics are recommendations.
+
+| Area | Proposal | Open decision |
+|------|----------|---------------|
+| Vector store | pgvector (`pgvector/pgvector:pg16`), J: "probably"; only needed for embeddings | TD-36 |
+| Matching approach | Names and aliases of the tools, plus a small local embedding model for implied tools if a measurement shows a gain; otherwise names only or a hosted LLM extraction | TD-37 |
+| Embedding runtime | ONNX Runtime with `tokenizers` inside the backend, no extra service; hosted embeddings not recommended | TD-38 |
+| Embedding model | paraphrase-multilingual-MiniLM-L12-v2 (118.5 MB, int8), multilingual-e5-small as fallback | TD-39 |
+| Persisted similarity | One value per tool and set | TD-40 |
+| LLM for the extraction (only if chosen) | Claude Opus 5.5, Claude Haiku 5.5 after a comparison | TD-41 |
 
 ## Open
 
@@ -90,7 +106,7 @@ tests stay lean.
 
 | Area | Open decisions | When |
 |------|----------------|------|
-| Testing strategy | TD-02 coverage, TD-03 integration tests with a database, TD-26 frontend tests, TD-27 end-to-end tests | MS 3 |
+| Testing strategy | TD-02 coverage, TD-03 integration tests with a database (Testcontainers already decided for the TWA-8 measurement, [ADR-0006](../adr/0006-local-semantic-matching.md)), TD-26 frontend tests, TD-27 end-to-end tests | MS 3 |
 
 ### Operations and Delivery
 

@@ -4,6 +4,7 @@ import {
   CATEGORIES,
   ROWS,
   areaLabel,
+  areaOf,
   areaProgress,
   createDrop,
   type SavedStreak,
@@ -12,7 +13,7 @@ import {
   moveBy,
   placeAt,
   tick,
-  type Category,
+  type Area,
   type Drop,
 } from "@/features/game/lib/drop";
 import { ToolOverviewCard } from "@/features/game/components/tool-overview-card";
@@ -59,7 +60,7 @@ export function CardDropBoard({
 }: {
   tools: ToolSummary[];
   saved: SavedStreak[];
-  areas?: readonly Category[];
+  areas?: readonly Area[];
   onPlayAgain: () => void;
 }) {
   const [drop, setDrop] = useState<Drop>(() => createDrop(tools, saved, areas));
@@ -68,6 +69,9 @@ export function CardDropBoard({
   const finished = isFinished(drop);
   const outcome = drop.lastOutcome;
   const sectionRef = useRef<HTMLElement>(null);
+  const columns = {
+    gridTemplateColumns: `repeat(${drop.areas.length}, minmax(0, 1fr))`,
+  };
 
   /* The board takes the focus, so arrow keys and space go to the game and not to the tab list. */
   useEffect(() => {
@@ -166,7 +170,7 @@ export function CardDropBoard({
         className="flex flex-col overflow-hidden rounded-lg border border-border bg-card"
         style={{ height: "70vh" }}
       >
-        <div className="relative grid flex-1 grid-cols-5">
+        <div className="relative grid flex-1" style={columns}>
           {drop.areas.map((category, column) => (
             <div
               key={category}
@@ -179,7 +183,7 @@ export function CardDropBoard({
           ))}
         </div>
 
-        <div className="grid h-36 grid-cols-5 gap-2 p-2">
+        <div className="grid h-36 gap-2 p-2" style={columns}>
           {drop.areas.map((category, column) => {
             const area = progress[column];
             const flash = outcome?.column === column;
@@ -315,7 +319,9 @@ function Summary({
         >
           <p className="text-base text-muted-foreground">
             Falsche Karte {review + 1} von {mistakes.length} · eingeordnet in{" "}
-            {areaLabel(drop.areas[reviewed.column] ?? reviewed.tool.category)}
+            {areaLabel(
+              drop.areas[reviewed.column] ?? areaOf(reviewed.tool, drop.areas),
+            )}
           </p>
           <ToolOverviewCard toolKey={reviewed.tool.key} />
           <div className="flex flex-wrap justify-between gap-3">
@@ -369,8 +375,11 @@ function Summary({
                   <span className="font-semibold">{entry.tool.name}</span>
                   <span className="text-muted-foreground">
                     Eingeordnet in{" "}
-                    {areaLabel(drop.areas[entry.column] ?? entry.tool.category)}
-                    , richtig ist {areaLabel(entry.tool.category)}.
+                    {areaLabel(
+                      drop.areas[entry.column] ??
+                        areaOf(entry.tool, drop.areas),
+                    )}
+                    , richtig ist {areaLabel(areaOf(entry.tool, drop.areas))}.
                   </span>
                 </button>
               </li>
@@ -390,7 +399,7 @@ function Summary({
               >
                 <p className="font-semibold">{tool.name}</p>
                 <p className="text-muted-foreground">
-                  Richtig ist {areaLabel(tool.category)}.
+                  Richtig ist {areaLabel(areaOf(tool, drop.areas))}.
                 </p>
                 <p>{tool.summary}</p>
               </li>

@@ -218,6 +218,201 @@
           }
         }
       }
+    },
+    "/api/interview-sets": {
+      "post": {
+        "tags": [
+          "interview"
+        ],
+        "summary": "Create Set",
+        "operationId": "create_set_api_interview_sets_post",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewSetIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewSetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "interview"
+        ],
+        "summary": "List Sets",
+        "operationId": "list_sets_api_interview_sets_get",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InterviewSetSummaryOut"
+                  },
+                  "title": "Response List Sets Api Interview Sets Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/interview-sets/{set_id}": {
+      "get": {
+        "tags": [
+          "interview"
+        ],
+        "summary": "Get Set",
+        "operationId": "get_set_api_interview_sets__set_id__get",
+        "parameters": [
+          {
+            "name": "set_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Set Id"
+            }
+          },
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewSetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "interview"
+        ],
+        "summary": "Delete Set",
+        "operationId": "delete_set_api_interview_sets__set_id__delete",
+        "parameters": [
+          {
+            "name": "set_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Set Id"
+            }
+          },
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -297,6 +492,117 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "InterviewCardOut": {
+        "properties": {
+          "tool_key": {
+            "type": "string",
+            "title": "Tool Key"
+          },
+          "similarity": {
+            "type": "number",
+            "title": "Similarity"
+          },
+          "mentioned": {
+            "type": "boolean",
+            "title": "Mentioned"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool_key",
+          "similarity",
+          "mentioned",
+          "evidence"
+        ],
+        "title": "InterviewCardOut"
+      },
+      "InterviewSetIn": {
+        "properties": {
+          "job_ad": {
+            "type": "string",
+            "maxLength": 20000,
+            "minLength": 50,
+            "title": "Job Ad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_ad"
+        ],
+        "title": "InterviewSetIn"
+      },
+      "InterviewSetOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "embedding_model": {
+            "type": "string",
+            "title": "Embedding Model"
+          },
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/InterviewCardOut"
+            },
+            "type": "array",
+            "title": "Cards"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "embedding_model",
+          "cards"
+        ],
+        "title": "InterviewSetOut"
+      },
+      "InterviewSetSummaryOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "card_count": {
+            "type": "integer",
+            "title": "Card Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "card_count"
+        ],
+        "title": "InterviewSetSummaryOut"
       },
       "ProgressOut": {
         "properties": {

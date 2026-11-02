@@ -7,6 +7,10 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from tech_wise_academy.config import load_settings
+from tech_wise_academy.interview.api import router as interview_router
+from tech_wise_academy.interview.embedding import OllamaEmbedder
+from tech_wise_academy.interview.repository import InterviewRepository
+from tech_wise_academy.interview.service import InterviewService
 from tech_wise_academy.learning_content.api import router as learning_content_router
 from tech_wise_academy.learning_content.repository import ToolRepository
 from tech_wise_academy.learning_content.service import ToolService
@@ -19,8 +23,14 @@ from tech_wise_academy.training.service import TrainingService
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = load_settings()
     engine = create_async_engine(settings.database_url)
-    app.state.tool_service = ToolService(ToolRepository(engine))
+    tool_service = ToolService(ToolRepository(engine))
+    app.state.tool_service = tool_service
     app.state.training_service = TrainingService(TrainingRepository(engine))
+    app.state.interview_service = InterviewService(
+        tool_service,
+        OllamaEmbedder(settings.embedding_url, settings.embedding_model),
+        InterviewRepository(engine),
+    )
     try:
         yield
     finally:
@@ -31,6 +41,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Tech Wise Academy", version="0.1.0", lifespan=lifespan)
     app.include_router(learning_content_router, prefix="/api")
     app.include_router(training_router, prefix="/api")
+    app.include_router(interview_router, prefix="/api")
     return app
 
 

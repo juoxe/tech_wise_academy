@@ -9,6 +9,7 @@ dependencies = [
     "sqlalchemy[asyncio]>=2.0.46,<3.0.0",
     "psycopg[binary]>=3.3.2,<4.0.0",
     "alembic>=1.18.1,<2.0.0",
+    "httpx>=0.28.0,<1.0.0",
 ]
 
 [dependency-groups]
@@ -32,6 +33,9 @@ add-bounds = "major"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+# The ADR-0006 measurement needs Docker, a model and an API key; run it with `pytest -m measurement`.
+markers = ["measurement: measurement of ADR-0006, not part of the normal test run"]
+addopts = "-m 'not measurement'"
 
 [tool.ruff]
 line-length = 100
@@ -69,3 +73,19 @@ layers = [
     "tech_wise_academy.training.repository",
     "tech_wise_academy.training.model",
 ]
+
+[[tool.importlinter.contracts]]
+name = "Interview layers: api > service > repository, embedding > model"
+type = "layers"
+layers = [
+    "tech_wise_academy.interview.api",
+    "tech_wise_academy.interview.service",
+    "tech_wise_academy.interview.repository | tech_wise_academy.interview.embedding",
+    "tech_wise_academy.interview.model",
+]
+
+[[tool.importlinter.contracts]]
+name = "Learning content knows nothing about the interview sets"
+type = "forbidden"
+source_modules = ["tech_wise_academy.learning_content"]
+forbidden_modules = ["tech_wise_academy.interview"]

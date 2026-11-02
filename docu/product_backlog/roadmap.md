@@ -67,6 +67,9 @@ MS 1 is done.
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
 - A statistics page per user (idea [TWA-6](backlog.md#epic-twa-6--statistics), not yet planned).
+- Interview preparation: card sets generated from a job advertisement, in the local network
+  ([TWA-8](backlog.md#epic-twa-8--interview-preparation), built ahead of MS 2, milestone not assigned
+  yet).
 
 ---
 

@@ -1081,6 +1081,7 @@ source = { editable = "." }
 dependencies = [
     { name = "alembic" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "httpx" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
     { name = "sqlalchemy", extra = ["asyncio"] },
@@ -1098,6 +1099,7 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.18.1,<2.0.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.128.0,<0.129.0" },
+    { name = "httpx", specifier = ">=0.28.0,<1.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.2,<4.0.0" },
     { name = "pydantic-settings", specifier = ">=2.10.0,<3.0.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.46,<3.0.0" },

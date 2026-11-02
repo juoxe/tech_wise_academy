@@ -45,6 +45,16 @@ class ToolDetail:
     alternatives: tuple[Alternative, ...]
 
 
+@dataclass(frozen=True)
+class ToolText:
+    """The name and the texts of a tool, for modules that work on the content (public interface)."""
+
+    key: str
+    name: str
+    summary: str
+    hints: tuple[str, ...]
+
+
 def _text_in_language(texts: Mapping[str, str], language: str) -> tuple[str, str]:
     """Return the text and its language; fall back to the default language."""
     if language in texts:
@@ -79,6 +89,17 @@ class ToolService:
                 )
             )
         return summaries
+
+    async def list_tool_texts(self, language: str = DEFAULT_LANGUAGE) -> list[ToolText]:
+        return [
+            ToolText(
+                key=tool.key,
+                name=tool.name,
+                summary=_text_in_language(tool.summaries, language)[0],
+                hints=_hints_in_language(tool.hints, language),
+            )
+            for tool in await self._reader.load_tools()
+        ]
 
     async def get_tool(self, key: str, language: str) -> ToolDetail | None:
         tools = await self._reader.load_tools()
