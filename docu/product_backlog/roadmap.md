@@ -78,6 +78,12 @@ expected results and not yet cut into a planned epic table.
   ([TWA-9](backlog.md#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view),
   `TODO`). Depends on: TWA-4 (tool overview and Tool API); stories TWA-9.3 (create and edit) and
   TWA-9.4 (delete) depend on the authentication decision (TD-17).
+- Tool extraction from any text: the tools a text names, the tools of a mentioned ecosystem and
+  concepts shown as topics, independent of interviews; the matching quality moved here from
+  TWA-8.7 ([TWA-10](backlog.md#epic-twa-10--tool-extraction-from-text), `TODO`).
+- Own card sets: sets created by hand or from a text, every set with a name, selected and learned
+  by name ([TWA-11](backlog.md#epic-twa-11--own-card-sets), `TODO`). Depends on: TWA-8 (sets and
+  games); story TWA-11.4 depends on TWA-10 (story TWA-10.6).
 
 ---
 

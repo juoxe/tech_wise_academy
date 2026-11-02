@@ -15,24 +15,28 @@ Sorted by what is due next. Status: `TODO` (no proposal yet) · `IN PROGRESS` (p
 
 | # | ID | Topic | Example options | Affected | Due | Status |
 |--:|----|-------|-----------------|----------|-----|--------|
-| 1 | TD-33 | Tool icons (logo source) | Simple Icons, devicon, own files, none (category icon only) | frontend, `tool.icon` | before TWA-4.4 (frontend skeleton) | TODO |
-| 2 | TD-06 | Code hosting and review tool | GitHub, GitLab, Bitbucket, Azure DevOps | PR template, CODEOWNERS | before the first collaboration or merge | TODO |
-| 3 | TD-07 | CI/CD platform | GitHub Actions, GitLab CI, Jenkins, Azure Pipelines | CI/CD | before the first merge to the main branch | TODO |
-| 4 | TD-23 | Markdown linter / formatter | markdownlint, Prettier, dprint, none | markdown style | when markdown checks are automated | TODO |
-| 5 | TD-26 | Frontend tests (unit, component) | Vitest, Jest; Testing Library; network mocks | frontend | MS 3 (testing strategy) | TODO |
-| 6 | TD-02 | Test coverage and threshold | report + ratchet, fixed threshold, none | tests | MS 3 (testing strategy) | TODO |
-| 7 | TD-27 | End-to-end tests | Playwright, Cypress, API end-to-end only, none | `e2e/`, CI/CD | MS 3 (testing strategy) | TODO |
-| 8 | TD-34 | Frontend translation of the UI (English, MS 3) | react-i18next, FormatJS (react-intl), Lingui, own dictionary | frontend | MS 3 (English UI) | TODO |
-| 9 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
-| 10 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
-| 11 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
-| 12 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
-| 13 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
-| 14 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
-| 15 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
-| 16 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
-| 17 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
-| 18 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
+| 1 | TD-42 | Source of the relations between job-ad terms and tools | Tool metadata in seed and database (aliases, tags, concepts), lists in the code, generated then reviewed | `tool_term`, seed, interview module | TWA-10.1 | IN PROGRESS |
+| 2 | TD-43 | Query side of the matching | Sentences, terms and phrases then sentences | interview module | TWA-10.1 | IN PROGRESS |
+| 3 | TD-44 | Ranking of the cards | Embeddings only, exact terms first then embeddings, plus reranker, hosted LLM | interview module | TWA-10.1 | IN PROGRESS |
+| 4 | TD-45 | Concepts that are not tools | Ignore, stop list, concept layer with topics | interview module, UI | TWA-10.1 | IN PROGRESS |
+| 5 | TD-33 | Tool icons (logo source) | Simple Icons, devicon, own files, none (category icon only) | frontend, `tool.icon` | before TWA-4.4 (frontend skeleton) | TODO |
+| 6 | TD-06 | Code hosting and review tool | GitHub, GitLab, Bitbucket, Azure DevOps | PR template, CODEOWNERS | before the first collaboration or merge | TODO |
+| 7 | TD-07 | CI/CD platform | GitHub Actions, GitLab CI, Jenkins, Azure Pipelines | CI/CD | before the first merge to the main branch | TODO |
+| 8 | TD-23 | Markdown linter / formatter | markdownlint, Prettier, dprint, none | markdown style | when markdown checks are automated | TODO |
+| 9 | TD-26 | Frontend tests (unit, component) | Vitest, Jest; Testing Library; network mocks | frontend | MS 3 (testing strategy) | TODO |
+| 10 | TD-02 | Test coverage and threshold | report + ratchet, fixed threshold, none | tests | MS 3 (testing strategy) | TODO |
+| 11 | TD-27 | End-to-end tests | Playwright, Cypress, API end-to-end only, none | `e2e/`, CI/CD | MS 3 (testing strategy) | TODO |
+| 12 | TD-34 | Frontend translation of the UI (English, MS 3) | react-i18next, FormatJS (react-intl), Lingui, own dictionary | frontend | MS 3 (English UI) | TODO |
+| 13 | TD-09 | Target platform and manifest tool | Compose on a VM, Kubernetes (Helm, Kustomize), PaaS | deployment | before the first deployment | TODO |
+| 14 | TD-08 | Container registry | GHCR, GitLab Registry, Docker Hub, cloud registry | CI/CD, deployment | before the first deployment | TODO |
+| 15 | TD-10 | Secret management in target environments | platform secrets, Vault, cloud secret manager | deployment | before the first deployment | TODO |
+| 16 | TD-13 | Health and metric endpoints | health routes of the framework, own endpoints | build files, Dockerfiles, observability | before the first deployment | TODO |
+| 17 | TD-15 | Log format and log platform | JSON (ECS, Logstash, GELF); Loki, ELK, cloud logging | configuration, observability | before the first deployment | TODO |
+| 18 | TD-18 | Security scans | OWASP Dependency-Check, Trivy, Snyk, platform secret scanning | CI/CD | before production | TODO |
+| 19 | TD-12 | Automatic dependency updates | Dependabot, Renovate, manual | repository configuration | before production | TODO |
+| 20 | TD-14 | Metric backend and dashboards | Prometheus + Grafana, OpenTelemetry Collector, cloud monitoring | observability | before production | TODO |
+| 21 | TD-16 | Tracing / correlation IDs | OpenTelemetry, asgi-correlation-id, own middleware | observability | before production | TODO |
+| 22 | TD-11 | Release tool | manual tags, release-please, semantic-release | release process | before the first release | TODO |
 
 ## 2. Decision Record
 
@@ -63,4 +67,4 @@ Decisions that have been made, newest first. TD-36 to TD-41 and TD-03 were decid
 | TD-21 | Service cut and communication | One backend with modules, one database; modules call each other through a public interface | [ADR-0001](0001-architecture-concept.md) | TWA-3.4 |
 | TD-20 | API versioning | No version in the path, compatible changes only; path version when external clients appear | [ADR-0001](0001-architecture-concept.md) | TWA-3.6 |
 
-**Next free TD number: TD-42**
+**Next free TD number: TD-46**

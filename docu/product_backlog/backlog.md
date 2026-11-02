@@ -17,8 +17,10 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
 | [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | TODO |
+| [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
+| [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
 
-**Next free epic number: 10**
+**Next free epic number: 12**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -1197,6 +1199,50 @@ could be chosen without a real gain.
 
 ---
 
+### TWA-8.7 – Improve the Matching Quality
+
+**Status:** REJECTED · **Depends on:** TWA-8.1
+
+**Result:** moved to epic [TWA-10](#epic-twa-10--tool-extraction-from-text) by J on 2026-11-02; the
+number stays taken.
+
+**Problem Description**
+
+J tried a real job ad (Microservices, Microfrontends, JVM-based technologies, Node.js, VueJS). "JVM"
+does not lead to Java, Kotlin and the other JVM tools, and the concept "Microservices" turns into
+tool cards (Micrometer, Micronaut) because the small model matches the spelling. Tools have no
+metadata for ecosystem, platform or concepts, and whole sentences dilute single terms. Without a
+better approach the interview sets are of little use. See
+[ADR-0007](../adr/0007-matching-quality.md).
+
+**Action Steps**
+
+1. J decides the topics of [ADR-0007](../adr/0007-matching-quality.md) (TD-42 to TD-45).
+2. Extend the tool data with aliases, tags and concepts (table `tool_term`, seed fields, the next
+   free migration); move the alias list out of the code; fill the terms for the 307 tools with a reviewed
+   suggestion.
+3. Match terms and phrases before sentences; rank exact term matches first, then embeddings.
+4. Add the concept layer: concepts never become tool cards by spelling and are shown as topics of
+   the set.
+5. Show why a card is in the set (named, tag, concept, similar) in the API and the UI.
+6. Keep failing ads as regression cases with J's expected tools (the ads stay out of the
+   repository), start with the ad of 2026-11-02.
+7. Fix the set title: skip short heading lines such as "Deine Aufgaben:".
+8. Update data model, API doc and game rules.
+
+**Acceptance Criteria**
+
+- An ad that says "JVM" gives cards for the tools tagged JVM, ranked after the tools that are named.
+- "Microservices" alone gives no tool card by spelling and is shown as a topic.
+- Every card shows its reason.
+- The set title is not a heading line.
+- The seed tests cover the new fields.
+- Type check, lint and format check pass.
+- [ADR-0007](../adr/0007-matching-quality.md) is accepted by J and the decisions are in chapter 2
+  of open-decisions.md.
+
+---
+
 ## Epic TWA-9 – Generalised Overview with Create, Edit, Delete and Detail View
 
 **Status:** TODO · **Milestone:** MS 2 – Playable MVP
@@ -1338,3 +1384,319 @@ Who may delete is not decided.
 - The UI asks for confirmation before a tool is deleted.
 - The API documentation and the data model describe the endpoint and the handling of references.
 - Type check, lint, format check and the lean tests for the rules pass.
+
+---
+
+## Epic TWA-10 – Tool Extraction from Text
+
+**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+
+**Description**
+
+As a learner, we want to pull the tools out of any text (a job advertisement, a project
+description, a course outline, my own notes), so that we get the cards we need to learn. The
+extraction finds the tools a text names, the tools of an ecosystem it mentions (for example "JVM"
+gives Java, Kotlin, Scala), and shows concepts (for example "Microservices") as topics instead of
+inventing tool cards from their spelling.
+
+**Affected components:** backend (the extraction today lives inside the module `interview`; it
+becomes independent of interviews), database (table `tool_term`), frontend, documentation
+
+**Working documents:**
+[ADR-0006](../adr/0006-local-semantic-matching.md),
+[ADR-0007](../adr/0007-matching-quality.md),
+[data model](../data_model/interview-data-model.md), [API](../api/interview-api.md)
+
+**Note:** a real job ad of 2026-11-02 shows the faults (JVM not understood, Microservices becomes a
+tool, whole sentences dilute single terms). The matching quality was story TWA-8.7 and was moved
+here by J on 2026-11-02. The measurement idea
+[TWA-8.6](#twa-86--measure-the-matching-approaches) stays where it is and gives the numbers for the
+decisions.
+
+---
+
+### TWA-10.1 – Decide the Matching Quality (ADR-0007)
+
+**Status:** TODO
+
+**Problem Description**
+
+The matching quality has open decisions (TD-42 to TD-45) that are proposed in
+[ADR-0007](../adr/0007-matching-quality.md). Without J's decision the tool metadata and the
+term-level matching cannot be built, and the extraction would depend on assumptions.
+
+**Action Steps**
+
+1. J decides TD-42 to TD-45 in [ADR-0007](../adr/0007-matching-quality.md).
+2. Set the ADR to accepted.
+3. Move the decisions to chapter 2 of open-decisions.md.
+4. Update the tech stack documentation.
+
+**Acceptance Criteria**
+
+- ADR-0007 is accepted by J.
+- TD-42 to TD-45 are in chapter 2 of open-decisions.md.
+- The tech stack documentation reflects the decisions.
+
+---
+
+### TWA-10.2 – Tool Metadata
+
+**Status:** TODO · **Depends on:** TWA-10.1
+
+**Problem Description**
+
+Tools have no metadata for aliases, ecosystem, platform or concepts, and the alias list is
+hard-coded in `interview/model.py`. Without this metadata "JVM" cannot lead to the JVM tools and
+concepts cannot be told apart from tools.
+
+**Action Steps**
+
+1. Add the table `tool_term (tool_key, kind, term)` with kind alias, tag or concept (the next
+   free migration).
+2. Add the seed fields `aliases`, `tags` and `concepts` and load them.
+3. Move the alias list out of `interview/model.py` into the seed data.
+4. Suggest the terms for the 307 tools once; no LLM at runtime.
+5. J reviews the suggested terms.
+6. Add seed tests for the new fields.
+7. Update the data model documentation.
+
+**Acceptance Criteria**
+
+- The table `tool_term` exists with the kinds alias, tag and concept (the next free migration).
+- The seed file carries `aliases`, `tags` and `concepts` for the tools and they are loaded.
+- The alias list is no longer in `interview/model.py`.
+- The terms of the 307 tools are reviewed by J.
+- The seed tests cover the new fields.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-10.3 – Term-Level Matching
+
+**Status:** TODO · **Depends on:** TWA-10.2
+
+**Problem Description**
+
+The matching works on whole sentences, which dilutes single terms, so tools named in a text are
+missed or ranked low. Exact names and ecosystem terms such as "JVM" are not used.
+
+**Action Steps**
+
+1. Split the text into terms and phrases and match them before sentences.
+2. Match aliases and tags exactly first; use embeddings for the rest.
+3. Rank the tools tagged with an ecosystem term after the tools that are named.
+4. Update the API documentation.
+
+**Acceptance Criteria**
+
+- A text that says "JVM" gives cards for the tools tagged JVM, ranked after the tools that are
+  named.
+- Exact matches of aliases and tags come before matches by embeddings.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-10.4 – Concept Layer
+
+**Status:** TODO · **Depends on:** TWA-10.2
+
+**Problem Description**
+
+A concept such as "Microservices" turns into tool cards (Micrometer, Micronaut) because the small
+model matches the spelling. The result misleads the learner.
+
+**Action Steps**
+
+1. Create a curated concept list that maps concepts to tools.
+2. Never turn a concept into tool cards by spelling.
+3. Show the concept as a topic ("passt dazu") with the tools it maps to.
+4. Update the API documentation.
+
+**Acceptance Criteria**
+
+- "Microservices" alone gives no tool card by spelling and is shown as a topic.
+- A concept from the curated list shows the tools mapped to it as "passt dazu".
+- Type check, lint and format check pass.
+
+---
+
+### TWA-10.5 – Reason per Card
+
+**Status:** TODO · **Depends on:** TWA-10.3
+
+**Problem Description**
+
+The result does not say why a card is in it, so the learner cannot judge whether it fits and J cannot
+see where the matching goes wrong.
+
+**Action Steps**
+
+1. Return the reason per card in the API: named, tag, concept or similar, with the phrase from the
+   text.
+2. Show the reason and the phrase on each card in the UI.
+3. Update the API documentation.
+
+**Acceptance Criteria**
+
+- Every card in the result shows its reason (named, tag, concept, similar).
+- The phrase from the text is shown with the reason.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-10.6 – Extraction Independent of Interviews
+
+**Status:** TODO · **Depends on:** TWA-10.3
+
+**Problem Description**
+
+The extraction lives inside the module `interview` and is tied to job advertisements. It cannot be
+used for other texts or by other features, and failing texts are not kept as regression cases.
+
+**Action Steps**
+
+1. Move the extraction into its own module with a public interface (ADR-0001).
+2. Let it take any text and return tools and topics.
+3. Use it from the interview preparation and from TWA-11.
+4. Keep failing texts as regression cases with J's expected tools; the texts stay out of the
+   repository. Start with the ad of 2026-11-02.
+5. Update the data model and API documentation.
+
+**Acceptance Criteria**
+
+- The extraction takes any text and returns tools and topics.
+- It has its own module with a public interface and the architecture checks pass.
+- The interview preparation uses it.
+- The regression cases check J's expected tools; no text is committed.
+- Type check, lint and format check pass.
+
+---
+
+## Epic TWA-11 – Own Card Sets
+
+**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+
+**Description**
+
+As a learner, we want to create my own card sets, by hand or from a text, and give every set a name,
+so that we can select a set by its name and learn exactly this set. Today only sets from a job
+advertisement exist; the title is the first line of the ad ("Deine Aufgaben:").
+
+**Affected components:** backend (sets module; the table `interview_set` becomes a general set table
+with a mandatory name and a source), frontend (feature for sets, Game tab), documentation
+
+**Working documents:**
+[game-play](../game-play.md),
+[data model](../data_model/interview-data-model.md), [API](../api/interview-api.md)
+
+**Note:** J decided on 2026-11-02 that sets can be created manually and that every set always has a
+name. TWA-11 depends on [TWA-8](#epic-twa-8--interview-preparation); story TWA-11.4 depends on
+TWA-10.6.
+
+---
+
+### TWA-11.1 – Named Sets
+
+**Status:** TODO
+
+**Problem Description**
+
+A set has no real name; the title of a set from a job ad is the first line of the ad, for example
+"Deine Aufgaben:". Sets cannot be told apart or selected by name, and only sets from a job ad exist.
+
+**Action Steps**
+
+1. Generalise the table `interview_set` to a general set table with a mandatory name and a source.
+2. Make the name mandatory: not empty and unique per profile.
+3. Suggest a name for sets made from a text; the name can be changed.
+4. Add renaming of a set.
+5. Let the name replace the first-line title.
+6. Update the data model and API documentation.
+
+**Acceptance Criteria**
+
+- Every set has a name that is not empty and unique per profile.
+- A set made from a text gets a suggested name that can be changed.
+- A set can be renamed.
+- The first-line title is no longer used.
+- The data model and API documentation describe the general set table and the name rules.
+- Type check, lint, format check and the lean tests for the rules pass.
+
+---
+
+### TWA-11.2 – Create a Set by Hand
+
+**Status:** TODO · **Depends on:** TWA-11.1
+
+**Problem Description**
+
+A set can only be created from a job advertisement. A learner cannot put together the tools they want
+to learn.
+
+**Action Steps**
+
+1. Add a view to pick tools from the catalogue with search and filter by area and set.
+2. Name the set and save it.
+3. Add and remove cards of a saved set later.
+4. Update the API documentation.
+
+**Acceptance Criteria**
+
+- A set can be created by picking tools from the catalogue, searching and filtering by area and set.
+- The set is saved with its name.
+- Cards can be added to and removed from a saved set.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-11.3 – Select and Learn a Set by Name
+
+**Status:** TODO · **Depends on:** TWA-11.1
+
+**Problem Description**
+
+The Game tab does not let the learner choose one of their own sets by name and learn exactly this
+set.
+
+**Action Steps**
+
+1. List the own sets by name in the Game tab, with card count and progress.
+2. Let the learner choose a set and play it in both games.
+3. Add delete and rename there.
+4. Update the game rules and the API documentation.
+
+**Acceptance Criteria**
+
+- The Game tab lists the own sets by name with card count and progress.
+- A chosen set can be played in both games.
+- A set can be deleted and renamed there.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-11.4 – Create a Set from a Text
+
+**Status:** TODO · **Depends on:** TWA-10.6, TWA-11.1
+
+**Problem Description**
+
+Sets from a text exist only through the interview preparation, without a review of the result. The
+learner cannot correct the cards or the name before the set is saved.
+
+**Action Steps**
+
+1. Pass the text through the extraction of TWA-10.
+2. Show the result for review: remove or add cards, edit the name.
+3. Save the set only after the review.
+4. Make the interview preparation use this source.
+5. Update the API documentation and the game rules.
+
+**Acceptance Criteria**
+
+- A text goes through the extraction of TWA-10 and the result is shown for review.
+- Cards can be removed or added and the name edited before saving.
+- The interview preparation creates its sets through this source.
+- Type check, lint and format check pass.
+
+---
