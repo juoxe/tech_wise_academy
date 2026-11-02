@@ -835,5 +835,152 @@ documentation
 **Working documents:** [game-play](../game-play.md)
 
 **Note:** the rules are documented only in [game-play.md](../game-play.md). The games are built ahead
-of MS 2 so they can be tested; the milestone is not assigned yet. Stories are added when the epic is
-reviewed.
+of MS 2 so they can be tested; the milestone is not assigned yet. The stories below record what was
+built (commit 71f586e on branch `twa-7-knowledge-games`). The epic stays IN PROGRESS until J has
+reviewed the games in the browser.
+
+---
+
+### TWA-7.1 – Wissens-Check
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner cannot find out in which of the five areas the tools are already known. The tools are only
+listed, and there is no game that checks the knowledge per area.
+
+**Action Steps**
+
+1. Let the cards fall onto the five areas, in a round of 90 s.
+2. Count a card as learned after two correct placements in a row.
+3. Show a summary per area at the end of the round.
+4. Document the rules in [game-play.md](../game-play.md).
+
+**Acceptance Criteria**
+
+- A round lasts 90 s; falling cards can be placed onto the five areas.
+- A card counts as learned after two correct placements in a row.
+- At the end of the round a summary per area is shown.
+- The rules are documented only in [game-play.md](../game-play.md).
+
+**Result:** implemented in `frontend/src/features/game/components/card-drop-board.tsx` and
+`frontend/src/features/game/lib/drop.ts`; rules in [game-play.md](../game-play.md).
+
+---
+
+### TWA-7.2 – Karten abräumen
+
+**Status:** DONE
+
+**Problem Description**
+
+The Wissens-Check only asks for the area of a tool. Nothing checks whether a learner can name a tool
+from its hints.
+
+**Action Steps**
+
+1. Show a field of up to 20 cards and the hints of the asked card.
+2. Offer "Nächster Hinweis" and "Weiß ich nicht".
+3. Count a card as learned after two first-try answers in a row.
+
+**Acceptance Criteria**
+
+- The field shows up to 20 cards and the hints of the asked card.
+- "Nächster Hinweis" shows the next hint; "Weiß ich nicht" gives up the card.
+- A card counts as learned after two first-try answers in a row.
+
+**Result:** implemented in `frontend/src/features/game/components/clearing-board.tsx` and
+`frontend/src/features/game/lib/clearing.ts`.
+
+---
+
+### TWA-7.3 – Saved Progress and Three Levels
+
+**Status:** DONE
+
+**Problem Description**
+
+Without saved progress a learner starts from zero in every round, and all tools are asked at once
+regardless of how much the learner already knows.
+
+**Action Steps**
+
+1. Save the progress per player (anonymous profile ID) and per game in the backend feature
+   `training`.
+2. Add the levels Kennen, Intermediate and Expert to the tools and the games.
+3. Unlock the levels one after another.
+
+**Acceptance Criteria**
+
+- The progress is saved per player (anonymous profile ID) and per game.
+- Each game has the levels Kennen, Intermediate and Expert.
+- A level is unlocked only after the level before it.
+
+**Result:** implemented in `backend/src/tech_wise_academy/training/`, migrations `0003` to `0005`
+(`backend/migrations/versions/`) and `frontend/src/features/game/pages/game-page.tsx`.
+
+---
+
+### TWA-7.4 – Programming Language Set
+
+**Status:** DONE
+
+**Problem Description**
+
+The games only know the tools of the five areas. Programming languages cannot be practised, and
+TypeScript is filed under FRONTEND although it is a language. The catalogue also lacks common AI
+models and tools.
+
+**Action Steps**
+
+1. Add a second set of 23 common programming languages, sorted by five paradigms (objektorientiert,
+   funktional, prozedural, deklarativ, multiparadigma); the paradigms extend the `Category` enum
+   (migration `0007`).
+2. Move TypeScript from FRONTEND to the languages.
+3. Make the set selectable in the Game tab, without levels or unlocking.
+4. Add eight AI models and tools to the catalogue: Llama, Gemma, Qwen, Mistral, FLUX.2 Klein, SDXL,
+   Whisper, ComfyUI (migration `0006`).
+
+**Acceptance Criteria**
+
+- The Game tab offers the language set with 23 languages in five paradigms, without levels or
+  unlocking.
+- TypeScript belongs to the languages, not to FRONTEND.
+- The eight AI models and tools are in the catalogue.
+
+**Result:** implemented in migrations `0006_seed_ai_models.py` and `0007_programming_languages.py`
+(`backend/migrations/versions/`) and `frontend/src/features/game/pages/game-page.tsx`. **Open
+point:** the Toolübersicht still shows the raw code of the paradigm (e.g. `OBJECT_ORIENTED`) for
+languages.
+
+---
+
+### TWA-7.5 – Overview Card and Review of Wrong Cards
+
+**Status:** DONE
+
+**Problem Description**
+
+After a round the learner sees which cards were wrong, but cannot look up what the tool is. There is
+no detailed view of a tool in the games.
+
+**Action Steps**
+
+1. Add a detailed Quartett-style card per tool: name, logo, area, level, summary, all hints,
+   example, alternatives and documentation link.
+2. Make the wrong cards in the Wissens-Check summary clickable.
+3. Let the learner page through the wrong cards with Zurück, Weiter and Schließen.
+
+**Acceptance Criteria**
+
+- The overview card shows name, logo, area, level, summary, all hints, example, alternatives and
+  documentation link of a tool.
+- In the Wissens-Check summary a wrong card opens its overview card.
+- Zurück and Weiter page through the wrong cards; Schließen closes the card.
+
+**Result:** implemented in `frontend/src/features/game/components/tool-overview-card.tsx` and
+`frontend/src/features/game/components/card-drop-board.tsx`.
+
+---
+
