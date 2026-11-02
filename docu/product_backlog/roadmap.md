@@ -73,6 +73,11 @@ expected results and not yet cut into a planned epic table.
 - Interview preparation: card sets generated from a job advertisement, in the local network
   ([TWA-8](backlog.md#epic-twa-8--interview-preparation), `IN PROGRESS`, built ahead of the planning
   of MS 2).
+- A generalised overview with create, edit, delete and detail view: a reusable table and detail
+  view for the tools, so that the tools can be maintained in the UI
+  ([TWA-9](backlog.md#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view),
+  `TODO`). Depends on: TWA-4 (tool overview and Tool API); stories TWA-9.3 (create and edit) and
+  TWA-9.4 (delete) depend on the authentication decision (TD-17).
 
 ---
 

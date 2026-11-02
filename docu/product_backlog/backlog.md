@@ -16,8 +16,9 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
+| [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | TODO |
 
-**Next free epic number: 9**
+**Next free epic number: 10**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -1196,3 +1197,144 @@ could be chosen without a real gain.
 
 ---
 
+## Epic TWA-9 – Generalised Overview with Create, Edit, Delete and Detail View
+
+**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+
+**Description**
+
+As a learner and maintainer, we want one generic overview that lists entries in a table and offers
+the standard functions create, edit and delete plus a detail view of one entry, so that the tools
+can be maintained in the UI and later overviews (language set, own sets, other data) reuse the same
+component.
+
+**Affected components:** frontend (feature `tools`, shared components), backend (feature
+`learning_content`), documentation (API and data model docs)
+
+**Working documents:** [data model](../data_model/learning-content-data-model.md),
+[API documentation](../api/learning-content-api.md)
+
+**Note:** today the tab "Toolübersicht" (`frontend/src/features/tools/pages/data-sets-tab.tsx`,
+`components/terms-list.tsx`) only lists the tools read-only. The tools can only be changed through
+the seed file and migrations. TWA-9.3 and TWA-9.4 depend on an open decision about authentication
+and editing rights (TD-17); no technology is decided here. J assigned the epic to MS 2.
+
+---
+
+### TWA-9.1 – Generic Overview Component
+
+**Status:** TODO
+
+**Problem Description**
+
+The tab "Toolübersicht" lists the tools read-only in a list built only for tools. For languages it
+shows the raw category code (e.g. `OBJECT_ORIENTED`) instead of a readable label. Every further
+overview (language set, own sets, other data) would have to be built again.
+
+**Action Steps**
+
+1. Extract a reusable data table from the tool list: configurable columns, sorting and filtering as
+   needed, row click, and states for empty, loading and error.
+2. Add readable labels for the categories and paradigms, so that the raw code (e.g.
+   `OBJECT_ORIENTED`) is no longer shown.
+3. Switch the Toolübersicht to the generic table.
+
+**Acceptance Criteria**
+
+- The generic table takes its columns and rows as configuration and shows empty, loading and error
+  states.
+- A click on a row can be handled by the page that uses the table.
+- Categories and paradigms are shown with readable labels; no raw code such as `OBJECT_ORIENTED` is
+  visible.
+- The Toolübersicht uses the generic table and shows the same tools as before.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-9.2 – Detail View
+
+**Status:** TODO · **Depends on:** TWA-9.1
+
+**Problem Description**
+
+The Toolübersicht shows only the name and category of a tool. A learner cannot see the other data of
+a tool there. The detailed card `ToolOverviewCard` exists only in the feature `game`.
+
+**Action Steps**
+
+1. Add a page or panel for one tool with all its data: name, area or paradigm, level, summary,
+   hints, examples, alternatives and documentation link.
+2. Make it reachable from the overview by a click on a row.
+3. Reuse the existing `ToolOverviewCard` of the feature `game` if it fits; move it to a shared place
+   if needed.
+
+**Acceptance Criteria**
+
+- A click on a tool in the Toolübersicht opens the detail view of that tool.
+- The detail view shows name, area or paradigm, level, summary, hints, examples, alternatives and
+  documentation link.
+- The detail view can be closed and leads back to the overview.
+- If `ToolOverviewCard` is reused, it lies in a shared place that both features may import.
+- Type check, lint and format check pass.
+
+---
+
+### TWA-9.3 – Create and Edit
+
+**Status:** TODO · **Depends on:** TWA-9.2
+
+**Problem Description**
+
+Tools can only be changed through the seed file and migrations, so every correction or new tool
+needs a code change. Who may edit (login, TD-17) and whether the seed file stays the source of truth
+are not decided.
+
+**Action Steps**
+
+1. Decide with J who may create and edit tools (login, TD-17) and whether the seed file stays the
+   source of truth; record the decision in an ADR if it concerns a technology.
+2. Add backend endpoints in the feature `learning_content` to create and change a tool, including
+   the German summary, hints, examples and alternatives.
+3. Validate the seed rules: a hint must not contain the name of its tool, and alternatives are
+   symmetric.
+4. Add a form for creating and editing a tool to the UI.
+5. Update the API documentation and the data model.
+
+**Acceptance Criteria**
+
+- The decision with J about editing rights and the role of the seed file is recorded.
+- A tool can be created and changed through the API, including German summary, hints, examples and
+  alternatives.
+- The API rejects a hint that contains the name of its tool and keeps alternatives symmetric.
+- The UI offers a form to create and edit a tool and shows the validation errors.
+- The API documentation and the data model describe the new endpoints and rules.
+- Type check, lint, format check and the lean tests for the rules pass.
+
+---
+
+### TWA-9.4 – Delete
+
+**Status:** TODO · **Depends on:** TWA-9.3
+
+**Problem Description**
+
+A tool cannot be removed without a migration. Saved progress, embeddings and sets refer to a tool
+only by its plain key, without a foreign key, so deleting a tool would leave dangling references.
+Who may delete is not decided.
+
+**Action Steps**
+
+1. Decide with J who may delete tools (same decision as in TWA-9.3) and what happens to saved
+   progress, embeddings and sets that refer to the tool.
+2. Add a backend endpoint to delete a tool.
+3. Apply the decided handling of progress, embeddings and sets.
+4. Add a delete function with a confirmation to the UI.
+5. Update the API documentation and the data model.
+
+**Acceptance Criteria**
+
+- The decision about the handling of progress, embeddings and sets is recorded.
+- A tool can be deleted through the API, and no reference to it stays dangling as decided.
+- The UI asks for confirmation before a tool is deleted.
+- The API documentation and the data model describe the endpoint and the handling of references.
+- Type check, lint, format check and the lean tests for the rules pass.
