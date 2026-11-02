@@ -604,6 +604,24 @@
         ],
         "title": "InterviewSetSummaryOut"
       },
+      "KeyConceptOut": {
+        "properties": {
+          "term": {
+            "type": "string",
+            "title": "Term"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "term",
+          "explanation"
+        ],
+        "title": "KeyConceptOut"
+      },
       "ProgressOut": {
         "properties": {
           "tool_key": {
@@ -636,6 +654,53 @@
           "wrong_total"
         ],
         "title": "ProgressOut"
+      },
+      "ToolContentOut": {
+        "properties": {
+          "overview": {
+            "type": "string",
+            "title": "Overview"
+          },
+          "use_cases": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Use Cases"
+          },
+          "key_concepts": {
+            "items": {
+              "$ref": "#/components/schemas/KeyConceptOut"
+            },
+            "type": "array",
+            "title": "Key Concepts"
+          },
+          "when_to_use": {
+            "type": "string",
+            "title": "When To Use"
+          },
+          "when_not_to_use": {
+            "type": "string",
+            "title": "When Not To Use"
+          },
+          "good_to_know": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Good To Know"
+          }
+        },
+        "type": "object",
+        "required": [
+          "overview",
+          "use_cases",
+          "key_concepts",
+          "when_to_use",
+          "when_not_to_use",
+          "good_to_know"
+        ],
+        "title": "ToolContentOut"
       },
       "ToolDetailOut": {
         "properties": {
@@ -697,6 +762,16 @@
             },
             "type": "array",
             "title": "Alternatives"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolContentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -711,7 +786,8 @@
           "documentation_url",
           "hints",
           "examples",
-          "alternatives"
+          "alternatives",
+          "content"
         ],
         "title": "ToolDetailOut"
       },

@@ -51,6 +51,7 @@ All fields of the summary and:
 | hints | List of hint texts in order (in the selected language) |
 | examples | List of code examples in order |
 | alternatives | List of `{ key, name }` of the alternative tools |
+| content | The learning content in the selected language, or `null`: `overview`, `use_cases`, `key_concepts` (list of `{ term, explanation }`), `when_to_use`, `when_not_to_use` and `good_to_know` |
 
 ## Open Points
 

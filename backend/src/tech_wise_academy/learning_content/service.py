@@ -4,7 +4,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Protocol
 
-from tech_wise_academy.learning_content.model import DEFAULT_LANGUAGE, Category, Tool
+from tech_wise_academy.learning_content.model import (
+    DEFAULT_LANGUAGE,
+    Category,
+    Tool,
+    ToolContent,
+)
 
 
 class ToolReader(Protocol):
@@ -43,6 +48,7 @@ class ToolDetail:
     hints: tuple[str, ...]
     examples: tuple[str, ...]
     alternatives: tuple[Alternative, ...]
+    content: ToolContent | None
 
 
 @dataclass(frozen=True)
@@ -130,6 +136,7 @@ class ToolService:
             hints=_hints_in_language(tool.hints, language),
             examples=tool.examples,
             alternatives=alternatives,
+            content=tool.contents.get(language, tool.contents.get(DEFAULT_LANGUAGE)),
         )
 
 

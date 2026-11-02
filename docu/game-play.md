@@ -181,11 +181,17 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 The overview card shows one tool in the style of a Quartett card, with more details:
 
 - Name, logo, area (Bereich) and level
-- Summary
-- All hints of the tool, in order
+- Summary (one sentence) and overview (three to five sentences)
+- "Wofür man es nutzt": three or four use cases
+- "Kernbegriffe": three to five key terms with a short explanation
+- "Wann einsetzen" and "Wann besser nicht"
+- "Gut zu wissen": two or three things worth knowing
 - The example, if the tool has one
 - The alternatives, if the tool has any
 - A link to the documentation
+
+The hints of the games are **not** shown on the card: they stay in the data for Karten abräumen,
+but a learner should read real knowledge here ([TWA-12](product_backlog/backlog.md#epic-twa-12--learning-content-in-depth)).
 
 The overview card is shown for the wrong cards of the Wissens-Check summary (see Result, point 4).
 

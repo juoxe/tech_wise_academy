@@ -84,6 +84,9 @@ expected results and not yet cut into a planned epic table.
 - Own card sets: sets created by hand or from a text, every set with a name, selected and learned
   by name ([TWA-11](backlog.md#epic-twa-11--own-card-sets), `TODO`). Depends on: TWA-8 (sets and
   games); story TWA-11.4 depends on TWA-10 (story TWA-10.6).
+- Learning content in depth: structured German content for all 307 entries (23 languages and 284
+  tools) on the card of a tool or language instead of the hints of the games, reviewed by J
+  ([TWA-12](backlog.md#epic-twa-12--learning-content-in-depth), `IN PROGRESS`).
 
 ---
 

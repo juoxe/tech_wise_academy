@@ -3,9 +3,10 @@
 import uuid
 
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tech_wise_academy.learning_content.model import Category, Tool
+from tech_wise_academy.learning_content.model import Category, KeyConcept, Tool, ToolContent
 
 metadata = sa.MetaData()
 
@@ -27,6 +28,7 @@ tool_translation_table = sa.Table(
     sa.Column("tool_id", sa.Uuid, sa.ForeignKey("tool.id", ondelete="CASCADE"), primary_key=True),
     sa.Column("language", sa.Text, primary_key=True),
     sa.Column("summary", sa.Text, nullable=False),
+    sa.Column("content", JSONB),
 )
 
 tool_hint_table = sa.Table(
@@ -61,6 +63,21 @@ tool_alternative_table = sa.Table(
 )
 
 
+def _content_of(data: dict) -> ToolContent:
+    """Reads the stored JSON of one language; the structure is checked by the seed tests."""
+    return ToolContent(
+        overview=data["overview"],
+        use_cases=tuple(data["use_cases"]),
+        key_concepts=tuple(
+            KeyConcept(term=item["term"], explanation=item["explanation"])
+            for item in data["key_concepts"]
+        ),
+        when_to_use=data["when_to_use"],
+        when_not_to_use=data["when_not_to_use"],
+        good_to_know=tuple(data["good_to_know"]),
+    )
+
+
 class ToolRepository:
     """Loads the learning content from the database."""
 
@@ -93,8 +110,13 @@ class ToolRepository:
             )
 
         summaries: dict[uuid.UUID, dict[str, str]] = {}
+        contents: dict[uuid.UUID, dict[str, ToolContent]] = {}
         for row in translation_rows:
             summaries.setdefault(row["tool_id"], {})[row["language"]] = row["summary"]
+            if row["content"] is not None:
+                contents.setdefault(row["tool_id"], {})[row["language"]] = _content_of(
+                    row["content"]
+                )
 
         hints: dict[uuid.UUID, dict[str, list[str]]] = {}
         for row in hint_rows:
@@ -117,6 +139,7 @@ class ToolRepository:
                     language: tuple(texts) for language, texts in hints.get(row["id"], {}).items()
                 },
                 examples=tuple(examples.get(row["id"], [])),
+                contents=contents.get(row["id"], {}),
             )
             for row in tool_rows
         )

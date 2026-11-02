@@ -1,7 +1,7 @@
 """Domain model of the learning content: plain data, no framework imports."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 DEFAULT_LANGUAGE = "de"
@@ -22,6 +22,24 @@ class Category(StrEnum):
 
 
 @dataclass(frozen=True)
+class KeyConcept:
+    term: str
+    explanation: str
+
+
+@dataclass(frozen=True)
+class ToolContent:
+    """What a learner reads on the card of a tool or language, in one language."""
+
+    overview: str
+    use_cases: tuple[str, ...]
+    key_concepts: tuple[KeyConcept, ...]
+    when_to_use: str
+    when_not_to_use: str
+    good_to_know: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Tool:
     key: str
     name: str
@@ -32,3 +50,4 @@ class Tool:
     summaries: Mapping[str, str]
     hints: Mapping[str, tuple[str, ...]]
     examples: tuple[str, ...]
+    contents: Mapping[str, ToolContent] = field(default_factory=dict)

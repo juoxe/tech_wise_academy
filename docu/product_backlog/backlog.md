@@ -19,8 +19,9 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | TODO |
 | [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
 | [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
+| [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
 
-**Next free epic number: 12**
+**Next free epic number: 13**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -1700,3 +1701,165 @@ learner cannot correct the cards or the name before the set is saved.
 - Type check, lint and format check pass.
 
 ---
+
+## Epic TWA-12 – Learning Content in Depth
+
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
+
+**Description**
+
+As a learner, we want to find real knowledge on the card of a tool or language, not only a
+one-sentence summary and the hints of the games, so that we learn something while we play. J asked
+on 2026-11-02 that the overview card of a tool no longer shows the hints of the games but more
+useful information about the tools and the programming languages, and that all 307 entries are
+filled with more content, so that one really learns something.
+
+**Affected components:** backend (feature `learning_content`: column for structured content, API),
+database (`tool_translation.content`), frontend (overview card in feature `game`, later the detail
+view of [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view)),
+documentation (data model, API documentation)
+
+**Working documents:** [data model](../data_model/learning-content-data-model.md),
+[API documentation](../api/learning-content-api.md)
+
+**Note:** the hints stay in the data, because the game Karten abräumen needs them; they only leave
+the overview card. The content is written in German and reviewed by J. It is produced by Claude and
+may contain mistakes, so J's review is a story of its own
+([TWA-12.5](#twa-125--review-of-the-content-by-j)).
+
+---
+
+### TWA-12.1 – Content Structure and Storage
+
+**Status:** DONE
+
+**Result:** done and verified on 2026-11-02: migration
+`backend/migrations/versions/0009_tool_content.py` (JSONB column `tool_translation.content`), API
+field `content` in `GET /api/tools/{key}`, seed field `content_de`, seed test
+`test_every_tool_has_complete_learning_content` in `backend/tests/unit/test_seed.py`; checked in the
+real database.
+
+**Problem Description**
+
+A tool has only a one-sentence summary, three hints for the games and one example. That is too little
+to learn anything about the tool or language on its card.
+
+**Action Steps**
+
+1. Define the structure of the content: overview of 3 to 5 sentences, 3 to 4 use cases, 3 to 5 key
+   concepts (each a term and an explanation), when to use, when not to use, 2 to 3 things good to
+   know.
+2. Store it as JSON per language in `tool_translation.content` (migration 0009).
+3. Expose it in the tool detail API.
+4. Add the seed field `content_de`.
+5. Add seed tests for the structure.
+
+**Acceptance Criteria**
+
+- Every tool has all parts of the content in the seed.
+- The API returns the content.
+- The seed tests check the structure and the lengths.
+- The migration runs against the real database.
+
+---
+
+### TWA-12.2 – Overview Card with the Content
+
+**Status:** DONE
+
+**Result:** done and verified on 2026-11-02:
+`frontend/src/features/game/components/tool-overview-card.tsx` shows the content and no hints any
+more; checked in the browser.
+
+**Problem Description**
+
+The overview card shows only the summary and the hints of the games. The hints are riddles and teach
+little, so the card gives the learner hardly any knowledge about the tool.
+
+**Action Steps**
+
+1. Show on the overview card: overview, use cases, key concepts, when to use or not, good to know,
+   example, alternatives and the documentation link.
+2. Do not show the hints on the card any more.
+
+**Acceptance Criteria**
+
+- No hints are shown on the card.
+- A section is only shown when it has content.
+- The texts are German.
+- Type check, lint and format check pass.
+- The design token check passes (colours from tokens only).
+
+---
+
+### TWA-12.3 – Content for the Programming Languages
+
+**Status:** DONE
+
+**Result:** done and verified on 2026-11-02: German content (`content_de`) for all 23 programming
+languages in `backend/src/tech_wise_academy/learning_content/seed_tools.json`; checked by the seed
+test `test_every_tool_has_complete_learning_content` in `backend/tests/unit/test_seed.py`, in the
+real database and in the browser.
+
+**Problem Description**
+
+The 23 programming languages have no explanation of their paradigm, typing, typical use or core
+concepts. A learner cannot find out on the card what distinguishes a language.
+
+**Action Steps**
+
+1. Write the content for the 23 languages, with the focus on paradigm, typing, typical use and core
+   concepts of the language.
+
+**Acceptance Criteria**
+
+- Every language has all parts of the content.
+- The texts contain no claims the writer is unsure of.
+
+---
+
+### TWA-12.4 – Content for the Tools
+
+**Status:** DONE
+
+**Result:** done and verified on 2026-11-02: German content (`content_de`) for the 284 tools in
+`backend/src/tech_wise_academy/learning_content/seed_tools.json`, 307 entries in total; checked by
+the seed test `test_every_tool_has_complete_learning_content` in `backend/tests/unit/test_seed.py`,
+in the real database and in the browser. The newest AI models (Gemma, Qwen, FLUX.2 Klein, Mistral)
+are written generically because details of the current versions were not verified.
+
+**Problem Description**
+
+The 284 tools other than the programming languages have only a one-sentence summary and three
+hints. That is too little to learn what a tool is for and when to use it.
+
+**Action Steps**
+
+1. Write the content in batches by tool key.
+2. Mark entries the writer is unsure about for review.
+
+**Acceptance Criteria**
+
+- All tools have all parts of the content.
+- Uncertain entries are listed.
+
+---
+
+### TWA-12.5 – Review of the Content by J
+
+**Status:** TODO · **Depends on:** TWA-12.3, TWA-12.4
+
+**Problem Description**
+
+The content is produced by Claude and may contain mistakes, outdated statements or wrong emphasis,
+especially for new tools. J has to review it before it counts as reliable.
+
+**Action Steps**
+
+1. J reads a sample or all of the content and marks mistakes.
+2. Fix the marked mistakes.
+3. Check the newest tools (for example recent AI models) against their documentation.
+
+**Acceptance Criteria**
+
+- J has approved the content.

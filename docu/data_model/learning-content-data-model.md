@@ -63,9 +63,26 @@ The summary of a tool in one language.
 | tool_id | UUID → `tool.id` | ✓ | input | The tool; translations are deleted with the tool |
 | language | text (`de`; `en` from MS 3) | ✓ | input | Language of the text |
 | summary | text | ✓ | input | One sentence: what is it? Shown as the solution of a hint |
+| content | JSONB, optional | | input | The learning content shown on the overview card, see below (migration 0009) |
 
 - Primary key: (`tool_id`, `language`).
 - Every tool has a row for `de`.
+
+**Content (`content`):** structured text for learning, written in German and reviewed by J
+([TWA-12](../product_backlog/backlog.md#epic-twa-12--learning-content-in-depth)). The seed field is
+`content_de`, the seed tests check that every tool has all parts.
+
+| Part | Content |
+|------|---------|
+| `overview` | Three to five sentences: what it is, which problem it solves, how it works at its core |
+| `use_cases` | Three or four concrete uses |
+| `key_concepts` | Three to five terms, each `{ term, explanation }`: the vocabulary a learner meets |
+| `when_to_use` | One or two sentences |
+| `when_not_to_use` | One or two sentences |
+| `good_to_know` | Two or three pitfalls or facts |
+
+To load changed content into a development database, run `alembic downgrade 0008` and
+`alembic upgrade head`; a released change needs a new migration.
 
 ## tool_hint
 

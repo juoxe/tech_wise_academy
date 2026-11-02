@@ -1,12 +1,35 @@
+import type { ReactNode } from "react";
+
 import { QueryState } from "@/components/shared/query-state";
 import { areaLabel } from "@/features/game/lib/drop";
 import { ToolIcon, useTool } from "@/features/tools";
 
-/* The overview card of one tool, like a Quartett card with all of its details: area, level, summary,
-   hints, example, alternatives and the documentation link. */
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-2">
+      <h4 className="text-lg font-semibold">{title}</h4>
+      {children}
+    </section>
+  );
+}
+
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex list-disc flex-col gap-1 pl-6 text-base">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+/* The overview card of one tool or language, like a Quartett card with what a learner should know:
+   overview, use cases, key concepts, when to use it and when not, things worth knowing, an example,
+   alternatives and the documentation link. The hints of the games are not shown here. */
 export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
   const tool = useTool(toolKey);
   const detail = tool.data;
+  const content = detail?.content;
 
   return (
     <QueryState
@@ -18,7 +41,7 @@ export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
       {detail && (
         <article
           aria-label={detail.name}
-          className="flex flex-col gap-4 rounded-md border border-border bg-card p-6"
+          className="flex flex-col gap-5 rounded-md border border-border bg-card p-6"
         >
           <header className="flex items-center gap-3">
             <ToolIcon icon={detail.icon} category={detail.category} />
@@ -32,20 +55,46 @@ export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
             </div>
           </header>
 
-          <p className="text-lg">{detail.summary}</p>
+          <p className="text-lg font-semibold">{detail.summary}</p>
 
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold">Hinweise</h4>
-            <ol className="flex list-decimal flex-col gap-1 pl-6 text-base">
-              {detail.hints.map((hint) => (
-                <li key={hint}>{hint}</li>
-              ))}
-            </ol>
-          </div>
+          {content && (
+            <>
+              <p className="text-base leading-relaxed">{content.overview}</p>
+
+              <Section title="Wofür man es nutzt">
+                <BulletList items={content.use_cases} />
+              </Section>
+
+              <Section title="Kernbegriffe">
+                <dl className="flex flex-col gap-2 text-base">
+                  {content.key_concepts.map((concept) => (
+                    <div key={concept.term}>
+                      <dt className="font-semibold">{concept.term}</dt>
+                      <dd className="text-muted-foreground">
+                        {concept.explanation}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Section>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Section title="Wann einsetzen">
+                  <p className="text-base">{content.when_to_use}</p>
+                </Section>
+                <Section title="Wann besser nicht">
+                  <p className="text-base">{content.when_not_to_use}</p>
+                </Section>
+              </div>
+
+              <Section title="Gut zu wissen">
+                <BulletList items={content.good_to_know} />
+              </Section>
+            </>
+          )}
 
           {detail.examples.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h4 className="text-lg font-semibold">Beispiel</h4>
+            <Section title="Beispiel">
               {detail.examples.map((example) => (
                 <pre
                   key={example}
@@ -54,18 +103,17 @@ export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
                   <code>{example}</code>
                 </pre>
               ))}
-            </div>
+            </Section>
           )}
 
           {detail.alternatives.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h4 className="text-lg font-semibold">Alternativen</h4>
+            <Section title="Alternativen">
               <p className="text-base">
                 {detail.alternatives
                   .map((alternative) => alternative.name)
                   .join(", ")}
               </p>
-            </div>
+            </Section>
           )}
 
           <a

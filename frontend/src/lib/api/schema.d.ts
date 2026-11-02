@@ -193,6 +193,13 @@ export interface components {
             /** Card Count */
             card_count: number;
         };
+        /** KeyConceptOut */
+        KeyConceptOut: {
+            /** Term */
+            term: string;
+            /** Explanation */
+            explanation: string;
+        };
         /** ProgressOut */
         ProgressOut: {
             /** Tool Key */
@@ -205,6 +212,21 @@ export interface components {
             correct_total: number;
             /** Wrong Total */
             wrong_total: number;
+        };
+        /** ToolContentOut */
+        ToolContentOut: {
+            /** Overview */
+            overview: string;
+            /** Use Cases */
+            use_cases: string[];
+            /** Key Concepts */
+            key_concepts: components["schemas"]["KeyConceptOut"][];
+            /** When To Use */
+            when_to_use: string;
+            /** When Not To Use */
+            when_not_to_use: string;
+            /** Good To Know */
+            good_to_know: string[];
         };
         /** ToolDetailOut */
         ToolDetailOut: {
@@ -229,6 +251,7 @@ export interface components {
             examples: string[];
             /** Alternatives */
             alternatives: components["schemas"]["AlternativeOut"][];
+            content: components["schemas"]["ToolContentOut"] | null;
         };
         /** ToolSummaryOut */
         ToolSummaryOut: {
