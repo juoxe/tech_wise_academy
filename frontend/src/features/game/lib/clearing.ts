@@ -21,6 +21,8 @@ export type Clearing = {
   asked: string;
   mistakes: Record<string, number>;
   hintsShown: Record<string, number>;
+  /* A random number per card; it fixes the order of its hints for this round. */
+  hintSeeds: Record<string, number>;
   lastOutcome: Outcome | null;
 };
 
@@ -56,8 +58,39 @@ export function startRound(tools: readonly ToolSummary[]): Clearing {
     asked: pickAsked(field, []),
     mistakes: {},
     hintsShown: {},
+    hintSeeds: Object.fromEntries(
+      field.map((tool) => [tool.key, Math.random()]),
+    ),
     lastOutcome: null,
   };
+}
+
+/* The hints of a card in the order of this round. A hint may fit several tools on purpose; the order
+   is random in every round, so that the player learns all hints and not just the first one. */
+export function orderedHints(hints: readonly string[], seed: number): string[] {
+  let state = Math.floor(seed * 2 ** 32) >>> 0;
+  const next = () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let value = Math.imul(state ^ (state >>> 15), 1 | state);
+    value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
+    return ((value ^ (value >>> 14)) >>> 0) / 2 ** 32;
+  };
+  const order = [...hints];
+  for (let index = order.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(next() * (index + 1));
+    [order[index], order[other]] = [
+      order[other] as string,
+      order[index] as string,
+    ];
+  }
+  return order;
+}
+
+/* The cards with a mistake in this round: a wrong click or "Weiß ich nicht". */
+export function wrongTools(clearing: Clearing): ToolSummary[] {
+  return clearing.field.filter(
+    (tool) => (clearing.mistakes[tool.key] ?? 0) > 0,
+  );
 }
 
 /* The card that is asked now, or undefined when the round is done. */

@@ -112,9 +112,11 @@ When the round is finished, the summary shows:
 3. **Dashboard:** one row per area, vertically, with a bar that shows the learned share, and the
    numbers "gelernt · offen · mit Fehler".
 4. **Falsch eingeordnet:** every card that was placed wrongly and is not learned yet, with its name,
-   the area it landed in and the area it belongs to. A click on a card, or the button "Falsche Karten
-   durchklicken", opens its overview card (see Übersichtskarte). "Zurück", "Weiter" and "Schließen" go
-   through the wrong cards one by one.
+   the area it landed in and the area it belongs to. When the round ends, the **review of the wrong
+   cards opens at once**: each wrong card is shown as its overview card (see Übersichtskarte);
+   "Zurück" and "Weiter" go through them one by one, "Schließen" cancels the review at any time and
+   leads to the summary. In the summary a click on a card, or the button "Falsche Karten
+   durchklicken", opens the review again.
 5. **Noch offen:** when the round is not mastered, the cards still open, with their area and
    description.
 
@@ -148,6 +150,9 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - Above the field the question "Welches Werkzeug ist gemeint?" shows the hints of the **asked card**.
   A random open card of the field is asked; each card is asked once per round. The position of a card
   in the field gives no hint about the order of the questions.
+- The hints of a card are **ambiguous on purpose**: one hint can fit several tools, and only
+  together do they point to one. The **order of the hints is random** for every card in every round, so
+  that the player learns all hints and not just the first one.
 - The first hint is shown at first. The player can ask for more:
   - **Nächster Hinweis:** shows one more hint of the asked card. It is not a mistake, but the card
     can no longer be learned on the first try. The button is off when all hints are shown.
@@ -155,7 +160,10 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - **Correct:** the card is removed and leaves a gap; the next card is asked.
 - **Wrong:** "Nicht ganz, versuch es nochmal." The click is a mistake on the asked card and shows one
   more hint.
-- The round is finished when every card of the field is removed. "Nächste Runde" starts a new field
+- The round is finished when every card of the field is removed. A card with at least one mistake
+  in the round is a wrong card; when the round ends, the **review of the wrong cards opens at once**,
+  as in the Wissens-Check, and can be cancelled with "Schließen". The end screen offers "Nächste
+  Runde" and, with wrong cards, "Falsche Karten durchklicken". "Nächste Runde" starts a new field
   with the tools that are still not learned.
 
 **Learned**

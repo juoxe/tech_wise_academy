@@ -1863,3 +1863,41 @@ especially for new tools. J has to review it before it counts as reliable.
 **Acceptance Criteria**
 
 - J has approved the content.
+
+---
+
+### TWA-12.6 – Learn from Mistakes in the Games
+
+**Status:** DONE
+
+**Result:** done and checked in the browser on 2026-11-02:
+`frontend/src/features/game/components/wrong-cards-review.tsx`, `clearing-board.tsx`,
+`card-drop-board.tsx`, `frontend/src/features/game/lib/clearing.ts`. No frontend test runner exists;
+the hint shuffle was checked with a throwaway script.
+
+**Problem Description**
+
+In "Karten abräumen" the hints always came in the same order, so a player learned mostly the first
+hint. The wrong cards could be paged through only at the end of a Wissens-Check, in the summary, not
+in "Karten abräumen", and not automatically. The content on the overview card is only useful if the
+player sees it for the cards they got wrong.
+
+**Action Steps**
+
+1. Show the hints of a card in a random order, fixed per card and round; the hints are ambiguous on
+   purpose.
+2. Extract the review of the wrong cards into one shared component.
+3. Open the review at once when a round ends in both games, with "Zurück", "Weiter" and "Schließen"
+   to cancel; offer "Falsche Karten durchklicken" in the end screen of "Karten abräumen".
+4. Describe the rules in docu/game-play.md.
+
+**Acceptance Criteria**
+
+- The hint order of a card differs between rounds and stays the same within a round.
+- Hints are not left out.
+- At the end of a round in both games the wrong cards open as overview cards without further
+  clicks.
+- "Schließen" cancels the review and shows the summary or end screen.
+- A card of "Karten abräumen" counts as wrong with at least one mistake.
+- The rules are only in game-play.md.
+- Type check, lint and format check pass.

@@ -6,12 +6,15 @@ import {
   guess,
   hintsShownFor,
   isRoundDone,
+  orderedHints,
   revealHint,
   shownHints,
   startRound,
+  wrongTools,
   type Answer,
   type Clearing,
 } from "@/features/game/lib/clearing";
+import { WrongCardsReview } from "@/features/game/components/wrong-cards-review";
 import { useRecordAnswer } from "@/features/training";
 import { ToolIcon, useTool, type ToolSummary } from "@/features/tools";
 
@@ -32,6 +35,12 @@ export function ClearingBoard({
   const done = isRoundDone(clearing);
   const outcome = clearing.lastOutcome;
   const recordAnswer = useRecordAnswer();
+  const wrong = wrongTools(clearing);
+  /* The review of the wrong cards opens at once when the round ends; "Schließen" cancels it. */
+  const [review, setReview] = useState<number | null>(null);
+  const [reviewClosed, setReviewClosed] = useState(false);
+  const shownIndex =
+    review ?? (done && !reviewClosed && wrong.length > 0 ? 0 : null);
 
   useEffect(() => {
     if (outcome === null) {
@@ -67,14 +76,34 @@ export function ClearingBoard({
     setClearing(revealHint(clearing));
   }
 
+  if (done && shownIndex !== null && wrong[shownIndex] !== undefined) {
+    return (
+      <WrongCardsReview
+        cards={wrong.map((tool) => ({
+          tool,
+          note: `${clearing.mistakes[tool.key] ?? 0} Fehler in dieser Runde`,
+        }))}
+        index={shownIndex}
+        onIndexChange={setReview}
+        onClose={() => {
+          setReview(null);
+          setReviewClosed(true);
+        }}
+      />
+    );
+  }
+
   if (done) {
     return (
       <section className="flex flex-col gap-4">
         <h2 className="text-2xl font-semibold">Runde geschafft</h2>
         <p className="text-lg text-muted-foreground">
           Alle Karten im Feld sind abgeräumt.
+          {wrong.length > 0
+            ? ` ${wrong.length} Karten hattest du falsch.`
+            : " Keine Karte war falsch."}
         </p>
-        <div>
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={onNextRound}
@@ -82,12 +111,24 @@ export function ClearingBoard({
           >
             Nächste Runde
           </button>
+          {wrong.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setReview(0)}
+              className="rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary"
+            >
+              Falsche Karten durchklicken
+            </button>
+          )}
         </div>
       </section>
     );
   }
 
-  const allHints = hint.data?.hints ?? [];
+  const allHints = orderedHints(
+    hint.data?.hints ?? [],
+    asked ? (clearing.hintSeeds[asked.key] ?? 0) : 0,
+  );
   const shown = asked ? hintsShownFor(clearing, asked.key) : 0;
   const hints = shownHints(allHints, shown);
 

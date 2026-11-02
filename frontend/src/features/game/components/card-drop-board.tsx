@@ -16,7 +16,7 @@ import {
   type Area,
   type Drop,
 } from "@/features/game/lib/drop";
-import { ToolOverviewCard } from "@/features/game/components/tool-overview-card";
+import { WrongCardsReview } from "@/features/game/components/wrong-cards-review";
 import { useRecordAnswer } from "@/features/training";
 import { ToolIcon, type ToolSummary } from "@/features/tools";
 import { cn } from "@/lib/utils";
@@ -266,8 +266,24 @@ function Summary({
     (entry) => !drop.learned.includes(entry.tool.key),
   );
   const open = drop.cards.filter((tool) => !drop.learned.includes(tool.key));
-  const [review, setReview] = useState<number | null>(null);
-  const reviewed = review === null ? undefined : mistakes[review];
+  /* The review of the wrong cards opens at once when the round ends; "Schließen" cancels it. */
+  const [review, setReview] = useState<number | null>(
+    mistakes.length > 0 ? 0 : null,
+  );
+
+  if (review !== null && mistakes[review] !== undefined) {
+    return (
+      <WrongCardsReview
+        cards={mistakes.map((entry) => ({
+          tool: entry.tool,
+          note: `eingeordnet in ${areaLabel(drop.areas[entry.column] ?? areaOf(entry.tool, drop.areas))}`,
+        }))}
+        index={review}
+        onIndexChange={setReview}
+        onClose={() => setReview(null)}
+      />
+    );
+  }
 
   return (
     <section
@@ -316,46 +332,6 @@ function Summary({
           );
         })}
       </div>
-
-      {reviewed && review !== null && (
-        <section
-          aria-label="Falsche Karte durchklicken"
-          className="flex flex-col gap-4"
-        >
-          <p className="text-base text-muted-foreground">
-            Falsche Karte {review + 1} von {mistakes.length} · eingeordnet in{" "}
-            {areaLabel(
-              drop.areas[reviewed.column] ?? areaOf(reviewed.tool, drop.areas),
-            )}
-          </p>
-          <ToolOverviewCard toolKey={reviewed.tool.key} />
-          <div className="flex flex-wrap justify-between gap-3">
-            <button
-              type="button"
-              disabled={review === 0}
-              onClick={() => setReview(review - 1)}
-              className={REVIEW_BUTTON}
-            >
-              Zurück
-            </button>
-            <button
-              type="button"
-              onClick={() => setReview(null)}
-              className={REVIEW_BUTTON}
-            >
-              Schließen
-            </button>
-            <button
-              type="button"
-              disabled={review === mistakes.length - 1}
-              onClick={() => setReview(review + 1)}
-              className={REVIEW_BUTTON}
-            >
-              Weiter
-            </button>
-          </div>
-        </section>
-      )}
 
       {mistakes.length > 0 && review === null && (
         <div className="flex flex-col gap-3">
