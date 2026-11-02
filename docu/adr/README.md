@@ -19,6 +19,6 @@ the options in a decision matrix and records the outcome per topic.
 | [0002](0002-backend-stack.md) | Backend stack | accepted | TD-05, TD-04, TD-19, TD-01 | TWA-3.1, TWA-3.2, TWA-3.8, TWA-3.5 |
 | [0003](0003-frontend-stack.md) | Frontend stack | accepted | TD-22, TD-24, TD-25, TD-31, TD-01 | TWA-3.3, TWA-3.5 |
 | [0004](0004-local-environment.md) | Local environment | accepted | TD-35 | TWA-4.5 |
-| [0006](0006-local-semantic-matching.md) | Matching job ads to tools | proposed | TD-36, TD-37, TD-38, TD-39, TD-40, TD-41, TD-03 (accepted) | TWA-8.1 |
+| [0006](0006-local-semantic-matching.md) | Matching job ads to tools | accepted | TD-36, TD-37, TD-38, TD-39, TD-40, TD-41, TD-03 | TWA-8.1 |
 
 **Next free ADR number: 0007**

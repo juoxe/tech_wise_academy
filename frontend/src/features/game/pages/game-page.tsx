@@ -49,11 +49,12 @@ const LEVELS = [
 type Level = (typeof LEVELS)[number]["level"];
 
 /* The sets of cards: the tools (three levels, sorted by area), the programming languages (one level,
-   sorted by paradigm) and the interview sets generated from a job advertisement (one level). */
+   sorted by paradigm) and the own sets, which hold the interview preparation: sets generated from a job advertisement (one
+   level). */
 const SETS = [
   { set: "tools", name: "Tools" },
   { set: "languages", name: "Programmiersprachen" },
-  { set: "interview", name: "Interview" },
+  { set: "interview", name: "Eigene Sets" },
 ] as const;
 
 type ToolSet = (typeof SETS)[number]["set"];
@@ -84,9 +85,9 @@ type Status = {
 };
 
 const BUTTON_ON =
-  "inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring";
+  "inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary";
 const BUTTON_OFF =
-  "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring";
+  "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary";
 
 /* The level is set automatically: the first open level whose tools are not all learned yet. A level
    opens when every tool of the level before it is learned. Level 1 is always open. */
@@ -168,7 +169,7 @@ export function GamePage() {
   );
   const byKey = new Map(allTools.map((tool) => [tool.key, tool]));
   const interview = {
-    title: interviewSet.data?.title ?? "Interview",
+    title: interviewSet.data?.title ?? "Eigene Sets",
     tools: (interviewSet.data?.cards ?? []).flatMap(
       (card) => byKey.get(card.tool_key) ?? [],
     ),

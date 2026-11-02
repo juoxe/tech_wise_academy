@@ -2,8 +2,8 @@
 
 **Status:** implemented in [TWA-8](../product_backlog/backlog.md#epic-twa-8--interview-preparation),
 migration `0008`. The decisions behind it are in [ADR-0006](../adr/0006-local-semantic-matching.md).
-This is the first version, built before [ADR-0006](../adr/0006-local-semantic-matching.md) was
-written (Ollama, `bge-m3`); it changes with the decisions there, which are still open.
+The matching follows [ADR-0006](../adr/0006-local-semantic-matching.md): MiniLM embeddings
+(384 dimensions) through ONNX Runtime, similarity in pgvector.
 
 The tables of the module `interview`. References to tools are plain keys without a foreign key,
 because tools belong to another module (see the [context map](../architecture/context-map.md)).
@@ -34,8 +34,8 @@ is needed for about 300 tools (see [ADR-0006](../adr/0006-local-semantic-matchin
 | Field | Type | Required | Provided | Description |
 |-------|------|:--------:|----------|-------------|
 | tool_key | text | ✓ | generated | Key of the tool |
-| model | text | ✓ | generated | Name of the embedding model, e.g. `bge-m3` |
-| text_hash | text | ✓ | generated | SHA-256 of the embedded text (name, summary, hints); a changed text is embedded again |
+| model | text | ✓ | generated | Name of the embedding model: `paraphrase-multilingual-MiniLM-L12-v2` |
+| text_hash | text | ✓ | generated | SHA-256 of the embedded text (name and summary); a changed text is embedded again |
 | embedding | vector | ✓ | generated | The vector |
 
 - Primary key: (`tool_key`, `model`).

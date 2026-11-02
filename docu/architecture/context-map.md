@@ -12,6 +12,7 @@ and modules call each other only through a small public interface.
 |---------|--------|----------------|------|--------|
 | Learning Content | `learning_content` | The content users learn from: tools with hints, code examples and alternatives; later learning packs and paths | `tool`, `tool_hint`, `tool_example`, `tool_alternative` ([data model](../data_model/learning-content-data-model.md)) | first code in TWA-4 |
 | Training | `training` | Game rounds and the learning progress of each user | `learning_progress` | first version for Level 0 (answers per tool and profile); rounds and more games follow in MS 2 |
+| Interview | `interview` | Card sets generated from a job advertisement: the matching of the ad to the tools and the persisted similarity values ([ADR-0006](../adr/0006-local-semantic-matching.md)) | `tool_embedding`, `interview_set`, `interview_set_chunk`, `interview_set_tool` ([data model](../data_model/interview-data-model.md)) | added in TWA-8 (2026-11-02) |
 | Identity and Access | – | Users and the roles USER and ADMIN | – | not a module yet; depends on TD-17 |
 
 ## Relationships
@@ -19,10 +20,14 @@ and modules call each other only through a small public interface.
 ```mermaid
 flowchart LR
     Training -->|reads tools through the public interface| LearningContent[Learning Content]
+    Interview -->|reads tool texts through the public interface| LearningContent
 ```
 
 - **Training depends on Learning Content** (customer / supplier, read only): it reads tools to build
   game rounds; Learning Content knows nothing about Training.
+- **Interview depends on Learning Content** (customer / supplier, read only): it reads the name and
+  summary of each tool to embed them; the games play an interview set through the frontend, so
+  Interview knows nothing about Training.
 - References from one module to another are plain IDs or keys, without foreign keys across
   modules.
 - Identity and Access is a generic domain: the decision on the identity provider (TD-17) comes

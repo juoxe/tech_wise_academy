@@ -15,7 +15,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
 | [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
-| [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | – | IN PROGRESS |
+| [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
 
 **Next free epic number: 9**
 
@@ -987,7 +987,7 @@ no detailed view of a tool in the games.
 
 ## Epic TWA-8 – Interview Preparation
 
-**Status:** IN PROGRESS
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -996,7 +996,7 @@ from its tech stack, so that we practise exactly the tools this job asks for. Ev
 local network; no text leaves it.
 
 **Affected components:** backend (new module `interview`, `learning_content` public interface),
-database (pgvector), compose (`ollama`), frontend (feature `interview`, feature `game`),
+database (pgvector), compose (mount of the model folder into the backend), frontend (feature `interview`, feature `game`),
 documentation
 
 **Working documents:**
@@ -1010,7 +1010,7 @@ documentation
 
 ### TWA-8.1 – Decide Vector Store, Embedding Runtime and Model
 
-**Status:** IN PROGRESS · **Depends on:** TWA-8.6
+**Status:** DONE
 
 **Problem Description**
 
@@ -1032,11 +1032,16 @@ runtime, the model and the matching approach are not decided yet.
 - Every topic is accepted by J.
 - open-decisions.md and the techstack are up to date.
 
+**Result:** [ADR-0006](../adr/0006-local-semantic-matching.md) accepted by J on 2026-11-02, decided
+without the postponed measurement (TWA-8.6): pgvector, matching approach C (names exact plus
+embeddings), ONNX Runtime inside the backend, model paraphrase-multilingual-MiniLM-L12-v2,
+similarity stored for every tool per set.
+
 ---
 
 ### TWA-8.2 – pgvector and Tool Embeddings
 
-**Status:** IN PROGRESS · **Depends on:** TWA-8.1
+**Status:** DONE · **Depends on:** TWA-8.1
 
 **Problem Description**
 
@@ -1046,7 +1051,8 @@ be computed.
 **Action Steps**
 
 1. Switch the database image to pgvector.
-2. Add the local embedding service to compose.
+2. Run the embedding model inside the backend with ONNX Runtime and mount its folder read-only
+   into the backend in compose.
 3. Migration with the extension and the tables.
 4. Embed name, summary and hints of each tool; embed again only what changed.
 
@@ -1058,11 +1064,16 @@ be computed.
 - A changed text is embedded again on the next generation; unchanged ones are not.
 - No call leaves the local network at runtime.
 
+**Result:** migration `backend/migrations/versions/0008_interview_sets.py` (pgvector 0.8.7, run on
+the real database: 307 tool embeddings), embedder
+`backend/src/tech_wise_academy/interview/embedding.py`. The model (118.5 MB) lies in a host folder
+mounted into the backend; there is no Ollama.
+
 ---
 
 ### TWA-8.3 – Generate an Interview Set from a Job Ad
 
-**Status:** IN PROGRESS · **Depends on:** TWA-8.2
+**Status:** DONE · **Depends on:** TWA-8.2
 
 **Problem Description**
 
@@ -1084,11 +1095,14 @@ relevant tools by hand from over 300.
 - A set is only visible to its profile.
 - Without the embedding service the API answers 503 and stores nothing.
 
+**Result:** backend feature `backend/src/tech_wise_academy/interview/`, API described in
+[interview-api.md](../api/interview-api.md); 307 similarity rows per set are stored.
+
 ---
 
 ### TWA-8.4 – Play an Interview Set
 
-**Status:** IN PROGRESS · **Depends on:** TWA-8.3
+**Status:** DONE · **Depends on:** TWA-8.3
 
 **Problem Description**
 
@@ -1097,7 +1111,7 @@ Wissens-Check has five areas, while an interview set can mix tools and languages
 
 **Action Steps**
 
-1. Add the set "Interview" to the Game tab with a text field for the ad and the saved sets.
+1. Add the set "Eigene Sets" to the Game tab, with the interview preparation as its first feature: a text field for the ad and the saved sets.
 2. Show the cards with similarity and the sentence of the ad behind them.
 3. Play the set in both games; mixed sets get a sixth area "Sprachen".
 4. Describe the rules in game-play.md.
@@ -1109,6 +1123,9 @@ Wissens-Check has five areas, while an interview set can mix tools and languages
 - Saved sets can be selected and deleted.
 - The UI texts are German.
 - Type check, lint and format check pass.
+
+**Result:** `frontend/src/features/interview/` and the set "Eigene Sets" in
+`frontend/src/features/game/pages/game-page.tsx`; the flow works in the browser.
 
 ---
 
@@ -1137,7 +1154,15 @@ gap.
 
 ### TWA-8.6 – Measure the Matching Approaches
 
-**Status:** TODO
+**Status:** IDEA
+
+**Postponed:** postponed by J on 2026-11-02, together with the 5 test ads. The decision in
+[ADR-0006](../adr/0006-local-semantic-matching.md) is taken on the recommendations without this
+measurement.
+
+**Note:** a sanity check on four sample ads after the implementation found only about 25 % correct
+"similar" cards, no better than lexical search. The measurement matters if the similar cards are to
+stay.
 
 **Problem Description**
 
@@ -1168,3 +1193,6 @@ could be chosen without a real gain.
 - No job ad is committed.
 - The success bar is confirmed by J.
 - The results are recorded in ADR-0006.
+
+---
+

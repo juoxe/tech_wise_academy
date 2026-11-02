@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from tech_wise_academy.config import load_settings
 from tech_wise_academy.interview.api import router as interview_router
-from tech_wise_academy.interview.embedding import OllamaEmbedder
+from tech_wise_academy.interview.embedding import OnnxEmbedder
 from tech_wise_academy.interview.repository import InterviewRepository
 from tech_wise_academy.interview.service import InterviewService
 from tech_wise_academy.learning_content.api import router as learning_content_router
@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.training_service = TrainingService(TrainingRepository(engine))
     app.state.interview_service = InterviewService(
         tool_service,
-        OllamaEmbedder(settings.embedding_url, settings.embedding_model),
+        OnnxEmbedder(settings.embedding_model_dir),
         InterviewRepository(engine),
     )
     try:

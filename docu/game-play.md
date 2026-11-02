@@ -18,13 +18,14 @@ The app has a menu bar with two tabs, in this order:
 
 ## Sets
 
-The Game tab offers two sets of cards. The player picks the set above the choice of the game; both
-games can be played with both sets.
+The Game tab offers three sets of cards. The player picks the set above the choice of the game; both
+games can be played with every set.
 
 | Set | Cards | Sorted by | Levels |
 |-----|-------|-----------|--------|
 | Tools | all tools except the programming languages | the five areas | 1 to 3 (see Levels) |
 | Programmiersprachen | 23 common programming languages | the five paradigms: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | none; all languages are one level |
+| Eigene Sets | the cards of a set the player made; so far the interview preparation: a job advertisement is pasted into the Game tab and gives a set of the matching tools | the five areas; a set with languages gets a sixth area "Sprachen" | none; the set is one level |
 
 Each tool or language belongs to exactly one set. The languages are not part of the three levels of
 the tools. They have no unlocking: the set is always open, and its progress bar counts the learned

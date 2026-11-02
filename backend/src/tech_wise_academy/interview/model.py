@@ -15,8 +15,9 @@ MAX_TITLE_LENGTH = 80
 
 # A set holds at most this many cards; a named tool always gets one, the others only fill up.
 MAX_CARDS = 20
-# How similar a tool that is not named has to be to a sentence of the ad to get a card.
-MIN_SIMILARITY = 0.6
+# How similar a tool that is not named has to be to a sentence of the ad to get a card. Set from a
+# sanity check on four sample ads, not from the measurement (ADR-0006).
+MIN_SIMILARITY = 0.55
 MAX_SIMILAR_CARDS = 6
 
 _VENDOR_PREFIX = re.compile(r"^(Apache|Eclipse|Grafana|HashiCorp|Meta|Google|OWASP|Project) ")
@@ -148,9 +149,10 @@ class InterviewSet:
     cards: tuple[Card, ...]
 
 
-def tool_document(name: str, summary: str, hints: tuple[str, ...]) -> str:
-    """The text of a tool that is embedded."""
-    return f"{name}: {summary} {' '.join(hints)}"
+def tool_document(name: str, summary: str) -> str:
+    """The text of a tool that is embedded. The hints are left out: with them the vectors matched
+    the sample ads worse (ADR-0006, sanity check)."""
+    return f"{name}: {summary}"
 
 
 def split_into_chunks(job_ad: str) -> tuple[Chunk, ...]:

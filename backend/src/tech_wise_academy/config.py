@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str
-    embedding_url: str = "http://localhost:11434"
-    embedding_model: str = "bge-m3"
+    # Folder with the MiniLM model files (ADR-0006); downloaded once, not part of the repository.
+    embedding_model_dir: str = "D:/models/paraphrase-multilingual-MiniLM-L12-v2"
 
 
 def load_settings() -> Settings:

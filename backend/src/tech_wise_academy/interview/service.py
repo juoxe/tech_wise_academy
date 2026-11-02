@@ -92,7 +92,7 @@ class InterviewService:
             _ToolText(
                 key=tool.key,
                 name=tool.name,
-                document=tool_document(tool.name, tool.summary, tool.hints),
+                document=tool_document(tool.name, tool.summary),
             )
             for tool in await self._tools.list_tool_texts()
         ]

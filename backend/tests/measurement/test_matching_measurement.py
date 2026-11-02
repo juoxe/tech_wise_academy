@@ -1,14 +1,15 @@
 """Measurement of ADR-0006: which variant finds the tools a job ad only describes.
 
 Not a unit test: it starts PostgreSQL with pgvector in a container (Testcontainers, TD-03), runs all
-migrations, and compares four variants on the five real ads that J provided and labelled. It runs
-only on request:
+migrations, and compares three variants on the five real ads that J provided and labelled.
+Variant E (LLM extraction) was not chosen in ADR-0006 and is not measured. It runs only on
+request:
 
     uv run pytest -m measurement -s
 
-Inputs: `ads/*.txt` and `labels.json` (from J), `concepts.json` (A+), `keywords_en.json` (B), the
-MiniLM model in `MEASUREMENT_MODEL_DIR` (C) and `ANTHROPIC_API_KEY` (E). A missing input skips its
-variant. The numbers are written to `results.json` and copied into ADR-0006 by hand.
+Inputs: `ads/*.txt` and `labels.json` (from J), `concepts.json` (A+), `keywords_en.json` (B)
+and the MiniLM model in `MEASUREMENT_MODEL_DIR` (C). A missing input skips its variant. The
+numbers are written to `results.json` and copied into ADR-0006 by hand.
 """
 
 import asyncio
@@ -23,6 +24,7 @@ from pathlib import Path
 
 import pytest
 
+from tech_wise_academy.interview.embedding import MODEL_FILE, OnnxEmbedder
 from tech_wise_academy.interview.model import Chunk, find_mentions, split_into_chunks
 from tech_wise_academy.learning_content.service import ToolText
 
@@ -31,8 +33,6 @@ pytestmark = pytest.mark.measurement
 HERE = Path(__file__).parent
 EXTRA_CARDS = 6
 DEFAULT_MODEL_DIR = "D:/models/paraphrase-multilingual-MiniLM-L12-v2"
-MODEL_FILE = "model_quint8_avx2.onnx"
-CLAUDE_MODEL = "claude-haiku-5-5"
 STOP_WORDS = frozenset(
     [
         "der",
@@ -174,47 +174,13 @@ def bm25_cards(chunks: tuple[Chunk, ...], tools: list[ToolText], named: set[str]
         key: max(score(_words(chunk.text), words) for chunk in chunks)
         for key, words in documents.items()
     }
-    ranked = sorted((key for key in best if key not in named and best[key] > 0), key=best.get)
+    ranked = sorted(
+        (key for key in best if key not in named and best[key] > 0), key=lambda key: best[key]
+    )
     return list(reversed(ranked))[:EXTRA_CARDS]
 
 
 # --- C: MiniLM through ONNX Runtime, similarity in pgvector -------------------------------------
-
-
-class OnnxEmbedder:
-    """Mean-pooled, normalised vectors of MiniLM; only for this measurement (TD-38 is open)."""
-
-    model = "paraphrase-multilingual-MiniLM-L12-v2"
-
-    def __init__(self, folder: Path) -> None:
-        import onnxruntime
-        from tokenizers import Tokenizer
-
-        self._tokenizer = Tokenizer.from_file(str(folder / "tokenizer.json"))
-        self._tokenizer.enable_truncation(max_length=256)
-        self._tokenizer.enable_padding()
-        self._session = onnxruntime.InferenceSession(str(folder / MODEL_FILE))
-        self._inputs = {item.name for item in self._session.get_inputs()}
-
-    async def embed(self, texts: list[str]) -> list[tuple[float, ...]]:
-        import numpy
-
-        vectors: list[tuple[float, ...]] = []
-        for start in range(0, len(texts), 32):
-            encodings = self._tokenizer.encode_batch(texts[start : start + 32])
-            ids = numpy.array([encoding.ids for encoding in encodings], dtype=numpy.int64)
-            mask = numpy.array(
-                [encoding.attention_mask for encoding in encodings], dtype=numpy.int64
-            )
-            feed = {"input_ids": ids, "attention_mask": mask}
-            if "token_type_ids" in self._inputs:
-                feed["token_type_ids"] = numpy.zeros_like(ids)
-            hidden = self._session.run(None, feed)[0]
-            summed = (hidden * mask[..., None]).sum(axis=1)
-            pooled = summed / mask.sum(axis=1, keepdims=True)
-            pooled /= numpy.linalg.norm(pooled, axis=1, keepdims=True)
-            vectors += [tuple(float(number) for number in row) for row in pooled]
-        return vectors
 
 
 async def embedding_cards(engine, job_ads: dict[str, str], folder: Path) -> dict[str, list[str]]:
@@ -226,7 +192,7 @@ async def embedding_cards(engine, job_ads: dict[str, str], folder: Path) -> dict
     from tech_wise_academy.learning_content.service import ToolService
 
     service = InterviewService(
-        ToolService(ToolRepository(engine)), OnnxEmbedder(folder), InterviewRepository(engine)
+        ToolService(ToolRepository(engine)), OnnxEmbedder(str(folder)), InterviewRepository(engine)
     )
     cards: dict[str, list[str]] = {}
     for name, text in job_ads.items():
@@ -241,49 +207,6 @@ async def embedding_cards(engine, job_ads: dict[str, str], folder: Path) -> dict
             )
             cards[name] = [row[0] for row in rows]
     return cards
-
-
-# --- E: Claude Haiku 5.5 picks keys of the catalogue --------------------------------------------
-
-
-def claude_cards(text: str, tools: list[ToolText], named: set[str]) -> tuple[list[str], list[str]]:
-    import anthropic
-
-    keys = [tool.key for tool in tools]
-    catalogue = "\n".join(f"{tool.key}: {tool.name} – {tool.summary}" for tool in tools)
-    response = anthropic.Anthropic().messages.create(
-        model=CLAUDE_MODEL,
-        max_tokens=16000,
-        output_config={
-            "effort": "low",
-            "format": {
-                "type": "json_schema",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "tools": {"type": "array", "items": {"type": "string", "enum": keys}},
-                        "not_in_catalogue": {"type": "array", "items": {"type": "string"}},
-                    },
-                    "required": ["tools", "not_in_catalogue"],
-                    "additionalProperties": False,
-                },
-            },
-        },
-        system=(
-            "You prepare a learner for a job interview. From the catalogue, pick the tools "
-            "that the job ad asks for, including tools it only describes without naming them. "
-            "Most relevant first. List the technologies of the ad that are not in the catalogue "
-            "separately."
-        ),
-        messages=[
-            {"role": "user", "content": f"Catalogue:\n{catalogue}\n\nJob ad:\n{text}"},
-        ],
-    )
-    if response.stop_reason != "end_turn":
-        pytest.fail(f"Claude stopped with {response.stop_reason}")
-    answer = json.loads(next(block.text for block in response.content if block.type == "text"))
-    extra = [key for key in answer["tools"] if key not in named]
-    return extra[:EXTRA_CARDS], answer["not_in_catalogue"]
 
 
 # --- The run ------------------------------------------------------------------------------------
@@ -354,20 +277,12 @@ def test_measure_matching_variants() -> None:
                 results["C"] = _score(await embedding_cards(engine, job_ads, folder), labels)
             else:
                 results["C"] = f"skipped: no model in {folder}"
-            if os.environ.get("ANTHROPIC_API_KEY"):
-                picked = {name: claude_cards(job_ads[name], tools, named[name]) for name in job_ads}
-                results["E"] = _score({name: cards for name, (cards, _) in picked.items()}, labels)
-                results["E"]["not_in_catalogue"] = {
-                    name: rest for name, (_, rest) in picked.items()
-                }
-            else:
-                results["E"] = "skipped: no ANTHROPIC_API_KEY"
             await engine.dispose()
 
         _run(main)
 
     (HERE / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False), "utf-8")
-    for variant in ("A+", "B", "C", "E"):
+    for variant in ("A+", "B", "C"):
         value = results[variant]
         summary = value if isinstance(value, str) else {k: value[k] for k in list(value)[:4]}
         print(variant, summary)

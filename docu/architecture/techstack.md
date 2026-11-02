@@ -13,6 +13,7 @@ and frontend are created.
 | [Architecture](#architecture) | [ADR-0001](../adr/0001-architecture-concept.md) | accepted |
 | [Backend](#backend) | [ADR-0002](../adr/0002-backend-stack.md) | accepted |
 | [Frontend](#frontend) | [ADR-0003](../adr/0003-frontend-stack.md) | accepted |
+| [Interview sets](#interview-sets) | [ADR-0006](../adr/0006-local-semantic-matching.md) | accepted |
 | Testing | – | developed in MS 3, lean until then |
 | [Operations and delivery](#operations-and-delivery) | – | open |
 
@@ -56,6 +57,21 @@ Decided in [ADR-0003](../adr/0003-frontend-stack.md) on 2026-10-25. Exact versio
 | UI components and styling | Tailwind CSS + shadcn/ui, icons `lucide-react` | TD-25 |
 | Design | Own design tokens following the shadcn scheme with roles (primary, secondary, …), light and dark; design concept in [design-concept.md](design-concept.md), dark mode as default | TD-31 |
 
+### Interview Sets
+
+Decided in [ADR-0006](../adr/0006-local-semantic-matching.md) by J on 2026-11-02 for
+[TWA-8](../product_backlog/backlog.md#epic-twa-8--interview-preparation), without the planned
+measurement (postponed).
+
+| Area | Decision | Open decision |
+|------|----------|---------------|
+| Matching approach | Names and aliases of the tools exact, plus embeddings with a small local model for the tools an ad only describes | TD-37 |
+| Embedding runtime | ONNX Runtime with `tokenizers` inside the backend, no model server | TD-38 |
+| Embedding model | paraphrase-multilingual-MiniLM-L12-v2, int8 ONNX (118.5 MB); downloaded once, outside the repository, mounted into the backend | TD-39 |
+| Vector store | pgvector in the existing PostgreSQL (`pgvector/pgvector:pg16`) | TD-36 |
+| Persisted similarity | One value per tool and set | TD-40 |
+| Test database (measurement only) | Testcontainers with the pgvector image; not installed while the measurement is postponed | TD-03 |
+
 ### Identity and access
 
 Decided by J on 2026-10-27 (TD-17, without ADR).
@@ -66,23 +82,7 @@ Decided by J on 2026-10-27 (TD-17, without ADR).
 
 ## Proposed
 
-A decision that is proposed in an ADR is listed here until J accepts it.
-
-### Interview Sets (ADR-0006)
-
-Proposed in [ADR-0006](../adr/0006-local-semantic-matching.md) on 2026-11-02 for
-[TWA-8](../product_backlog/backlog.md#epic-twa-8--interview-preparation). Local processing is a
-criterion, not a fixed constraint; hosted APIs are compared too. The vector store follows J's
-direction; the other topics are recommendations.
-
-| Area | Proposal | Open decision |
-|------|----------|---------------|
-| Vector store | pgvector (`pgvector/pgvector:pg16`), J: "probably"; only needed for embeddings | TD-36 |
-| Matching approach | Names and aliases of the tools, plus a small local embedding model for implied tools if a measurement shows a gain; otherwise names only or a hosted LLM extraction | TD-37 |
-| Embedding runtime | ONNX Runtime with `tokenizers` inside the backend, no extra service; hosted embeddings not recommended | TD-38 |
-| Embedding model | paraphrase-multilingual-MiniLM-L12-v2 (118.5 MB, int8), multilingual-e5-small as fallback | TD-39 |
-| Persisted similarity | One value per tool and set | TD-40 |
-| LLM for the extraction (only if chosen) | Claude Opus 5.5, Claude Haiku 5.5 after a comparison | TD-41 |
+No proposals are open. A decision that is proposed in an ADR is listed here until J accepts it.
 
 ## Open
 

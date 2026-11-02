@@ -1,6 +1,7 @@
 # ADR-0006: Matching Job Ads to Tools
 
-- **Status:** proposed – TD-03 (test database) is decided by J; all other topics are open
+- **Status:** accepted (J, 2026-11-02) – decided on paper, **without the planned measurement**, which J
+  postponed (TWA-8.6)
 - **Date:** 2026-11-02
 - **Open decisions:** TD-36, TD-37, TD-38, TD-39, TD-40, TD-41, TD-03 in [open-decisions.md](open-decisions.md)
 - **Stories:** [TWA-8.1](../product_backlog/backlog.md#twa-81--decide-vector-store-embedding-runtime-and-model)
@@ -149,7 +150,11 @@ Google Cloud. They are among the most frequent words in real ads, and no method 
 for them ([TWA-8.5](../product_backlog/backlog.md#twa-85--tools-missing-from-the-catalogue)). Only E
 can at least name them as "not covered".
 
-### Planned measurement on five real job ads (J, 2026-11-02)
+### Planned measurement on five real job ads (postponed)
+
+**J postponed this measurement on 2026-11-02 and decided without it** (TWA-8.6, status IDEA). The
+test stays in `backend/tests/measurement/`, skipped until the ads and labels exist; variant E was
+removed from it because E was not chosen, and `testcontainers` is not installed yet.
 
 The comparison above uses ads written by the same agent that wrote the aliases. J decided to measure
 again on **five real, public job ads**, mixed German and English, which **J provides and labels**
@@ -177,6 +182,38 @@ normal test run.
 - For E only, the terms without a card that it lists are reported, but not scored.
 
 The numbers are added here after the run.
+
+### Sanity check after the decision (2026-11-02)
+
+**Not the measurement:** the same four self-written ads as above, used only to set the threshold of
+the chosen variant C. Model: paraphrase-multilingual-MiniLM-L12-v2, int8 ONNX, on the i7-9700.
+
+Which text of a tool to embed, measured as correct extra cards among the top 6 per ad:
+
+| Text of the tool | Correct extra cards |
+|------------------|--------------------:|
+| name, summary and hints | 5 / 24 |
+| **name and summary (chosen)** | **7 / 24** |
+| summary only | 7 / 24 |
+| best of summary and each hint | 2 / 24 |
+
+Threshold for a card of a tool the ad does not name (with name and summary):
+
+| Similarity at least | Implied tools above it | Other tools above it | Share correct |
+|--------------------:|-----------------------:|---------------------:|--------------:|
+| 0.50 | 22 / 42 | 106 | 17 % |
+| **0.55 (chosen)** | **13 / 42** | **40** | **25 %** |
+| 0.60 | 3 / 42 | 11 | 21 % |
+
+Speed: embedding the 307 tools takes about 10 s once; an ad takes well under a second. In the
+running backend the first set took 13 s (with the tools), the next one 0.14 s.
+
+**What this means:** the small model adds about **one right card in four**; the others are close in
+topic but wrong (for example sqlmap and DBeaver for "SQL", k6 and Testcontainers for "End-to-End-
+Tests"). That is no better than BM25 above (21 %). The named tools stay exact, because they come
+from the names, not from the model. With 0.55 and at most 6 extra cards, a set holds the named tools
+plus up to 6 "ähnlich" cards. Whether the similar cards are worth it is what the postponed
+measurement would show; until then the UI marks them as "ähnlich" with their sentence of the ad.
 
 ### Size, cost and fit
 
@@ -348,38 +385,32 @@ strategy (TD-03 beyond this test, TD-02, TD-26, TD-27) stays in MS 3.
 | Topic | Choice | Status | Decided by / on |
 |-------|--------|--------|-----------------|
 | Local network | A criterion, no longer a fixed constraint | accepted | J, 2026-11-02 |
-| Vector store (TD-36) | pgvector, only needed for topic 2 = C or D; depends on TD-37 | recommended | – |
-| Matching approach (TD-37) | C with a small local model, if a measurement shows a gain; otherwise A (locality) or E (quality) | recommended | – |
-| Embedding runtime (TD-38) | ONNX Runtime in the backend; hosted embeddings not recommended | recommended | – |
-| Embedding model (TD-39) | paraphrase-multilingual-MiniLM-L12-v2 (118.5 MB), e5-small as fallback | recommended | – |
-| Persisted similarity values (TD-40) | Every tool per set | recommended | – |
-| LLM for the extraction (TD-41) | Claude Opus 5.5, Haiku 5.5 after a comparison (only for E); Haiku 5.5 for the measurement | recommended | – |
+| Vector store (TD-36) | pgvector, needed because C was chosen | accepted | J, 2026-11-02 |
+| Matching approach (TD-37) | C: names exact plus embeddings with a small local model (without the measurement) | accepted | J, 2026-11-02 |
+| Embedding runtime (TD-38) | ONNX Runtime in the backend, no model server | accepted | J, 2026-11-02 |
+| Embedding model (TD-39) | paraphrase-multilingual-MiniLM-L12-v2 (int8 ONNX, 118.5 MB); the others not chosen | accepted | J, 2026-11-02 |
+| Persisted similarity values (TD-40) | Every tool per set | accepted | J, 2026-11-02 |
+| LLM for the extraction (TD-41) | Does not apply: E was not chosen | rejected | J, 2026-11-02 |
 | Database for the measurement test (TD-03) | Testcontainers with `pgvector/pgvector:pg16`, for this measurement only | accepted | J, 2026-11-02 |
 
 ## Consequences
 
-- **Before building on it:** J decides topics 2 to 6 on the numbers of the planned measurement. The
-  measurement needs, each confirmed by J before it is installed: the MiniLM model (118.5 MB, from
-  Hugging Face, onto drive D:), the libraries `onnxruntime`, `tokenizers`, `testcontainers` and, for
-  E, `anthropic` (all in the dev group only), and an Anthropic API key that J puts into `.env`.
-  Without the key, E is skipped. Cost of E: well under one dollar.
-- **Docker's disk image must leave drive C:** before any further image is pulled. The pgvector image
-  is small, but even small pulls fail while C: is full.
-- **If ONNX Runtime is accepted:** the `ollama` and `ollama-model` services leave `compose.yaml`; the
-  backend gets an ONNX embedder behind the existing interface; the model file is downloaded once
-  (configurable path, not in the repository); `EMBEDDING_URL` gives way to a model path.
-- **If E is accepted:** the embedding code, the vector columns and the pgvector image are removed; the
-  backend gets an extractor behind the same kind of interface, an API key in `.env` (never in the
-  repository), and the UI says that the ad is sent to Anthropic. Without a key or without internet,
-  the set falls back to A.
-- **If A (names only) is accepted:** the embedding code, the vector columns and the pgvector image are
-  removed; `interview_set_tool` keeps the named tools and the matching sentence.
-- **Either way:** the alias list in `interview/model.py` has to grow with real ads, and the catalogue
-  gaps ([TWA-8.5](../product_backlog/backlog.md#twa-85--tools-missing-from-the-catalogue)) limit
-  every method more than the choice of model does.
-- To update when decided: [open-decisions.md](open-decisions.md), the [ADR index](README.md),
-  [techstack](../architecture/techstack.md), [data model](../data_model/interview-data-model.md),
-  `compose.yaml`, `.env.example`.
+Implemented on 2026-11-02:
+
+- The backend runs MiniLM through ONNX Runtime (`interview/embedding.py`, libraries `onnxruntime` and
+  `tokenizers`). The model files (`onnx/model_quint8_avx2.onnx`, `tokenizer.json`) are downloaded once
+  from Hugging Face into a folder outside the repository (`D:/models/…` here), set by
+  `EMBEDDING_MODEL_DIR` and mounted read-only into the backend container (`EMBEDDING_MODEL_HOST_DIR`).
+  Without the files the backend starts, and creating a set answers `503`.
+- The `ollama` and `ollama-model` services, `OLLAMA_PORT`, `EMBEDDING_URL` and `EMBEDDING_MODEL` are
+  gone. The Ollama image (8.5 GB) and its volume are still on drive C: and can be deleted by J.
+- The tool text that is embedded is name and summary; threshold 0.55; at most 6 similar cards (see
+  the sanity check).
+- No `anthropic`, no API key and no `testcontainers` for now.
+- Still true: the alias list in `interview/model.py` has to grow with real ads, and the catalogue gaps
+  ([TWA-8.5](../product_backlog/backlog.md#twa-85--tools-missing-from-the-catalogue)) limit every
+  method more than the choice of model does. If the similar cards turn out to be more noise than
+  help, switching them off leaves A (names only) without other changes.
 
 ## Sources
 

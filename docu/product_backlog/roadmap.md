@@ -71,8 +71,8 @@ expected results and not yet cut into a planned epic table.
   ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
   MS 2).
 - Interview preparation: card sets generated from a job advertisement, in the local network
-  ([TWA-8](backlog.md#epic-twa-8--interview-preparation), built ahead of MS 2, milestone not assigned
-  yet).
+  ([TWA-8](backlog.md#epic-twa-8--interview-preparation), `IN PROGRESS`, built ahead of the planning
+  of MS 2).
 
 ---
 
