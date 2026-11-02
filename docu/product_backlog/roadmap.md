@@ -20,7 +20,7 @@ product exists is described in the [vision](vision.md).
 | Milestone | Title | Status | Goal |
 |-----------|-------|--------|------|
 | [MS 1](#ms-1--project-initialisation) | Project Initialisation | IN PROGRESS | Runnable skeleton and planning in place |
-| [MS 2](#ms-2--playable-mvp-draft) | Playable MVP | DRAFT | A playable MVP exists |
+| [MS 2](#ms-2--playable-mvp) | Playable MVP | IN PROGRESS | A playable MVP exists |
 | [MS 3](#ms-3--polished-game-draft) | Polished Game | DRAFT | The game is polished and fun to play |
 | [MS 4](#ms-4--go-live-draft) | Go-Live | DRAFT | The product is live |
 
@@ -50,10 +50,10 @@ Milestone status: `DRAFT` (outlined, no epics yet) · `PLANNED` (epics cut) · `
 
 ---
 
-## MS 2 – Playable MVP (draft)
+## MS 2 – Playable MVP
 
-**Status:** DRAFT – outlined from what the Tech Tool Trainer already offers; epics are cut when
-MS 1 is done.
+**Status:** IN PROGRESS – TWA-7 and TWA-8 are being built; the milestone is still outlined as
+expected results and not yet cut into a planned epic table.
 
 **Goal:** a playable MVP exists.
 
@@ -67,6 +67,9 @@ MS 1 is done.
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
 - A statistics page per user (idea [TWA-6](backlog.md#epic-twa-6--statistics), not yet planned).
+- Knowledge games: Wissens-Check and Karten abräumen with three levels and saved progress
+  ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
+  MS 2).
 - Interview preparation: card sets generated from a job advertisement, in the local network
   ([TWA-8](backlog.md#epic-twa-8--interview-preparation), built ahead of MS 2, milestone not assigned
   yet).

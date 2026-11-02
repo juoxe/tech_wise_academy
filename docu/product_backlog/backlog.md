@@ -14,7 +14,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
 | [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
-| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | – | IN PROGRESS |
+| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | – | IN PROGRESS |
 
 **Next free epic number: 9**
@@ -821,7 +821,7 @@ The epic has no milestone and no stories yet; it is planned in detail when MS 2 
 
 ## Epic TWA-7 – Knowledge Games
 
-**Status:** IN PROGRESS
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -835,8 +835,8 @@ documentation
 
 **Working documents:** [game-play](../game-play.md)
 
-**Note:** the rules are documented only in [game-play.md](../game-play.md). The games are built ahead
-of MS 2 so they can be tested; the milestone is not assigned yet. The stories below record what was
+**Note:** the rules are documented only in [game-play.md](../game-play.md). J assigned the epic to
+MS 2. The stories below record what was
 built (commit 71f586e on branch `twa-7-knowledge-games`). The epic stays IN PROGRESS until J has
 reviewed the games in the browser.
 
