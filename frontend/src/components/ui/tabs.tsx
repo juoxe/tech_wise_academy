@@ -41,7 +41,7 @@ export function TabsTrigger({
       className={cn(
         "inline-flex items-center rounded-sm px-3 py-1.5 text-base font-medium text-muted-foreground",
         "data-[state=active]:bg-background data-[state=active]:text-foreground",
-        "focus-visible:outline-2 focus-visible:outline-ring",
+        "focus-visible:outline-2 focus-visible:outline-primary",
         className,
       )}
       {...props}

@@ -4,8 +4,8 @@ Status: applied in `frontend/src/styles/globals.css`. Basis: Tech Tool Trainer
 [ADR-0008](../../../Tech_Tool_Trainer/docu/adr/0008-frontend-design.md) (colours, dark mode as
 default, base size 17 px). Decision for Tech Wise Academy: see [ADR-0003](../adr/0003-frontend-stack.md),
 TD-31. The greens and the orange for wrong answers were chosen by J. On 2026-11-02 J asked for
-stronger greens, for the green instead of the olive as the primary colour and for a sunflower
-yellow focus ring.
+stronger greens and for the green instead of the olive as the primary colour. Sunflower yellow
+is only a third colour in the card icon (logo).
 
 ## Rules
 
@@ -22,17 +22,18 @@ yellow focus ring.
 | Role | Dark mode | Light mode |
 |------|-----------|------------|
 | `primary` | `#27ae60` (green) | `#15803d` (dark green) |
-| `ring` | `#f1c40f` (sunflower yellow) | `#a68408` (dark gold, for contrast on white) |
+| `ring` | `#27ae60` (green) | `#22a06b` (green) |
 | `status-done` (correct answers, done) | `#8bc34a` (olive green) | green, see `globals.css` |
 | `destructive` (wrong answers, errors) | `#f97316` (saturated orange) | `#c2410c` (darker orange, for contrast on white) |
 
-The logo `frontend/public/logo.svg` uses both greens: the primary green `#27ae60` and the olive
-`#8bc34a`. It is shown next to the app
+The logo `frontend/public/logo.svg` shows three cards stepping up to the right: the primary green
+`#27ae60` at the left, the olive `#8bc34a` in front of it and, as a third colour, sunflower yellow
+`#f1c40f` at the top right, in front of both. The yellow is used nowhere else. It is shown next to the app
 title and as the browser icon. It is a brand asset, not a component colour.
 
 Main actions (Starten, Nochmal spielen, Nächste Runde) and the page heading of the Game tab use
-`primary`. `status-done` is only used for status: progress bars and correct answers. Focus outlines use
-`ring` (sunflower yellow), so the focus stands out from the green actions.
+`primary`. `status-done` is only used for status: progress bars and correct answers. Focus outlines are green.
+The tab bar has no outline: the active tab has green text and a green underline.
 
 The other roles are taken from the Tech Tool Trainer as they are in `globals.css`.
 

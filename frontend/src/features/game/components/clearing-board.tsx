@@ -78,7 +78,7 @@ export function ClearingBoard({
           <button
             type="button"
             onClick={onNextRound}
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring"
+            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary"
           >
             Nächste Runde
           </button>
@@ -122,14 +122,14 @@ export function ClearingBoard({
             type="button"
             onClick={showHint}
             disabled={shown >= allHints.length}
-            className="rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+            className="rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
           >
             Nächster Hinweis
           </button>
           <button
             type="button"
             onClick={dontKnow}
-            className="rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring"
+            className="rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary"
           >
             Weiß ich nicht
           </button>

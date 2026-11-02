@@ -2,6 +2,9 @@ import { GamePage } from "@/features/game";
 import { DataSetsTab } from "@/features/tools";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+const TAB =
+  "rounded-none border-b-2 border-transparent bg-transparent px-0 py-2 text-lg hover:text-primary focus-visible:text-primary focus-visible:outline-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none";
+
 export function App() {
   return (
     <Tabs
@@ -16,16 +19,10 @@ export function App() {
           </span>
         </h1>
         <TabsList className="mt-3 h-auto justify-start gap-6 rounded-none bg-transparent p-0">
-          <TabsTrigger
-            value="game"
-            className="rounded-none border-b-2 border-transparent bg-transparent px-0 py-2 text-lg data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
-          >
+          <TabsTrigger value="game" className={TAB}>
             Game
           </TabsTrigger>
-          <TabsTrigger
-            value="tools"
-            className="rounded-none border-b-2 border-transparent bg-transparent px-0 py-2 text-lg data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
-          >
+          <TabsTrigger value="tools" className={TAB}>
             Toolübersicht
           </TabsTrigger>
         </TabsList>
