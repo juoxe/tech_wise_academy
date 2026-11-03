@@ -107,7 +107,9 @@ def _seed() -> None:
         .joinpath("seed_tools.json")
         .read_text(encoding="utf-8")
     )
-    tools = seed["tools"]
+    # Only the area tools fit the constraint of this revision; 0002 and 0007 add the rest.
+    tools = [tool for tool in seed["tools"] if tool["category"] in CATEGORIES]
+    seeded_keys = {tool["key"] for tool in tools}
     tool_table = sa.table(
         "tool",
         sa.column("id", sa.Uuid()),
@@ -197,6 +199,7 @@ def _seed() -> None:
         tuple(sorted((_tool_id(tool["key"]), _tool_id(other))))
         for tool in tools
         for other in tool["alternatives"]
+        if other in seeded_keys
     }
     op.bulk_insert(
         alternative_table,
