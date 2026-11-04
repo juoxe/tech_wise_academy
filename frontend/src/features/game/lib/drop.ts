@@ -1,4 +1,4 @@
-import type { ToolSummary } from "@/features/tools";
+import { categoryLabel, type ToolSummary } from "@/features/tools";
 
 export type Category = ToolSummary["category"];
 
@@ -24,18 +24,9 @@ export type Area = Category | "LANGUAGE";
 
 export const MIXED_AREAS: readonly Area[] = [...CATEGORIES, "LANGUAGE"];
 
-const LABELS: Partial<Record<Area, string>> = {
-  OBJECT_ORIENTED: "Objektorientiert",
-  FUNCTIONAL: "Funktional",
-  PROCEDURAL: "Prozedural",
-  DECLARATIVE: "Deklarativ",
-  MULTI_PARADIGM: "Multiparadigma",
-  LANGUAGE: "Sprachen",
-};
-
-/* The name shown for an area; the areas of the tools show their code. */
+/* The name shown for an area: the category or paradigm name, or "Sprachen" for the languages of a mixed set. */
 export function areaLabel(area: Area): string {
-  return LABELS[area] ?? area;
+  return area === "LANGUAGE" ? "Sprachen" : categoryLabel(area);
 }
 
 /* The area a card belongs to on this floor. */

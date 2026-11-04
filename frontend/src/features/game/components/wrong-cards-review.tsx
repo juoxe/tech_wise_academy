@@ -1,5 +1,4 @@
-import { ToolOverviewCard } from "@/features/game/components/tool-overview-card";
-import type { ToolSummary } from "@/features/tools";
+import { ToolOverviewCard, type ToolSummary } from "@/features/tools";
 
 const REVIEW_BUTTON =
   "rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-primary";

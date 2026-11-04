@@ -67,7 +67,8 @@ expected results and not yet cut into a planned epic table.
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
 - A statistics page per user (idea [TWA-6](backlog.md#epic-twa-6--statistics), not yet planned).
-- Knowledge games: Wissens-Check and Karten abräumen with three levels and saved progress
+- Knowledge games: five games – Wissens-Check and Karten abräumen with three levels and saved
+  progress; SQL-Bausteine, Code beurteilen and Memory without levels and progress
   ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
   MS 2).
 - Interview preparation: card sets generated from a job advertisement, in the local network
@@ -76,8 +77,9 @@ expected results and not yet cut into a planned epic table.
 - A generalised overview with create, edit, delete and detail view: a reusable table and detail
   view for the tools, so that the tools can be maintained in the UI
   ([TWA-9](backlog.md#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view),
-  `TODO`). Depends on: TWA-4 (tool overview and Tool API); stories TWA-9.3 (create and edit) and
-  TWA-9.4 (delete) depend on the authentication decision (TD-17).
+  `IN PROGRESS`; TWA-9.1 and TWA-9.2 done). Depends on: TWA-4 (tool overview and Tool API); stories
+  TWA-9.3 (create and edit) and TWA-9.4 (delete) wait for J's decision on who may edit and delete,
+  and on the role of the seed file.
 - Tool extraction from any text: the tools a text names, the tools of a mentioned ecosystem and
   concepts shown as topics, independent of interviews; the matching quality moved here from
   TWA-8.7 ([TWA-10](backlog.md#epic-twa-10--tool-extraction-from-text), `TODO`).

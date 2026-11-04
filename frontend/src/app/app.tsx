@@ -15,7 +15,9 @@ export function App() {
         <h1 className="flex items-center gap-3 text-3xl font-bold">
           <img src="/logo.svg" alt="" className="size-11" />
           <span>
-            Tech <span className="text-primary">Wise</span> Academy
+            <span className="text-foreground">Tech</span>{" "}
+            <span className="text-primary">Wise</span>{" "}
+            <span className="text-foreground">Academy</span>
           </span>
         </h1>
         <TabsList className="mt-3 h-auto justify-start gap-6 rounded-none bg-transparent p-0">

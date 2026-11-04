@@ -2,6 +2,9 @@ import { useState } from "react";
 
 import { CardDropBoard } from "@/features/game/components/card-drop-board";
 import { ClearingBoard } from "@/features/game/components/clearing-board";
+import { CodeReviewBoard } from "@/features/game/components/code-review-board";
+import { MemoryBoard } from "@/features/game/components/memory-board";
+import { SqlTileBoard } from "@/features/game/components/sql-tile-board";
 import {
   CATEGORIES,
   MIXED_AREAS,
@@ -155,6 +158,9 @@ export function GamePage() {
   const [game, setGame] = useState<TrainingGame>("level0");
   const [set, setSet] = useState<ToolSet>("tools");
   const [playing, setPlaying] = useState(false);
+  const [sqlPlaying, setSqlPlaying] = useState(false);
+  const [codeReviewPlaying, setCodeReviewPlaying] = useState(false);
+  const [memoryPlaying, setMemoryPlaying] = useState(false);
   const [roundNumber, setRoundNumber] = useState(0);
   const [confirmReset, setConfirmReset] = useState<TrainingGame | null>(null);
   const resetProgress = useResetProgress();
@@ -209,12 +215,72 @@ export function GamePage() {
     await progress.refetch();
   }
 
+  if (memoryPlaying) {
+    return (
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold">Memory</h2>
+          <button
+            type="button"
+            onClick={() => setMemoryPlaying(false)}
+            className={BUTTON_OFF}
+          >
+            Anderes Spiel wählen
+          </button>
+        </div>
+        <MemoryBoard
+          entries={
+            set === "languages"
+              ? allTools.filter(isLanguage)
+              : set === "interview"
+                ? interview.tools
+                : allTools.filter((tool) => !isLanguage(tool))
+          }
+        />
+      </div>
+    );
+  }
+
+  if (codeReviewPlaying) {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold">Code beurteilen</h2>
+          <button
+            type="button"
+            onClick={() => setCodeReviewPlaying(false)}
+            className={BUTTON_OFF}
+          >
+            Anderes Spiel wählen
+          </button>
+        </div>
+        <CodeReviewBoard />
+      </div>
+    );
+  }
+
+  if (sqlPlaying) {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold">SQL-Bausteine</h2>
+          <button
+            type="button"
+            onClick={() => setSqlPlaying(false)}
+            className={BUTTON_OFF}
+          >
+            Anderes Spiel wählen
+          </button>
+        </div>
+        <SqlTileBoard />
+      </div>
+    );
+  }
+
   if (!playing) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h1 className="text-3xl font-bold text-primary">
-          Welches Game willst du spielen?
-        </h1>
+        <h1 className="text-3xl font-bold">Welches Game willst du spielen?</h1>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Set">
           {SETS.map((option) => (
             <button
@@ -268,7 +334,7 @@ export function GamePage() {
                     className="h-3 w-full overflow-hidden rounded-full bg-muted"
                   >
                     <div
-                      className="h-full bg-status-done transition-all"
+                      className="h-full bg-secondary transition-all"
                       style={{ width: `${gameStatus.percent}%` }}
                     />
                   </div>
@@ -336,6 +402,54 @@ export function GamePage() {
             );
           },
         )}
+        <section className="flex flex-col gap-3 rounded-md border border-border p-6">
+          <h2 className="text-2xl font-semibold">SQL-Bausteine</h2>
+          <p className="text-base text-muted-foreground">
+            Baue eine PostgreSQL-Abfrage aus Bausteinen. Klicke die Bausteine in
+            der Reihenfolge der Abfrage an. Nicht jeder Baustein wird gebraucht.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setSqlPlaying(true)}
+              className={BUTTON_ON}
+            >
+              Starten
+            </button>
+          </div>
+        </section>
+        <section className="flex flex-col gap-3 rounded-md border border-border p-6">
+          <h2 className="text-2xl font-semibold">Code beurteilen</h2>
+          <p className="text-base text-muted-foreground">
+            Lies ein kurzes Code-Beispiel und markiere alle Aussagen, die
+            stimmen. Mehrere Aussagen können richtig sein, auch keine oder alle.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setCodeReviewPlaying(true)}
+              className={BUTTON_ON}
+            >
+              Starten
+            </button>
+          </div>
+        </section>
+        <section className="flex flex-col gap-3 rounded-md border border-border p-6">
+          <h2 className="text-2xl font-semibold">Memory</h2>
+          <p className="text-base text-muted-foreground">
+            Finde zu jedem Werkzeug oder jeder Programmiersprache die passende
+            Beschreibung. Die Karten kommen aus dem gewählten Set.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setMemoryPlaying(true)}
+              className={BUTTON_ON}
+            >
+              Starten
+            </button>
+          </div>
+        </section>
       </div>
     );
   }
@@ -364,7 +478,7 @@ export function GamePage() {
           className="h-3 w-full overflow-hidden rounded-full bg-muted"
         >
           <div
-            className="h-full bg-status-done transition-all"
+            className="h-full bg-secondary transition-all"
             style={{ width: `${percent}%` }}
           />
         </div>

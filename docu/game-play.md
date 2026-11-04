@@ -1,8 +1,9 @@
 # Game Play
 
-Status: **two games are implemented**: the knowledge check Wissens-Check (Level 0, a falling-card game)
-and Karten abräumen. Both are played in three levels (Kennen, Intermediate, Expert). The full game
-with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
+Status: **five games are implemented**: the knowledge check Wissens-Check (Level 0, a falling-card game)
+and Karten abräumen, both played in three levels (Kennen, Intermediate, Expert); and the games without
+levels SQL-Bausteine (PostgreSQL queries from tiles), Code beurteilen (multiple choice on code) and Memory
+(pairs of names and descriptions). The full game with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
 (Keycloak) and statistics are not part of these games yet.
 
 This document is the single source for the game rules.
@@ -18,8 +19,9 @@ The app has a menu bar with two tabs, in this order:
 
 ## Sets
 
-The Game tab offers three sets of cards. The player picks the set above the choice of the game; both
-games can be played with every set.
+The Game tab offers three sets of cards. The player picks the set above the choice of the game. The
+two knowledge games Wissens-Check and Karten abräumen and the game Memory use the cards of the chosen
+set. SQL-Bausteine and Code beurteilen do not use a set.
 
 | Set | Cards | Sorted by | Levels |
 |-----|-------|-----------|--------|
@@ -39,9 +41,9 @@ abräumen the hints name the language.
 | 0 | Knowledge check: how well does the player know each area? | MS 1 | implemented |
 | 1 and later | The real game: sorting, games per learning path | MS 2 | not planned in detail yet |
 
-The Game tab first asks which game to play, with a green start button per game. Each game shows its
-current level and its progress as a bar in percent (learned tools of the level). Both games have
-three **difficulty levels**; the level is set automatically (see Unlocking) and is not chosen by the
+The Game tab first asks which game to play, with a green start button per game. The two knowledge
+games show their current level and its progress as a bar in percent (learned tools of the level).
+Both have three **difficulty levels**; the level is set automatically (see Unlocking) and is not chosen by the
 player. Each tool belongs to exactly one of them:
 
 | Level | Name | Tools | Meaning |
@@ -187,6 +189,53 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - The three levels, the automatic choice of the level and the progress bar are the same as for the
   Wissens-Check, with the progress of this game. Each answer is saved for the player as described under
   Saving.
+
+## SQL-Bausteine
+
+**Goal:** learn to write PostgreSQL queries by putting their parts in the right order.
+
+- The Game tab offers SQL-Bausteine as a third game. It is independent of the set and has no levels,
+  no unlocking and no saved progress.
+- A task names the wanted result and the tables with their columns, in German.
+- The tiles are single words or fragments, such as `SELECT`, `FROM`, `ORDER BY` or `IS NULL`. They
+  are shown in a mixed order. Some tiles are **distractors**: the query does not use them.
+- The player clicks the tiles in the order of the query. A click on a tile in the answer removes it
+  again. "Zurücksetzen" puts all tiles back.
+- "Prüfen" compares the answer with the query of the task, tile by tile. Right: "Richtig!". Wrong:
+  the correct query is shown.
+- A distractor in the answer makes the answer wrong. "Weiter" goes to the next task; after the last
+  task the result is shown ("x von y Abfragen richtig").
+- The tasks are static content in `frontend/src/features/game/lib/sql-tasks.ts`.
+
+## Code beurteilen
+
+**Goal:** learn to spot weaknesses in code by judging statements about a short example.
+
+- The Game tab offers Code beurteilen as a fourth game. It is independent of the set and has no
+  levels, no unlocking and no saved progress.
+- A task shows a short code example in Python, SQL or TypeScript and a German question.
+- Under the example there are several statements. **Any number of them can be right**: none, one,
+  several or all. The player marks every statement that is right.
+- "Prüfen" shows for each statement whether it is right or wrong, with a reason. A task counts as
+  solved only when exactly the right statements are marked.
+- "Weiter" goes to the next example; after the last one the result is shown ("x von y Beispielen
+  richtig beurteilt").
+- The examples are static content in `frontend/src/features/game/lib/code-review-tasks.ts`.
+
+## Memory
+
+**Goal:** connect each tool or programming language with its description.
+
+- The Game tab offers Memory as a fifth game. It has no levels, no unlocking and no saved progress.
+- The cards come from the set chosen above the choice of the game: Tools (all tools except the
+  languages), Programmiersprachen or Eigene Sets. A round uses up to six entries of the set that have
+  a description.
+- Each entry gives two cards: one with the **name** and one with the **description** (summary).
+- The player turns two cards per move. A pair matches when both cards belong to the same entry and
+  show different sides. A matching pair stays face up; other cards turn back after about one second.
+- The round ends when all pairs are found. The result shows the moves and the wrong pairs.
+- The code is in `frontend/src/features/game/components/memory-board.tsx` and
+  `frontend/src/features/game/lib/memory-deck.ts`.
 
 ## Übersichtskarte
 

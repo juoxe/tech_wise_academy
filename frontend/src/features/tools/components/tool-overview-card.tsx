@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
 import { QueryState } from "@/components/shared/query-state";
-import { areaLabel } from "@/features/game/lib/drop";
-import { ToolIcon, useTool } from "@/features/tools";
+import { ToolIcon } from "@/features/tools/components/tool-icon";
+import { useTool } from "@/features/tools/hooks/use-tool";
+import { categoryLabel } from "@/features/tools/lib/labels";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -25,8 +26,15 @@ function BulletList({ items }: { items: string[] }) {
 
 /* The overview card of one tool or language, like a Quartett card with what a learner should know:
    overview, use cases, key concepts, when to use it and when not, things worth knowing, an example,
-   alternatives and the documentation link. The hints of the games are not shown here. */
-export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
+   alternatives and the documentation link. The hints are only shown with showHints (detail view);
+   the games do not show them, because they are the answers to the cards. */
+export function ToolOverviewCard({
+  toolKey,
+  showHints = false,
+}: {
+  toolKey: string;
+  showHints?: boolean;
+}) {
   const tool = useTool(toolKey);
   const detail = tool.data;
   const content = detail?.content;
@@ -50,7 +58,7 @@ export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
                 {detail.name}
               </h3>
               <p className="text-base text-muted-foreground">
-                {areaLabel(detail.category)} · Level {detail.level}
+                {categoryLabel(detail.category)} · Level {detail.level}
               </p>
             </div>
           </header>
@@ -91,6 +99,12 @@ export function ToolOverviewCard({ toolKey }: { toolKey: string }) {
                 <BulletList items={content.good_to_know} />
               </Section>
             </>
+          )}
+
+          {showHints && detail.hints.length > 0 && (
+            <Section title="Hinweise">
+              <BulletList items={detail.hints} />
+            </Section>
           )}
 
           {detail.examples.length > 0 && (

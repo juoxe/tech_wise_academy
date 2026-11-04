@@ -16,12 +16,13 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
-| [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | TODO |
+| [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | IN PROGRESS |
 | [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
 | [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
 | [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
+| [TWA-13](#epic-twa-13--code-quality-and-security) | Code Quality and Security | – | TODO |
 
-**Next free epic number: 13**
+**Next free epic number: 14**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -829,10 +830,12 @@ The epic has no milestone and no stories yet; it is planned in detail when MS 2 
 
 **Description**
 
-As a learner, we want to find out which tools we already know by playing two games, so that we know
-where to learn. The games are Wissens-Check (falling cards onto the areas) and Karten abräumen
-(clearing the field by naming the tool from its hints). Each game has three levels; the level is set
-automatically, and the level after one is open when every tool of the level before is learned.
+As a learner, we want to find out which tools we already know by playing five games, so that we know
+where to learn. The Game tab offers five games: Wissens-Check and Karten abräumen (three levels each,
+saved progress), SQL-Bausteine (tiles, no levels, no progress), Code beurteilen (multiple choice, no
+levels, no progress) and Memory (pairs of names and descriptions, no levels, no progress). In the games
+with levels the level is set automatically, and the level after one is open when every tool of the
+level before is learned.
 
 **Affected components:** frontend (Game tab, feature `game`), backend (feature `training`),
 documentation
@@ -840,9 +843,9 @@ documentation
 **Working documents:** [game-play](../game-play.md)
 
 **Note:** the rules are documented only in [game-play.md](../game-play.md). J assigned the epic to
-MS 2. The stories below record what was
-built (commit 71f586e on branch `twa-7-knowledge-games`). The epic stays IN PROGRESS until J has
-reviewed the games in the browser.
+MS 2. The stories below record what was built on branch `twa-7-knowledge-games` (the first games
+were committed in 71f586e; the later stories are in the working tree until J commits them). The epic
+stays IN PROGRESS until J has reviewed all five games in the browser.
 
 ---
 
@@ -1025,6 +1028,118 @@ repository), test `backend/tests/unit/test_training_api.py`, frontend `useResetP
 `frontend/src/features/training/` and the button with confirmation in
 `frontend/src/features/game/pages/game-page.tsx`, rule in `docu/game-play.md` (Saving); checked in
 the browser (bars went from 17 % to 0 %, cancel kept the progress).
+
+---
+
+### TWA-7.7 – SQL Tile Game (Postgres)
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner who wants to learn SQL queries with PostgreSQL has no game for it. The knowledge games only
+ask for tools and languages; nothing trains the building blocks of a query (for example ORDER BY) or
+the order in which they are written.
+
+**Action Steps**
+
+1. Add a third game "SQL-Bausteine" to the Game tab, as a separate section with its own start button,
+   next to the two existing games.
+2. Show tasks in German: each task names the result a query should produce; the player builds the SQL
+   statement from tiles (single words or fragments such as SELECT, FROM, WHERE, ORDER BY).
+3. Show the tiles in a mixed order, including tiles that are not used in the solution (distractors).
+4. The player clicks tiles in the order of the query; a clicked tile moves to the answer line, a click
+   on a tile in the answer line removes it again.
+5. Check the answer against the query, token by token, and show whether it is correct, with the
+   correct query after a wrong answer.
+6. Keep the tasks as static content in the frontend; no progress is saved in this story.
+7. Document the rules in docu/game-play.md (new section "SQL-Bausteine").
+
+**Acceptance Criteria**
+
+- The Game tab offers "SQL-Bausteine" as a third game with its own start button; the two existing
+  games are unchanged.
+- Each task shows a German description of the wanted result and a set of tiles in a mixed order.
+- The tiles include at least one tile that the solution does not use.
+- A tile is moved to the answer line by a click and removed from it by a click on it.
+- A distractor tile is accepted in the answer line, but the check fails when it is used.
+- "Prüfen" says whether the query is correct; after a wrong answer the correct query is shown.
+- The player can go to the next task and reset the current answer.
+- The texts are German; the code and this story are English.
+- The rules are documented in docu/game-play.md.
+
+**Result:** implemented in `frontend/src/features/game/components/sql-tile-board.tsx`, `frontend/src/features/game/lib/sql-tasks.ts` (five tasks, PostgreSQL) and `frontend/src/features/game/pages/game-page.tsx` (third game in the choice of the game); rules in [game-play.md](../game-play.md), section SQL-Bausteine. Checked: typecheck, lint and format check pass; in the browser the correct query of the first task is accepted as "Richtig!". Open for J: the browser review of the game and the epic description, see below.
+
+---
+
+### TWA-7.8 – Code Review Multiple Choice
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner who reads code cannot yet tell which parts of a code example are weak (for example SQL
+injection or a password in the code). No game trains this judgement; the learner only reads the code,
+and there is no way to see which statements about it are right.
+
+**Action Steps**
+
+1. Add a fourth game "Code beurteilen" to the Game tab, with its own start button, next to the other
+   games; it has no levels and no saved progress.
+2. Show a short code example per task (Python, SQL and TypeScript) with a German question.
+3. Show several statements per example; any number of them can be right, from none to all.
+4. The learner marks the statements that are right and checks the answer; the check shows for each
+   statement whether it was right and why.
+5. Keep the examples as static content in the frontend.
+6. Document the rules in [game-play.md](../game-play.md) (section "Code beurteilen").
+
+**Acceptance Criteria**
+
+- The Game tab offers "Code beurteilen" as a further game with its own start button; the other games
+  are unchanged.
+- Each task shows a code example and statements; the learner can mark several statements.
+- A task counts as solved only when exactly the right statements are marked.
+- After the check every statement shows whether it was right, with a short reason.
+- The texts are German; the code and this story are English.
+- The rules are documented in docu/game-play.md.
+
+**Result:** implemented in `frontend/src/features/game/components/code-review-board.tsx`, `frontend/src/features/game/lib/code-review-tasks.ts` (five examples: Python, SQL, TypeScript) and `frontend/src/features/game/pages/game-page.tsx` (fourth game in the choice of the game); rules in [game-play.md](../game-play.md), section Code beurteilen. Checked: typecheck, lint and format check pass; in the browser the first example is accepted when both right statements are marked, and a wrong selection is rejected.
+
+---
+
+### TWA-7.9 – Memory
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner who knows a tool by its name cannot yet practise connecting it to its meaning. The games
+check the area, the hints or the name, but no game pairs a tool or language with its description.
+
+**Action Steps**
+
+1. Add a fifth game "Memory" to the Game tab, with its own start button; it has no levels and no
+   saved progress.
+2. Lay out face-down cards: for each of six tools or languages of the chosen set, one card shows the
+   name and one card shows the description (summary).
+3. The learner turns two cards per move; a pair matches when both cards belong to the same tool or
+   language. Non-matching cards turn back after a short time.
+4. At the end show the number of moves and of wrong pairs.
+5. Use the tools and languages of the set chosen in the Game tab; no new data.
+6. Document the rules in docu/game-play.md (section "Memory").
+
+**Acceptance Criteria**
+
+- The Game tab offers "Memory" as a fifth game with its own start button; the other games are
+  unchanged.
+- A round shows six pairs: a name card and a description card of the same tool or language.
+- Two cards that match stay face up; two that do not match turn back.
+- The round ends when all pairs are found, with the number of moves and wrong pairs.
+- The cards come from the set chosen in the Game tab.
+- The texts are German; the code and this story are English.
+- The rules are documented in docu/game-play.md.
+
+**Result:** implemented in `frontend/src/features/game/components/memory-board.tsx`, `frontend/src/features/game/lib/memory-deck.ts` and `frontend/src/features/game/pages/game-page.tsx` (fifth game in the choice of the game); the shared shuffle moved to `frontend/src/features/game/lib/shuffle.ts`. Rules in [game-play.md](../game-play.md), section Memory. Checked: typecheck, lint and format check pass; in the browser the round shows 12 cards (six pairs), a move and a wrong pair are counted, and non-matching cards turn back. A matching pair was not clicked in the browser.
 
 ---
 
@@ -1285,7 +1400,7 @@ better approach the interview sets are of little use. See
 
 ## Epic TWA-9 – Generalised Overview with Create, Edit, Delete and Detail View
 
-**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -1309,7 +1424,11 @@ and editing rights (TD-17); no technology is decided here. J assigned the epic t
 
 ### TWA-9.1 – Generic Overview Component
 
-**Status:** TODO
+**Status:** DONE
+
+**Result:** `DataTable` in `frontend/src/components/shared/data-table.tsx`; the Toolübersicht uses it
+(`features/tools/components/tools-table.tsx`). Category and paradigm names come from
+`features/tools/lib/labels.ts`; the game uses the same names.
 
 **Problem Description**
 
@@ -1339,7 +1458,11 @@ overview (language set, own sets, other data) would have to be built again.
 
 ### TWA-9.2 – Detail View
 
-**Status:** TODO · **Depends on:** TWA-9.1
+**Status:** DONE · **Depends on:** TWA-9.1
+
+**Result:** a click on a row opens the detail view above the table (`data-sets-tab.tsx`), with the
+shared `ToolOverviewCard` (moved to `features/tools/components/tool-overview-card.tsx`, now with the
+hints in this view only). "Schließen" returns to the overview.
 
 **Problem Description**
 
@@ -1940,3 +2063,182 @@ player sees it for the cards they got wrong.
 - A card of "Karten abräumen" counts as wrong with at least one mistake.
 - The rules are only in game-play.md.
 - Type check, lint and format check pass.
+
+---
+
+## Epic TWA-13 – Code Quality and Security
+
+**Status:** TODO
+
+**Description**
+
+As a developer, we want the code to be checked automatically for quality and security problems
+before and after each change, so that weaknesses are found early and not by a learner or an
+attacker.
+
+Every tool named in the stories is a new technology: under CLAUDE.md no tool is installed before J has decided it (see TWA-13.1).
+
+**Affected components:** repository tooling (pre-commit, CI), backend, frontend, documentation
+
+---
+
+### TWA-13.1 – Decide the Tooling for Quality and Security
+
+**Status:** TODO
+
+**Problem Description**
+
+The repository has Ruff, ty, import-linter and pytest for the backend and ESLint, Prettier and tsc
+for the frontend, but no hook runs before a commit, no static security analysis, no secret scan, no
+dependency audit and no CI run.
+
+**Action Steps**
+
+1. Write an ADR proposal (status proposed) with options for the pre-commit runner, static security
+   analysis (for example Semgrep, or Ruff security rules plus ESLint security plugins), secret
+   scanning (for example gitleaks), dependency audit (for example pip-audit, npm audit) and the CI
+   runner.
+2. Ask J to decide topic by topic.
+3. Record the decisions in `docu/adr/open-decisions.md`.
+
+**Acceptance Criteria**
+
+- Each tool area has an accepted or rejected decision, with J's name and date.
+- No tool is installed before its decision.
+
+---
+
+### TWA-13.2 – Pre-Commit Checks
+
+**Status:** TODO · **Depends on:** TWA-13.1
+
+**Problem Description**
+
+A commit can contain code that is not formatted, not linted or has secrets, because the checks are
+only run by hand.
+
+**Action Steps**
+
+1. Add the hook runner decided in TWA-13.1.
+2. Run the formatter and linter of the changed backend and frontend files.
+3. Run the secret scan on staged files.
+4. Document how to install the hooks in the developer README.
+
+**Acceptance Criteria**
+
+- A commit with an unformatted file or a secret is rejected.
+- The hooks run in under a minute on a normal change.
+- The README describes the setup.
+
+---
+
+### TWA-13.3 – Static Security Analysis
+
+**Status:** TODO · **Depends on:** TWA-13.1
+
+**Problem Description**
+
+No tool looks for common weaknesses in the code, such as SQL injection, unsafe HTML output or unsafe
+file paths.
+
+**Action Steps**
+
+1. Add the static analysis tool decided in TWA-13.1 with rules for Python and TypeScript.
+2. Run it over backend and frontend.
+3. Fix or name each finding; document accepted false positives with a reason in the code.
+
+**Acceptance Criteria**
+
+- The tool runs in the pre-commit checks or in CI.
+- Every finding is fixed or listed with a reason.
+- No finding is silenced without a reason.
+
+---
+
+### TWA-13.4 – Dependency Audit
+
+**Status:** TODO · **Depends on:** TWA-13.1
+
+**Problem Description**
+
+Known vulnerabilities in libraries are not found, because the dependencies are never checked against
+vulnerability databases.
+
+**Action Steps**
+
+1. Add the audit of backend and frontend dependencies decided in TWA-13.1.
+2. Decide with J how often the audit runs and how updates are proposed (manual, or an update bot).
+3. Document the policy in `docu/architecture/techstack.md`.
+
+**Acceptance Criteria**
+
+- The audit runs in CI.
+- Open high-severity findings are fixed or named in the backlog.
+
+---
+
+### TWA-13.5 – Secret Scan and Environment Check
+
+**Status:** TODO · **Depends on:** TWA-13.1
+
+**Problem Description**
+
+The `.env` file is ignored by git, but nothing checks that no secret reached a commit or a Docker
+image.
+
+**Action Steps**
+
+1. Scan the history and the working tree once for secrets with the tool decided in TWA-13.1.
+2. Check the ignore rules of git and of the Docker build context that `.env`, `.env.*` files and local data are excluded; if no `.dockerignore` exists, create it in this story (it must exclude `.env` and `.env.*` files).
+3. Document where secrets are kept.
+
+**Acceptance Criteria**
+
+- The scan finds no secret, or each finding is removed and rotated.
+- The ignore rules for `.env`, `.env.*` files and local data are checked in git and in the Docker
+  build context; a `.dockerignore` exists and excludes `.env` and `.env.*` files.
+
+---
+
+### TWA-13.6 – Continuous Integration
+
+**Status:** TODO · **Depends on:** TWA-13.1, TWA-13.3, TWA-13.4
+
+**Problem Description**
+
+The checks run only when a developer remembers them; a push is not checked.
+
+**Action Steps**
+
+1. Decide with J where the CI runs (open decision in TWA-13.1).
+2. Run format check, lint, type check, backend tests and the analysis from TWA-13.3 and the audit
+   from TWA-13.4 on each push.
+3. Show the result on the pull request.
+
+**Acceptance Criteria**
+
+- A push that breaks one of the checks shows as failed.
+- The pipeline is documented.
+
+---
+
+### TWA-13.7 – Code Quality Rules
+
+**Status:** TODO · **Depends on:** TWA-13.1
+
+**Problem Description**
+
+The rules are set but not all relevant ones are on: the backend uses Ruff with E, F, I, B, UP and SIM
+only, there is no rule for complexity or unused code, and the frontend has no check for unused
+exports.
+
+**Action Steps**
+
+1. Review the rule sets of Ruff and ESLint with J.
+2. Add the agreed rules and fix the findings in the code within the change.
+3. Document the rules in `docu/architecture/techstack.md`.
+
+**Acceptance Criteria**
+
+- The agreed rules run in the checks.
+- Every new finding is fixed in the same change.

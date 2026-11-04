@@ -4,8 +4,9 @@ Status: applied in `frontend/src/styles/globals.css`. Basis: Tech Tool Trainer
 [ADR-0008](../../../Tech_Tool_Trainer/docu/adr/0008-frontend-design.md) (colours, dark mode as
 default, base size 17 px). Decision for Tech Wise Academy: see [ADR-0003](../adr/0003-frontend-stack.md),
 TD-31. The greens and the orange for wrong answers were chosen by J. On 2026-11-02 J asked for
-stronger greens and for the green instead of the olive as the primary colour. Sunflower yellow
-is only a third colour in the card icon (logo).
+stronger greens and for the green instead of the olive as the primary colour. On 2026-11-03 J asked for
+more yellow and light green: light green is `primary`, yellow is `secondary` (progress bars). J then
+asked for dark green headings: the title and all headings use the role `heading`.
 
 ## Rules
 
@@ -21,19 +22,29 @@ is only a third colour in the card icon (logo).
 
 | Role | Dark mode | Light mode |
 |------|-----------|------------|
-| `primary` | `#27ae60` (green) | `#15803d` (dark green) |
-| `ring` | `#27ae60` (green) | `#22a06b` (green) |
+| `primary` (buttons, tab bar, focus) | `#9ccc65` (light green) | `#4d7c0f` (dark lime green, for contrast on white) |
+| `heading` (title, headings `h1`, `h2`) | `#5a8f29` (dark green, for contrast on the dark page) | `#4d7c0f` (dark lime green, for contrast on white) |
+| `secondary` (progress bars) | `#f1c40f` (sunflower yellow) | `#a16207` (dark yellow, for contrast on white) |
+| `ring` (focus) | `#9ccc65` (light green) | `#4d7c0f` (dark lime green) |
 | `status-done` (correct answers, done) | `#8bc34a` (olive green) | green, see `globals.css` |
 | `destructive` (wrong answers, errors) | `#f97316` (saturated orange) | `#c2410c` (darker orange, for contrast on white) |
 
-The logo `frontend/public/logo.svg` shows three cards stepping up to the right: the primary green
-`#27ae60` at the left, the olive `#8bc34a` in front of it and, as a third colour, sunflower yellow
-`#f1c40f` at the top right, in front of both. The yellow is used nowhere else. It is shown next to the app
-title and as the browser icon. It is a brand asset, not a component colour.
+Contrast (WCAG): text on `primary` with `primary-foreground` 10.0:1 (dark) and 4.8:1 (light).
+`heading` on the page about 4.7:1 (dark) and about 5:1 (light), estimated by hand and to be confirmed by `design-token-checker`. The tab text in `primary` 10.6:1 (dark) and 4.8:1 (light).
 
-Main actions (Starten, Nochmal spielen, Nächste Runde) and the page heading of the Game tab use
-`primary`. `status-done` is only used for status: progress bars and correct answers. Focus outlines are green.
-The tab bar has no outline: the active tab has green text and a green underline.
+The logo `frontend/public/logo.svg` shows three cards stepping up to the right: the light green
+`#9ccc65` at the left, the olive `#8bc34a` in front of it and, as a third colour, sunflower yellow
+`#f1c40f` at the top right, in front of both. The logo colours are brand assets. The component colours are
+the tokens above. Light green is `primary`, dark green is `heading`, yellow is `secondary`, olive stays `status-done`.
+
+Use of the colours:
+
+- **Primary (light green):** buttons (Starten, Nochmal spielen, Nächste Runde) and the tab bar: the active tab has
+  green text and a green underline. Focus outlines are green.
+- **Heading (dark green):** the title and the headings (`h1`, `h2`, set once in `globals.css`, so components do
+  not need a colour class). A component can still override the colour with a `text-*` class.
+- **Secondary (yellow):** progress bars (game progress, area progress).
+- **Status-done (olive):** only for correct answers and done states, never for progress bars.
 
 The other roles are taken from the Tech Tool Trainer as they are in `globals.css`.
 

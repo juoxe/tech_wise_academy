@@ -324,7 +324,7 @@ function Summary({
               </div>
               <div className="flex h-5 w-full overflow-hidden rounded-md bg-muted">
                 <div
-                  className="h-full bg-status-done"
+                  className="h-full bg-secondary"
                   style={{ width: `${learnedPercent}%` }}
                 />
               </div>
