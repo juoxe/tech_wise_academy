@@ -4,9 +4,15 @@ import {
   weightFor,
   type Weights,
 } from "@/features/game/lib/weighted";
-import { categoryLabel, type ToolSummary } from "@/features/tools";
+import {
+  categoryLabel,
+  paradigmLabel,
+  type Paradigm,
+  type ToolSummary,
+} from "@/features/tools";
 
-export type Category = ToolSummary["category"];
+/* The five areas of the tools; the programming languages are an area of their own ("LANGUAGE"). */
+export type Category = Exclude<ToolSummary["category"], "LANGUAGE">;
 
 export const CATEGORIES: readonly Category[] = [
   "DEVOPS",
@@ -16,8 +22,8 @@ export const CATEGORIES: readonly Category[] = [
   "AI_DATA",
 ];
 
-/* The areas of the second set, the programming languages: they are sorted by paradigm. */
-export const PARADIGMS: readonly Category[] = [
+/* The floor of the set of the programming languages: the languages are sorted by paradigm. */
+export const PARADIGMS: readonly Paradigm[] = [
   "OBJECT_ORIENTED",
   "FUNCTIONAL",
   "PROCEDURAL",
@@ -25,19 +31,27 @@ export const PARADIGMS: readonly Category[] = [
   "MULTI_PARADIGM",
 ];
 
-/* An area of the floor. In a mixed set, such as an interview set, the languages share one area. */
-export type Area = Category | "LANGUAGE";
+/* An area of the floor: an area of the tools, a paradigm, or in a mixed set, such as an interview
+   set, the one area "LANGUAGE" that all languages share. */
+export type Area = Category | Paradigm | "LANGUAGE";
 
 export const MIXED_AREAS: readonly Area[] = [...CATEGORIES, "LANGUAGE"];
 
 /* The name shown for an area: the category or paradigm name, or "Sprachen" for the languages of a mixed set. */
 export function areaLabel(area: Area): string {
-  return area === "LANGUAGE" ? "Sprachen" : categoryLabel(area);
+  if (area === "LANGUAGE") {
+    return "Sprachen";
+  }
+  return (PARADIGMS as readonly string[]).includes(area)
+    ? paradigmLabel(area as Paradigm)
+    : categoryLabel(area as Category);
 }
 
-/* The area a card belongs to on this floor. */
+/* The area a card belongs to on this floor: the category of a tool, the paradigm of a language on
+   the paradigm floor, and "LANGUAGE" for a language on a floor with the areas of the tools. */
 export function areaOf(tool: ToolSummary, areas: readonly Area[]): Area {
-  return areas.includes(tool.category) ? tool.category : "LANGUAGE";
+  const own = tool.category === "LANGUAGE" ? tool.paradigm : tool.category;
+  return own && areas.includes(own) ? own : "LANGUAGE";
 }
 
 export const TIME_LIMIT_SECONDS = 90;

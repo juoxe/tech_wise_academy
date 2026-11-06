@@ -1,9 +1,9 @@
 import type { ToolSummary } from "@/features/tools";
 import {
-  DEFAULT_SCORE,
   SCORES,
-  STACK_SCORE,
-  scoreOf,
+  effectiveScore,
+  inStack,
+  isHidden,
   type ProgressEntry,
   type RoundGame,
   type RoundResult,
@@ -61,7 +61,7 @@ export function describeResult(
 }
 
 export function isLanguage(tool: ToolSummary): boolean {
-  return !(AREAS as readonly string[]).includes(tool.category);
+  return tool.category === "LANGUAGE";
 }
 
 function percentOf(part: number, whole: number): number {
@@ -103,21 +103,6 @@ export function summarize(
   };
 }
 
-/* The progress of the tools per level; the programming languages have no level and are left out. */
-export function byLevel(
-  tools: readonly ToolSummary[],
-  entries: readonly ProgressEntry[],
-  levels: readonly number[],
-): { level: number; share: Share }[] {
-  return levels.map((level) => ({
-    level,
-    share: shareOf(
-      tools.filter((tool) => !isLanguage(tool) && tool.level === level),
-      entries,
-    ),
-  }));
-}
-
 /* The progress of the tools per area. */
 export function byArea(
   tools: readonly ToolSummary[],
@@ -139,36 +124,34 @@ export function stackShare(
   scores: Scores,
 ): Share {
   return shareOf(
-    tools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE),
+    tools.filter((tool) => inStack(scores, tool)),
     entries,
   );
 }
 
-/* The progress per importance score. Empty as long as every tool has the default score, so that the
-   statistics look as before until the player sets a score. Scores without a tool are left out. */
+/* The progress per effective importance score (the own score, otherwise the default priority),
+   highest first. Groups without a tool are left out. */
 export function byScore(
   tools: readonly ToolSummary[],
   entries: readonly ProgressEntry[],
   scores: Scores,
 ): { score: Score; label: string; share: Share }[] {
-  if (tools.every((tool) => scoreOf(scores, tool.key) === DEFAULT_SCORE)) {
-    return [];
-  }
   return [...SCORES]
     .reverse()
     .map(({ score, label }) => ({
       score,
       label,
       share: shareOf(
-        tools.filter((tool) => scoreOf(scores, tool.key) === score),
+        tools.filter((tool) => effectiveScore(scores, tool) === score),
         entries,
       ),
     }))
     .filter(({ share }) => share.total > 0);
 }
 
-/* The tools with the most wrong answers: highest first, then the higher importance score, then by
-   name. Tools without a wrong answer and hidden tools (score 0) are left out. */
+/* The tools with the most wrong answers: highest first, then the higher importance score (the own score, otherwise
+   the default priority), then by name. Tools without a wrong answer and hidden tools (score 0) are left
+   out. */
 export function toolsToRepeat(
   tools: readonly ToolSummary[],
   entries: readonly ProgressEntry[],
@@ -181,14 +164,14 @@ export function toolsToRepeat(
       const tool = byKey.get(entry.tool_key);
       return tool !== undefined &&
         entry.wrong_total > 0 &&
-        scoreOf(scores, tool.key) > 0
+        !isHidden(scores, tool)
         ? [{ tool, wrong: entry.wrong_total, correct: entry.correct_total }]
         : [];
     })
     .sort(
       (a, b) =>
         b.wrong - a.wrong ||
-        scoreOf(scores, b.tool.key) - scoreOf(scores, a.tool.key) ||
+        effectiveScore(scores, b.tool) - effectiveScore(scores, a.tool) ||
         a.tool.name.localeCompare(b.tool.name, "de"),
     )
     .slice(0, limit);

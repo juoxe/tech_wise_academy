@@ -2,19 +2,25 @@ import { DataTable, type Column } from "@/components/shared/data-table";
 import { ToolIcon } from "@/features/tools/components/tool-icon";
 import type { ToolSummary } from "@/features/tools/api/tools-api";
 import { PrioritySelect } from "@/features/tools/components/priority-select";
-import { categoryLabel } from "@/features/tools/lib/labels";
-import { scoreOf, type Score, type Scores } from "@/features/training";
+import { areaWithParadigm } from "@/features/tools/lib/labels";
+import { scoreOf, type MaybeScore, type Scores } from "@/features/training";
 
 /* The columns of the Toolübersicht. Hints and examples are not part of the list and not shown here.
    The column Priorität holds the importance score of the player; it can be changed in the row. */
 function columnsOf(
   scores: Scores,
-  onScore: (key: string, score: Score) => void,
+  onScore: (key: string, score: MaybeScore) => void,
 ): readonly Column<ToolSummary>[] {
   return [
     {
       header: "Icon",
-      cell: (tool) => <ToolIcon icon={tool.icon} category={tool.category} />,
+      cell: (tool) => (
+        <ToolIcon
+          icon={tool.icon}
+          category={tool.category}
+          paradigm={tool.paradigm}
+        />
+      ),
     },
     {
       header: "Schlüssel",
@@ -28,7 +34,7 @@ function columnsOf(
     },
     {
       header: "Kategorie",
-      cell: (tool) => categoryLabel(tool.category),
+      cell: (tool) => areaWithParadigm(tool),
     },
     {
       header: "Kurzbeschreibung",
@@ -40,6 +46,7 @@ function columnsOf(
         <PrioritySelect
           label={`Priorität von ${tool.name}`}
           value={scoreOf(scores, tool.key)}
+          defaultScore={tool.default_priority}
           onChange={(score) => onScore(tool.key, score)}
         />
       ),
@@ -66,7 +73,7 @@ export function ToolsTable({
   selectedKey?: string;
   onSelect: (key: string) => void;
   scores: Scores;
-  onScore: (key: string, score: Score) => void;
+  onScore: (key: string, score: MaybeScore) => void;
 }) {
   return (
     <DataTable

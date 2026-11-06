@@ -14,7 +14,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
 | [TWA-6](#epic-twa-6--statistics) | Statistics | MS 2 | DONE |
-| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | DONE |
+| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
 | [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | DONE |
 | [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
@@ -323,6 +323,32 @@ are not written for developers.
 - The README describes how to set up and run the project (after TWA-4).
 - The TODO note in `docu/adr/README.md` is removed.
 - Agent-specific rules are in the workflow skill, not in the READMEs.
+
+---
+
+### TWA-2.7 – Backlog Consistency After the Level Removal
+
+**Status:** DONE
+
+**Problem Description**
+
+After TWA-14.8 removed the levels and TWA-7.15 changed Memory, older stories and the roadmap still
+describe levels, unlocking and "4, 6 or 8 pairs" as if they were current. A reader of the epic
+descriptions and the roadmap gets a wrong picture of the product.
+
+**Action Steps**
+
+1. Find all statements about levels, unlocking, "Nach Level" and the old Memory pair counts.
+2. Correct the ones that describe the current state (epic descriptions, roadmap, acceptance criteria
+   that are still open).
+3. Mark finished older stories as superseded instead of rewriting their history.
+
+**Acceptance Criteria**
+
+- No epic description or roadmap line states levels, unlocking or the old pair counts as current.
+- Finished stories that were changed later carry a note that names the story that changed them.
+
+**Result:** (2026-11-06) epic TWA-6 description and the roadmap line of the statistics now say "per game, area and importance score"; the TWA-14 epic description no longer says that the games ask the tools of a level; the roadmap line "Games per path that unlock one after another" now says without levels and unlocking since TWA-14.8; the TWA-7 epic Note names the open reviews as the only reason for IN PROGRESS. Notes naming the changing story were added to TWA-6.1, TWA-7.3, TWA-7.4 (open point solved by TWA-7.11 and TWA-9.1), TWA-7.5, TWA-7.9, TWA-7.10, TWA-9.2, TWA-9.3, TWA-14.1 and TWA-14.4. History of TWA-1 to TWA-5 and TWA-12.x and the meaning of "difficulty level" in SQL-Bausteine, Code beurteilen and Memory were left unchanged.
 
 ---
 
@@ -815,7 +841,7 @@ skeleton in TWA-4 ("TWA-4: Add project skeleton"); the number TWA-5 stays taken.
 
 **Description**
 
-As a learner, we want to see how our learning progress stands per game, per level and per area, so
+As a learner, we want to see how our learning progress stands per game, per area and per importance score, so
 that we can judge where we stand and what to learn next. A new tab "Statistik" shows the saved
 progress of the two knowledge games (Wissens-Check and Karten abräumen) as numbers and bars, and the
 stored rounds of the other three games.
@@ -869,6 +895,8 @@ and how many answers were right or wrong.
 - The rules are documented in docu/game-play.md.
 
 **Result:** implemented in `frontend/src/features/statistics/` (`lib/statistics.ts`, `pages/statistics-page.tsx`, `index.ts`), the tab in `frontend/src/app/app.tsx`, and the exports `DIFFICULTIES` (feature `game`) and `useTools` (feature `tools`). Rules in [game-play.md](../game-play.md), section Statistik. Checked: typecheck, lint and format check pass; in the browser a throwaway profile with test answers shows the learned tools, answers, levels (94 + 97 + 93) and areas (with the 23 languages 307 tools), and a profile without answers shows "Noch keine Daten". The test profile was deleted again. The error state comes from the shared `QueryState` and was not provoked in the browser.
+
+**Note (2026-11-06):** the grouping "Nach Level" was removed by TWA-14.8; the tab groups by area and by importance score now.
 
 ---
 
@@ -928,17 +956,17 @@ A learner cannot see how the results develop over several rounds there.
 
 ## Epic TWA-7 – Knowledge Games
 
-**Status:** DONE · **Milestone:** MS 2 – Playable MVP
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
 As a learner, we want to find out which tools we already know by playing five games, so that we know
-where to learn. The Game tab offers five games: Wissens-Check and Karten abräumen (three levels each,
-set automatically, saved progress), SQL-Bausteine (tiles, three difficulty levels chosen by the player,
-no learning progress), Code beurteilen (multiple choice, three difficulty levels chosen by the player, no
-learning progress) and Memory (pairs of names and descriptions, three difficulty levels chosen by the
-player, no learning progress). The results of their rounds are stored (TWA-6.3). In the two knowledge games the level is set automatically, and the level after one is open
-when every tool of the level before is learned.
+where to learn. The Game tab offers five games: Wissens-Check and Karten abräumen (no levels since
+TWA-14.8: one pool drawn by priority, saved progress), SQL-Bausteine (tiles, three difficulty levels
+chosen by the player, no learning progress), Code beurteilen (multiple choice, three difficulty levels
+chosen by the player, no learning progress) and Memory (pairs of names and descriptions, three
+difficulty levels chosen by the player, always 10 pairs, no learning progress). The results of their
+rounds are stored (TWA-6.3).
 
 **Affected components:** frontend (Game tab, feature `game`), backend (feature `training`),
 documentation
@@ -949,6 +977,10 @@ documentation
 MS 2. The stories below record what was built on branch `twa-7-knowledge-games` (the first games
 were committed in 71f586e; the later stories are in the working tree until J commits them).
 Reviewed by J in the browser on 2026-11-06.
+Reopened on 2026-11-06 for the small improvements TWA-7.11 to TWA-7.13; reviewed again by J when they are done.
+TWA-7.11 to TWA-7.13 are done and wait for J's review.
+TWA-7.14 to TWA-7.16 are done and wait for J's review; TWA-7.17 is an idea.
+The open reviews of TWA-7 and TWA-14 are the only reason these epics are still IN PROGRESS.
 
 ---
 
@@ -1031,6 +1063,8 @@ regardless of how much the learner already knows.
 **Result:** implemented in `backend/src/tech_wise_academy/training/`, migrations `0003` to `0005`
 (`backend/migrations/versions/`) and `frontend/src/features/game/pages/game-page.tsx`.
 
+**Note (2026-11-06):** the levels and the unlocking were removed by TWA-14.8; the progress is saved per player and game as before.
+
 ---
 
 ### TWA-7.4 – Programming Language Set
@@ -1065,6 +1099,8 @@ models and tools.
 point:** the Toolübersicht still shows the raw code of the paradigm (e.g. `OBJECT_ORIENTED`) for
 languages.
 
+**Note (2026-11-06):** solved by TWA-7.11 (paradigm as a feature of the language) and TWA-9.1.
+
 ---
 
 ### TWA-7.5 – Overview Card and Review of Wrong Cards
@@ -1092,6 +1128,8 @@ no detailed view of a tool in the games.
 
 **Result:** implemented in `frontend/src/features/game/components/tool-overview-card.tsx` and
 `frontend/src/features/game/components/card-drop-board.tsx`.
+
+**Note (2026-11-06):** the level was removed from the card by TWA-14.8; the card shows the priority instead (TWA-14.3).
 
 ---
 
@@ -1244,6 +1282,8 @@ check the area, the hints or the name, but no game pairs a tool or language with
 
 **Result:** implemented in `frontend/src/features/game/components/memory-board.tsx`, `frontend/src/features/game/lib/memory-deck.ts` and `frontend/src/features/game/pages/game-page.tsx` (fifth game in the choice of the game); the shared shuffle moved to `frontend/src/features/game/lib/shuffle.ts`. Rules in [game-play.md](../game-play.md), section Memory. Checked: typecheck, lint and format check pass; in the browser the round shows 12 cards (six pairs), a move and a wrong pair are counted, and non-matching cards turn back. A matching pair was not clicked in the browser.
 
+**Note (2026-11-06):** the number of pairs was changed by TWA-7.10 and is 10 for every difficulty since TWA-7.15.
+
 ---
 
 ### TWA-7.10 – Difficulty Levels and More Content for the New Games
@@ -1277,6 +1317,206 @@ and an advanced learner get the same tasks, and the games hold too few examples 
 - The texts are German; the code and this story are English.
 
 **Result:** implemented in `frontend/src/features/game/lib/difficulty.ts` (new), `frontend/src/features/game/lib/sql-tasks.ts`, `frontend/src/features/game/lib/code-review-tasks.ts`, `frontend/src/features/game/lib/memory-deck.ts`, the boards `sql-tile-board.tsx`, `code-review-board.tsx`, `memory-board.tsx` and `frontend/src/features/game/pages/game-page.tsx` (difficulty choice). Rules in [game-play.md](../game-play.md), sections SQL-Bausteine, Code beurteilen and Memory. Checked: typecheck, lint and format check pass; in the browser, before the content was extended, the SQL-Bausteine levels showed their own task counts (Kennen 4, Expert 3) and Code beurteilen Kennen showed 3 examples. With the extended content the browser shows SQL 6/6/5 tasks and Code 5/6/5 examples for Kennen/Intermediate/Expert. Checked in the browser on 2026-11-06 with the backend running: Memory shows 4, 6 and 8 pairs for Kennen, Intermediate and Expert.
+
+**Note (2026-11-06):** the number of pairs of Memory is 10 for every difficulty since TWA-7.15.
+
+---
+
+### TWA-7.11 – Programming Languages as Their Own Area
+
+**Status:** DONE
+
+**Result:** implemented: migration `0013_language_paradigm.py` adds the category `LANGUAGE` and the column `tool.paradigm` (new check: a language has a paradigm, every other tool has none; reversible, the downgrade and upgrade were run on the real database), the enum `Paradigm`, the field `paradigm` in the API and the tool form (rule `check_draft`, 2 new tests; 61 backend tests pass). The seed file stays as it is. The frontend shows the area "Programmiersprachen" and the paradigm as a feature (`areaWithParadigm`), the icon of a language without a logo is the one of its paradigm, the Wissens-Check of the set Programmiersprachen keeps the paradigms as the floor (`areaOf` in `game/lib/drop.ts`). Checked in the browser: 23 languages with a paradigm and 284 tools without, the overview shows "Programmiersprachen · Prozedural", the paradigm floor is shown, the tech stack with a language gets the area "Sprachen". Data model, API documentation and game-play.md are updated.
+
+**Problem Description**
+
+The programming languages are filed under five "categories" (objektorientiert, funktional, ...) that
+sit next to the areas DevOps, Backend, Frontend, Security and KI & Daten, although they describe how
+a language works, not what area it belongs to.
+
+**Action Steps**
+
+1. Add the category (area) `LANGUAGE` "Programmiersprachen"; the paradigm (objektorientiert,
+   funktional, prozedural, deklarativ, multiparadigma) becomes a separate attribute `paradigm` of a
+   language (migration 0013; the seed file stays as it is).
+2. Rules: a language has a paradigm, a tool of another area has none.
+3. API and form: category and paradigm as separate fields.
+4. The Toolübersicht shows the area "Programmiersprachen" and the paradigm as a feature of the
+   language; filters use the area.
+5. The Wissens-Check of the set Programmiersprachen keeps the paradigms as the areas of the floor.
+6. Update the data model, the API documentation and game-play.md.
+
+**Acceptance Criteria**
+
+- No tool has a paradigm as its category.
+- Every language has a paradigm.
+- The Toolübersicht, the form, the games and the Statistik work as before.
+- The migration runs on the existing database.
+- The documentation is updated.
+- The checks pass.
+
+---
+
+### TWA-7.12 – Progress Bar Colours
+
+**Status:** DONE
+
+**Result:** implemented: the roles `progress-1` to `progress-5` in `globals.css` (red, orange, yellow, light green, dark green, light and dark mode, 3:1 or more on the track, computed), the shared component `frontend/src/components/shared/progress-bar.tsx` (steps of 20 %: 0 to 19, 20 to 39, 40 to 59, 60 to 79, 80 to 100 %) used in the Game tab, in the board and in the Statistik, and `docu/architecture/design-concept.md`. Checked in the browser: all five roles resolve to their colours, a bar at 26 % is orange; the design-token-checker found no fixed colour and no remaining yellow progress bar. Light `progress-4` has only 0.02 above the 3:1 limit on the track.
+
+**Problem Description**
+
+All progress bars have the same yellow, so the learner cannot see at a glance how far a game or area
+is.
+
+**Action Steps**
+
+1. Add five colour roles for progress to globals.css and the design concept: red (0 to 19 %),
+   orange (20 to 39 %), yellow (40 to 59 %), light green (60 to 79 %), dark green (80 to 100 %),
+   each readable on the track in light and dark mode.
+2. One shared progress bar component takes the percent and picks the colour; use it in the Game
+   tab, the board and the Statistik.
+3. Update docu/architecture/design-concept.md.
+
+**Acceptance Criteria**
+
+- The colour of a bar follows the five 20 % steps.
+- The roles exist for light and dark mode with enough contrast against the track.
+- No bar keeps its own colour code.
+- The design-token-checker finds no violation.
+
+---
+
+### TWA-7.13 – Heading Colours
+
+**Status:** DONE
+
+**Result:** implemented: the roles `heading` (the dark green of the logo, `#27ae60`; in light mode the darker shade `#1d8348` for contrast; also used for "Wise" in the title) for `h1` and `h2` and the new role `subheading` (light green) for `h3` and `h4`, both set once in `globals.css`, no component sets a heading colour. Contrast on `background` and `card` is 4.6:1 or more in both modes; on a muted surface the light subheading (4.4:1) and the dark heading (4.3:1) fall short, so headings are not placed on `muted` (no heading sits on it today; written in the design concept). Checked in the browser in dark mode: h1, h2 and "Wise" are `#27ae60`, h3 and h4 `#9ccc65` (before J asked for the logo green on 2026-11-06: `#5a8f29`). Light mode was checked by computation, not in the browser.
+
+**Problem Description**
+
+All headings share one green, so large and small headings cannot be told apart by colour.
+
+**Action Steps**
+
+1. Two kinds of headings: large headings (h1, h2) in dark green, sub-headings (h3, h4) in light
+   green; both as colour roles for light and dark mode with enough contrast on the background.
+2. Apply them in the global styles.
+3. Update docu/architecture/design-concept.md.
+
+**Acceptance Criteria**
+
+- h1 and h2 use the dark green role, h3 and h4 the light green role.
+- Both pass WCAG AA in light and dark mode.
+- No component sets its own heading colour.
+- The design-token-checker finds no violation.
+
+---
+
+### TWA-7.14 – More SQL Tasks with Joins
+
+**Status:** DONE
+
+**Result:** implemented in `frontend/src/features/game/lib/sql-tasks.ts`: 24 tasks, 8 per difficulty, every task says in full sentences which tables and columns exist ("Die Tabelle customer hat die Spalten id, name, city und created_at."); the tables are customer, orders, product, order_item and employee. Kennen: one table; Intermediate: joins of two or three tables, a join of a table with itself and grouping (7 of 8 tasks use a JOIN); Expert: subqueries, EXISTS, a WITH query, window functions and joins over several tables. A script checked the counts, that no id repeats, that every table in a solution is described in its task and that no distractor equals a solution tile; in the browser the first Intermediate task shows "Aufgabe 1 von 8" and the described tables. The correctness of the 24 queries was checked by reading, not by running them against a database. Rules in game-play.md.
+
+**Problem Description**
+
+SQL-Bausteine has few tasks. The description only names the wanted result without saying which table
+exists, and the difficulty Intermediate does not yet need joins.
+
+**Action Steps**
+
+1. Every task states the table in full sentences, for example "Tabelle customer mit den Spalten id,
+   name, city und created_at".
+2. Add more tasks per difficulty (at least 8 each).
+3. Kennen: single-table queries; Intermediate: more complex queries such as joins of two tables;
+   Expert: more complex still (several joins, subqueries, grouping with HAVING, window functions).
+4. Update game-play.md.
+
+**Acceptance Criteria**
+
+- Each task names its tables and columns.
+- Each difficulty has at least 8 tasks.
+- Intermediate tasks use joins.
+- Expert tasks are harder than Intermediate tasks.
+- The texts are German.
+- The rules are only in game-play.md.
+- The checks pass.
+
+---
+
+### TWA-7.15 – Memory with 10 Pairs and Covering the Cards
+
+**Status:** DONE · **Depends on:** TWA-14.8
+
+**Result:** implemented in `frontend/src/features/game/components/memory-board.tsx` and `lib/memory-deck.ts`: a round always has 10 pairs (20 cards, four columns); two cards that do not match stay open until the player clicks one of them, and no other card can be turned meanwhile; a matching pair stays face up; the difficulty chooses the content by the default priority (Kennen Hoch, Intermediate Normal, Expert Niedrig, filled up with other cards of the set). Checked in the browser: 20 cards and "von 10", two wrong cards stayed open after waiting, a third click did nothing, a click on an open card covered both, and a found pair stayed open. This replaces the 4, 6 or 8 pairs of TWA-7.10. Rules in game-play.md.
+
+**Problem Description**
+
+Memory shows too few cards at once (8 to 16) and turns two cards back by itself, so the player does
+not practise covering them.
+
+**Action Steps**
+
+1. A round always has 10 pairs (20 cards).
+2. Two cards that do not match stay face up until the player covers them by clicking one of them;
+   other cards cannot be turned while two wrong cards are open.
+3. The difficulty no longer changes the number of pairs: Kennen draws from the tools with the default
+   priority Hoch, Intermediate from Normal, Expert from Niedrig; if the set holds too few, the round
+   is filled with other tools of the set.
+4. Update game-play.md (this replaces the 4, 6 or 8 pairs of TWA-7.10).
+
+**Acceptance Criteria**
+
+- A round shows 20 cards.
+- Wrong cards stay open until the player covers them.
+- Matching pairs stay face up.
+- The difficulty chooses the content, not the number of pairs.
+- The texts are German.
+- The checks pass.
+
+---
+
+### TWA-7.16 – Dark Mode Only
+
+**Status:** DONE
+
+**Result:** implemented: the app is dark only (`<html class="dark">` in `frontend/index.html`, no switch); the design concept says that only the dark mode is supported and checked and that the light values in `globals.css` are an unchecked start (idea TWA-7.17). Checked: the design-token-checker was asked to judge dark mode only.
+
+**Problem Description**
+
+The app keeps a light mode that is not tested or wanted for now.
+
+**Action Steps**
+
+1. The app is dark only; no light mode is checked or maintained.
+2. Say so in the design concept.
+
+**Acceptance Criteria**
+
+- The design concept states that only the dark mode is supported.
+- The light token values stay in globals.css as a start for later and are not checked.
+
+---
+
+### TWA-7.17 – Light Mode
+
+**Status:** IDEA
+
+**Problem Description**
+
+The light mode of the colours (headings, progress bars) is not finished and not checked; J wants it
+done "some day".
+
+**Action Steps**
+
+1. Check and fix all colours for the light mode, including the contrast values of the progress bars
+   and headings.
+2. Decide with J whether there is a switch.
+
+**Acceptance Criteria**
+
+- Every colour role passes WCAG AA in the light mode.
+- The design concept lists the light mode values.
 
 ---
 
@@ -1625,6 +1865,8 @@ a tool there. The detailed card `ToolOverviewCard` exists only in the feature `g
 - If `ToolOverviewCard` is reused, it lies in a shared place that both features may import.
 - Type check, lint and format check pass.
 
+**Note (2026-11-06):** the level was replaced by the default priority (TWA-14.8).
+
 ---
 
 ### TWA-9.3 – Create and Edit
@@ -1658,6 +1900,8 @@ database is the source of truth.
 - The UI offers a form to create and edit a tool and shows the validation errors.
 - The API documentation and the data model describe the new endpoints and rules.
 - Type check, lint, format check and the lean tests for the rules pass.
+
+**Note (2026-11-06):** the level was replaced by the default priority (TWA-14.8).
 
 ---
 
@@ -2394,8 +2638,8 @@ exports.
 
 As a learner, we want to give every card a score for how important it is to us, so that we learn our
 own tech stack first and more intensively, and the games and statistics follow what matters to us.
-Today every tool counts the same: the games ask all tools of a level, and only the learning progress
-(learned, correct, wrong) is saved per player.
+Before this epic every tool counted the same: the games asked all tools of a level (the levels were
+removed by TWA-14.8), and only the learning progress (learned, correct, wrong) was saved per player.
 
 **Affected components:** backend (feature `training`, new table), frontend (features `game`,
 `tools`, `statistics`), documentation (game-play.md, data model, API)
@@ -2407,6 +2651,8 @@ Today every tool counts the same: the games ask all tools of a level, and only t
 library or technology is needed. Relation to [TWA-11](#epic-twa-11--own-card-sets) (own card sets):
 the score is a weight per card and per player, a set is a named list of cards; both can exist side
 by side, [TWA-14.1](#twa-141--decide-what-the-score-means) decides how the two meet.
+TWA-14.7 is done and waits for J's review.
+TWA-14.8 is done and waits for J's review.
 
 ---
 
@@ -2440,6 +2686,8 @@ it changes the games. Without these rules backend, UI and games would each guess
 - It is stated how the games, the unlocking of levels and the statistics use the score.
 - It is stated how the score and the own sets (TWA-11) relate.
 - No new technology is introduced.
+
+**Note (2026-11-06):** the unlocking of levels no longer exists since TWA-14.8.
 
 ---
 
@@ -2533,6 +2781,8 @@ tech stack meets many cards that do not matter to them.
 - Level unlocking follows the rule of 14.1.
 - The rules are documented only in game-play.md; texts are German.
 
+**Note (2026-11-06):** the levels and their unlocking were removed by TWA-14.8; "Mein Tech-Stack" is one pool of the effective priority.
+
 ---
 
 ### TWA-14.5 – Use the Score in the Statistics
@@ -2579,6 +2829,80 @@ must still set the scores by hand.
 **Acceptance Criteria**
 
 - To be written when the idea is planned.
+
+---
+
+### TWA-14.7 – Priority Can Be Unset
+
+**Status:** DONE
+
+**Result:** implemented: the score can be `null` ("Nicht gesetzt"); `PUT /api/training/priorities` with `score: null` removes the scores of the given tools, "Normal" is stored like the other scores (`training/model.py`, `repository.py`, `service.py`, `api.py`; 6 tests in `tests/unit/test_training_priorities.py`). In the frontend `features/training/lib/priority.ts` (`MaybeScore`, `weightOf`, `effectiveScore`, `isHidden`, `inStack`), the choice `PrioritySelect` with "Nicht gesetzt" first, the filter "Nicht gesetzt" and the group "Nicht gesetzt" in the Statistik. An unset tool is played like Normal, shown, and not in "Mein Tech-Stack". Checked in the browser against the real database: the default of a tool is "Nicht gesetzt", Normal and Kern were stored, "Nicht gesetzt" removed the row again, the Statistik showed Kern, Normal and Nicht gesetzt; rules in game-play.md (Priority).
+
+**Problem Description**
+
+Today a tool without a stored score reads as "Normal", so the learner cannot tell a tool that was
+rated "Normal" from one that was never rated.
+
+**Action Steps**
+
+1. A tool can have no score ("Nicht gesetzt"); this is the state of every tool at the start and
+   after a reset.
+2. "Normal" becomes a score that can be chosen like the others and is stored.
+3. The API accepts no score (`null`) to remove the stored score of several tools.
+4. In the games an unset tool behaves like Normal (weight 2, shown, not in "Mein Tech-Stack"); the
+   Toolübersicht shows "Nicht gesetzt" and can filter and set it; the Statistik shows the group
+   "Nicht gesetzt".
+5. Update game-play.md (section Priority), the tests and the OpenAPI types.
+
+**Acceptance Criteria**
+
+- A tool has no score until one is chosen.
+- "Normal" and "Nicht gesetzt" are different states.
+- Choosing "Nicht gesetzt" removes the stored score.
+- An unset tool is played like Normal.
+- A reset puts all tools to "Nicht gesetzt".
+- The rules are only in game-play.md.
+- The texts are German.
+- The checks pass.
+
+---
+
+### TWA-14.8 – Default Priority Replaces the Levels
+
+**Status:** DONE
+
+**Result:** implemented: migration `0014_default_priority.py` adds `tool.default_priority` (check 0 to 4), fills it from the level (Kennen 3, Intermediate 2, Expert 1) and removes the column `level` (reversible, run both ways on the real database: 117 tools with 3 (94 of the old level 1 and the 23 languages), 97 with 2, 93 with 1); the field `level` is gone from the model, the API, the tool form, the overview card and the games, and `default_priority` takes its place (the form has "Standard-Priorität"). The own score overrides the default: `PrioritySelect` shows "Standard (Hoch)" and so on, the toolbar has "Auf Standard zurücksetzen" and a filter on tools without an own score, `features/training/lib/priority.ts` has `effectiveScore`, `isHidden`, `inStack`. Wissens-Check and Karten abräumen play one pool per set drawn by the effective priority, without levels and unlocking (`statusOf` in `game-page.tsx`); the Statistik drops "Nach Level" and groups "Nach Priorität" by the effective score. Checked: backend ruff, ty, import-linter and 62 tests pass; frontend typecheck, lint, format and build pass; in the browser against the real database the Tools set held 284 cards, "Mein Tech-Stack" 117, no level text was left, the choice showed "Standard (Hoch)", and the Statistik showed Kern 1, Hoch 116, Normal 97, Niedrig 93. Data model, API documentation and game-play.md are updated.
+
+**Problem Description**
+
+Each tool has a fixed level (Kennen, Intermediate, Expert) that unlocks the games one after another,
+next to the importance score of the player. So two systems say how important a tool is, and the
+learner has to understand both. Decided by J on 2026-11-06: the levels of the tools are turned into
+start priorities and then removed.
+
+**Action Steps**
+
+1. Each tool gets a default priority (migration 0014): level Kennen becomes Hoch (3), Intermediate
+   Normal (2), Expert Niedrig (1); then the column `level` is removed from the table, the API, the
+   tool form and the games.
+2. A player's own score overrides the default; "Nicht gesetzt" now means "use the default"; the
+   choice shows "Standard (Hoch)" and so on.
+3. "Alle Prioritäten zurücksetzen" becomes "Auf Standard zurücksetzen": it removes all own scores and
+   the defaults apply again.
+4. Wissens-Check and Karten abräumen play one pool of all tools of the set drawn by the effective
+   priority, without levels and unlocking; the progress bar counts the set.
+5. The Statistik drops "Nach Level" and groups "Nach Priorität" by the effective score.
+6. Update game-play.md, the data model, the API documentation and the tests.
+
+**Acceptance Criteria**
+
+- Every tool has a default priority taken from its old level.
+- No level is left in the table, the API, the UI or the games.
+- The player's score overrides the default, and a reset restores the defaults.
+- The games have no unlocking.
+- "Mein Tech-Stack" uses the effective priority.
+- The migration runs on the existing database.
+- The checks pass.
 
 ---
 

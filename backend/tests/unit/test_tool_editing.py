@@ -7,7 +7,7 @@ import uuid
 import pytest
 from fastapi.testclient import TestClient
 
-from tech_wise_academy.learning_content.model import Category, Tool, ToolDraft
+from tech_wise_academy.learning_content.model import Category, Paradigm, Tool, ToolDraft
 from tech_wise_academy.learning_content.repository import ordered_pair
 from tech_wise_academy.learning_content.service import (
     ToolKeyTakenError,
@@ -31,13 +31,14 @@ class MemoryStore:
                 key=draft.key,
                 name=draft.name,
                 category=draft.category,
-                level=draft.level,
+                default_priority=draft.default_priority,
                 documentation_url=draft.documentation_url,
                 icon=draft.icon,
                 summaries={"de": draft.summary},
                 hints={"de": draft.hints},
                 examples=draft.examples,
                 contents={} if draft.content is None else {"de": draft.content},
+                paradigm=draft.paradigm,
             )
             for key, draft in self.tools.items()
             if key not in self.deleted
@@ -76,7 +77,7 @@ def _draft(key: str = "docker", name: str = "Docker", **changes: object) -> Tool
         key=key,
         name=name,
         category=Category.DEVOPS,
-        level=1,
+        default_priority=2,
         documentation_url=f"https://example.org/{key}",
         icon=None,
         summary=f"{name} auf Deutsch.",
@@ -115,6 +116,33 @@ def test_the_name_check_ignores_case() -> None:
 
     with pytest.raises(ToolRuleError):
         asyncio.run(service.create_tool(_draft(hints=("das tool DOCKER startet Container.",))))
+
+
+def test_a_language_needs_a_paradigm_and_other_tools_have_none() -> None:
+    service, _ = _service()
+
+    with pytest.raises(ToolRuleError):
+        asyncio.run(service.create_tool(_draft("go", "Go", category=Category.LANGUAGE)))
+    with pytest.raises(ToolRuleError):
+        asyncio.run(service.create_tool(_draft(paradigm=Paradigm.FUNCTIONAL)))
+
+    asyncio.run(
+        service.create_tool(
+            _draft("go", "Go", category=Category.LANGUAGE, paradigm=Paradigm.PROCEDURAL)
+        )
+    )
+    detail = asyncio.run(service.get_tool("go", "de"))
+    assert detail is not None and detail.paradigm is Paradigm.PROCEDURAL
+
+
+def test_the_default_priority_must_be_on_the_scale() -> None:
+    service, _ = _service()
+
+    with pytest.raises(ToolRuleError):
+        asyncio.run(service.create_tool(_draft(default_priority=5)))
+    with pytest.raises(ToolRuleError):
+        asyncio.run(service.create_tool(_draft(default_priority=-1)))
+    asyncio.run(service.create_tool(_draft(default_priority=0)))
 
 
 def test_an_alternative_must_exist_and_not_be_the_tool_itself() -> None:
@@ -186,7 +214,7 @@ def _client() -> TestClient:
 _BODY = {
     "name": "Docker",
     "category": "DEVOPS",
-    "level": 1,
+    "default_priority": 3,
     "documentation_url": "https://docs.docker.com/",
     "summary": "Container-Laufzeit.",
     "hints": ["Startet Container aus Images."],

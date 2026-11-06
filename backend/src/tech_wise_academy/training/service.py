@@ -58,15 +58,17 @@ class TrainingService:
         await self._repository.reset_progress(profile_id, game)
 
     async def list_scores(self, profile_id: uuid.UUID) -> dict[str, int]:
-        """The scores of the player that differ from the default."""
+        """The scores the player has set; a tool that is not listed has no score."""
         return await self._repository.list_scores(profile_id)
 
-    async def set_scores(self, profile_id: uuid.UUID, tool_keys: list[str], score: int) -> None:
-        """Gives all the tools the same importance score."""
+    async def set_scores(
+        self, profile_id: uuid.UUID, tool_keys: list[str], score: int | None
+    ) -> None:
+        """Gives all the tools the same importance score; `None` removes their scores."""
         if not is_valid_score(score):
             raise InvalidScoreError(score)
         await self._repository.set_scores(profile_id, sorted(set(tool_keys)), score)
 
     async def reset_scores(self, profile_id: uuid.UUID) -> None:
-        """All tools of the player go back to the default score."""
+        """All tools of the player go back to "not set"."""
         await self._repository.reset_scores(profile_id)

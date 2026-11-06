@@ -27,12 +27,17 @@ export {
   useSetPriorities,
 } from "@/features/training/hooks/use-priorities";
 export {
-  DEFAULT_SCORE,
+  DEFAULT_LABEL,
   SCORES,
   STACK_SCORE,
+  effectiveScore,
+  inStack,
+  isHidden,
   scoreLabel,
   scoreOf,
   weightOf,
+  type MaybeScore,
+  type PriorityTool,
   type Score,
   type Scores,
 } from "@/features/training/lib/priority";

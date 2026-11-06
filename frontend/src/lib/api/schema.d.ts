@@ -103,7 +103,7 @@ export interface paths {
         };
         /**
          * List Priorities
-         * @description The importance scores that differ from the default (`DEFAULT_SCORE`).
+         * @description The importance scores the player has set; a tool that is not listed has no score.
          */
         get: operations["list_priorities_api_training_priorities_get"];
         /** Set Priorities */
@@ -179,7 +179,7 @@ export interface components {
          * Category
          * @enum {string}
          */
-        Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA" | "OBJECT_ORIENTED" | "FUNCTIONAL" | "PROCEDURAL" | "DECLARATIVE" | "MULTI_PARADIGM";
+        Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA" | "LANGUAGE";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -245,6 +245,12 @@ export interface components {
             explanation: string;
         };
         /**
+         * Paradigm
+         * @description How a programming language works: a feature of a language, not an area of its own.
+         * @enum {string}
+         */
+        Paradigm: "OBJECT_ORIENTED" | "FUNCTIONAL" | "PROCEDURAL" | "DECLARATIVE" | "MULTI_PARADIGM";
+        /**
          * PrioritiesIn
          * @description One score for several tools: a single tool, an area or a whole tech stack.
          */
@@ -252,11 +258,11 @@ export interface components {
             /** Tool Keys */
             tool_keys: string[];
             /** Score */
-            score: number;
+            score: number | null;
         };
         /**
          * PriorityOut
-         * @description A tool with a score that differs from the default.
+         * @description A tool the player has given a score.
          */
         PriorityOut: {
             /** Tool Key */
@@ -325,8 +331,9 @@ export interface components {
             /** Name */
             name: string;
             category: components["schemas"]["Category"];
-            /** Level */
-            level: number;
+            paradigm?: components["schemas"]["Paradigm"] | null;
+            /** Default Priority */
+            default_priority: number;
             /** Documentation Url */
             documentation_url: string;
             /** Icon */
@@ -361,8 +368,9 @@ export interface components {
             /** Name */
             name: string;
             category: components["schemas"]["Category"];
-            /** Level */
-            level: number;
+            paradigm?: components["schemas"]["Paradigm"] | null;
+            /** Default Priority */
+            default_priority: number;
             /** Documentation Url */
             documentation_url: string;
             /** Icon */
@@ -386,14 +394,15 @@ export interface components {
             /** Name */
             name: string;
             category: components["schemas"]["Category"];
-            /** Level */
-            level: number;
+            /** Default Priority */
+            default_priority: number;
             /** Summary */
             summary: string;
             /** Language */
             language: string;
             /** Icon */
             icon: string | null;
+            paradigm: components["schemas"]["Paradigm"] | null;
             /** Documentation Url */
             documentation_url: string;
             /** Hints */
@@ -411,14 +420,15 @@ export interface components {
             /** Name */
             name: string;
             category: components["schemas"]["Category"];
-            /** Level */
-            level: number;
+            /** Default Priority */
+            default_priority: number;
             /** Summary */
             summary: string;
             /** Language */
             language: string;
             /** Icon */
             icon: string | null;
+            paradigm: components["schemas"]["Paradigm"] | null;
         };
         /** ValidationError */
         ValidationError: {

@@ -14,6 +14,12 @@ class Category(StrEnum):
     FRONTEND = "FRONTEND"
     SECURITY = "SECURITY"
     AI_DATA = "AI_DATA"
+    LANGUAGE = "LANGUAGE"
+
+
+class Paradigm(StrEnum):
+    """How a programming language works: a feature of a language, not an area of its own."""
+
     OBJECT_ORIENTED = "OBJECT_ORIENTED"
     FUNCTIONAL = "FUNCTIONAL"
     PROCEDURAL = "PROCEDURAL"
@@ -44,13 +50,14 @@ class Tool:
     key: str
     name: str
     category: Category
-    level: int
+    default_priority: int
     documentation_url: str
     icon: str | None
     summaries: Mapping[str, str]
     hints: Mapping[str, tuple[str, ...]]
     examples: tuple[str, ...]
     contents: Mapping[str, ToolContent] = field(default_factory=dict)
+    paradigm: Paradigm | None = None
 
 
 @dataclass(frozen=True)
@@ -60,7 +67,7 @@ class ToolDraft:
     key: str
     name: str
     category: Category
-    level: int
+    default_priority: int
     documentation_url: str
     icon: str | None
     summary: str
@@ -68,3 +75,4 @@ class ToolDraft:
     examples: tuple[str, ...]
     alternatives: tuple[str, ...]
     content: ToolContent | None
+    paradigm: Paradigm | None = None

@@ -2,35 +2,31 @@ import { useEffect, useState } from "react";
 
 import type { Difficulty } from "@/features/game/lib/difficulty";
 import {
-  PAIRS_BY_DIFFICULTY,
+  PAIRS_PER_ROUND,
   buildDeck,
   isPair,
   type MemoryCard,
+  type MemoryEntry,
 } from "@/features/game/lib/memory-deck";
 import { useRecordResult } from "@/features/training";
 import { cn } from "@/lib/utils";
 
-/* Cards that do not match turn back after this time. */
-const TURN_BACK_MS = 900;
-
 const PRIMARY =
   "rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary";
 
-type Entry = { key: string; name: string; summary: string };
-
-/* The game Memory: a name card and a description card per tool or language. The player turns two
-   cards per move; a pair stays face up. The round ends when every pair is found. The difficulty sets
-   the number of pairs. */
+/* The game Memory: a name card and a description card per tool or language, 10 pairs (20 cards) per
+   round. The player turns two cards per move; a pair stays face up. Two cards that do not match stay
+   open until the player covers them by clicking one of them. The round ends when every pair is
+   found. The difficulty chooses the content (see memory-deck.ts), not the number of pairs. */
 export function MemoryBoard({
   entries,
   difficulty,
 }: {
-  entries: Entry[];
+  entries: MemoryEntry[];
   difficulty: Difficulty;
 }) {
-  const pairs = PAIRS_BY_DIFFICULTY[difficulty];
   const [deck, setDeck] = useState<MemoryCard[]>(() =>
-    buildDeck(entries, pairs),
+    buildDeck(entries, PAIRS_PER_ROUND, difficulty),
   );
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
@@ -49,40 +45,44 @@ export function MemoryBoard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finished]);
 
-  /* Two flipped cards are compared after a short time: a pair stays, otherwise both turn back. */
-  useEffect(() => {
-    if (flipped.length < 2) {
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      const first = deck.find((card) => card.id === flipped[0]);
-      const second = deck.find((card) => card.id === flipped[1]);
-      if (first && second && isPair(first, second)) {
-        setMatched((current) => [...current, first.toolKey]);
-      } else {
-        setWrongPairs((count) => count + 1);
-      }
-      setFlipped([]);
-    }, TURN_BACK_MS);
-    return () => window.clearTimeout(timer);
-  }, [flipped, deck]);
+  /* Two open cards that do not match: the player has to cover them before the next move. */
+  const mismatch = flipped.length === 2;
+
+  function cardOf(id: number | undefined): MemoryCard | undefined {
+    return deck.find((card) => card.id === id);
+  }
 
   function flip(card: MemoryCard) {
-    if (
-      flipped.length === 2 ||
-      flipped.includes(card.id) ||
-      matched.includes(card.toolKey)
-    ) {
+    if (matched.includes(card.toolKey)) {
       return;
     }
-    setFlipped((current) => [...current, card.id]);
-    if (flipped.length === 1) {
-      setMoves((count) => count + 1);
+    if (flipped.length === 2) {
+      // Clicking one of the two open cards covers both again; other cards cannot be turned yet.
+      if (flipped.includes(card.id)) {
+        setFlipped([]);
+      }
+      return;
     }
+    if (flipped.includes(card.id)) {
+      return;
+    }
+    if (flipped.length === 0) {
+      setFlipped([card.id]);
+      return;
+    }
+    setMoves((count) => count + 1);
+    const first = cardOf(flipped[0]);
+    if (first && isPair(first, card)) {
+      setMatched((current) => [...current, card.toolKey]);
+      setFlipped([]);
+      return;
+    }
+    setWrongPairs((count) => count + 1);
+    setFlipped([flipped[0] as number, card.id]);
   }
 
   function restart() {
-    setDeck(buildDeck(entries, pairs));
+    setDeck(buildDeck(entries, PAIRS_PER_ROUND, difficulty));
     setFlipped([]);
     setMatched([]);
     setMoves(0);
@@ -132,10 +132,12 @@ export function MemoryBoard({
         </span>
       </div>
       <p className="text-base text-muted-foreground">
-        Finde zu jedem Namen die passende Beschreibung.
+        {mismatch
+          ? "Das passt nicht. Klicke eine der beiden offenen Karten, um sie wieder zuzudecken."
+          : "Finde zu jedem Namen die passende Beschreibung."}
       </p>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {deck.map((card) => {
           const isFaceUp =
             flipped.includes(card.id) || matched.includes(card.toolKey);
@@ -146,7 +148,11 @@ export function MemoryBoard({
               type="button"
               onClick={() => flip(card)}
               aria-label={
-                isFaceUp ? undefined : `Verdeckte Karte ${card.id + 1}`
+                isFaceUp
+                  ? mismatch && flipped.includes(card.id)
+                    ? `${card.text} (Karte zudecken)`
+                    : undefined
+                  : `Verdeckte Karte ${card.id + 1}`
               }
               className={cn(
                 "flex min-h-28 items-center justify-center rounded-md border border-border p-3 text-center text-base focus-visible:outline-2 focus-visible:outline-primary",

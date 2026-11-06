@@ -9,12 +9,12 @@ import {
   type Scores,
   type TrainingGame,
 } from "@/features/training";
+import { ProgressBar } from "@/components/shared/progress-bar";
 import { QueryState } from "@/components/shared/query-state";
 import type { ToolSummary } from "@/features/tools";
 import {
   ROUND_GAMES,
   byArea,
-  byLevel,
   byScore,
   describeResult,
   isLanguage,
@@ -41,24 +41,12 @@ function ShareRow({ label, share }: { label: string; share: Share }) {
           {share.learned} von {share.total} gelernt · {share.percent} %
         </span>
       </div>
-      <div
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={share.percent}
-        className="h-3 w-full overflow-hidden rounded-full bg-muted"
-      >
-        <div
-          className="h-full bg-secondary transition-all"
-          style={{ width: `${share.percent}%` }}
-        />
-      </div>
+      <ProgressBar percent={share.percent} label={label} />
     </div>
   );
 }
 
-/* The statistics of one game: the summary, the progress per level and area, the tools to repeat. */
+/* The statistics of one game: the summary, the progress per area and priority, the tools to repeat. */
 function GameStatistics({
   name,
   tools,
@@ -91,21 +79,6 @@ function GameStatistics({
         falsch
         {summary.accuracy === null ? "" : ` · ${summary.accuracy} % richtig`}
       </p>
-
-      <div className="flex flex-col gap-3">
-        <h3 className="text-lg font-semibold">Nach Level</h3>
-        {byLevel(
-          tools,
-          entries,
-          DIFFICULTIES.map((option) => option.level),
-        ).map(({ level, share }) => (
-          <ShareRow
-            key={level}
-            label={`Level ${level} · ${DIFFICULTIES.find((option) => option.level === level)?.name ?? ""}`}
-            share={share}
-          />
-        ))}
-      </div>
 
       {perScore.length > 0 && (
         <div className="flex flex-col gap-3">

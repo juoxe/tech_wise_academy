@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tech_wise_academy.training.model import Progress, RoundResult, keeps_default
+from tech_wise_academy.training.model import Progress, RoundResult
 
 metadata = sa.MetaData()
 
@@ -169,7 +169,7 @@ class TrainingRepository:
         return updated
 
     async def list_scores(self, profile_id: uuid.UUID) -> dict[str, int]:
-        """The stored scores of a player; a tool that is not in the result has the default."""
+        """The stored scores of a player; a tool that is not in the result has no score."""
         statement = sa.select(tool_priority_table.c.tool_key, tool_priority_table.c.score).where(
             tool_priority_table.c.profile_id == profile_id
         )
@@ -177,10 +177,12 @@ class TrainingRepository:
             rows = (await connection.execute(statement)).all()
         return {tool_key: score for tool_key, score in rows}
 
-    async def set_scores(self, profile_id: uuid.UUID, tool_keys: list[str], score: int) -> None:
-        """Sets one score for several tools; the default is not stored, its rows are removed."""
+    async def set_scores(
+        self, profile_id: uuid.UUID, tool_keys: list[str], score: int | None
+    ) -> None:
+        """Sets one score for several tools; `None` removes their scores (not set)."""
         async with self._engine.begin() as connection:
-            if keeps_default(score):
+            if score is None:
                 await connection.execute(
                     sa.delete(tool_priority_table).where(
                         tool_priority_table.c.profile_id == profile_id,

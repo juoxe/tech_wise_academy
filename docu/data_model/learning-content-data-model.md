@@ -50,9 +50,10 @@ Decided by J on 2026-10-25: the **first slice is German**; English follows in MS
 | key | text, unique | ✓ | input | Readable short name (`kubernetes`): lowercase letters, digits and hyphens; stable for links and seed data |
 | name | text | ✓ | input | Display name (`Kubernetes`); the same in all languages |
 | category | enum `Category` | ✓ | input | The main category of the tool, one value, see [Category](#category) |
-| level | integer `1` to `3` | ✓ | input | The level of the tool in the game, see [Level](#level) |
+| default_priority | integer `0` to `4` | ✓ | input | The default importance score of the tool (0 Ausblenden, 1 Niedrig, 2 Normal, 3 Hoch, 4 Kern), see [Default priority](#default-priority). It replaced the level (migration 0014, TWA-14.8) |
 | documentation_url | text | ✓ | input | Link to the official documentation, for reading on |
 | icon | text, optional | | input | Identifier of the tool's icon in the icon source (open decision TD-33). Empty = the frontend shows the icon of the category |
+| paradigm | text, optional | | input | The paradigm of a language (`OBJECT_ORIENTED`, `FUNCTIONAL`, `PROCEDURAL`, `DECLARATIVE` or `MULTI_PARADIGM`); empty for every tool that is not a language, see [Category](#category) |
 | deleted_at | timestamp with time zone, optional | | set on delete | Soft delete (migration 0011, TWA-9.4): a tool with a value is hidden by the API and stays in the table, so progress, embeddings and sets that refer to its key never dangle. The key stays taken |
 
 ## tool_translation
@@ -147,11 +148,14 @@ migration.
 | `FRONTEND` | Frontend development |
 | `SECURITY` | Security (DevSecOps) |
 | `AI_DATA` | AI and data |
+| `LANGUAGE` | Programming languages: an area of their own (migration 0013, TWA-7.11) |
 
-The second set, the **programming languages**, uses the same enum with five **paradigms** instead of
-areas (migration 0007). A language has exactly one main paradigm; a language that is taught in
-several styles is `MULTI_PARADIGM`. The set of a tool is derived from its category, so there is no
-extra column.
+The second set, the **programming languages**, is the area `LANGUAGE`. What sorts the languages is
+not an area but a **feature of the language**, its **paradigm**, in the column `tool.paradigm` (the
+enum `Paradigm`; until migration 0007 to 0012 the paradigms were categories). A language has exactly
+one main paradigm; a language that is taught in several styles is `MULTI_PARADIGM`. A tool of
+another area has no paradigm; a check makes sure of that: `category = 'LANGUAGE'` exactly when the
+paradigm is set. The seed file keeps the old values; migration 0013 converts them.
 
 | Code | Meaning |
 |------|---------|
@@ -161,13 +165,20 @@ extra column.
 | `DECLARATIVE` | Declarative (SQL, HTML, CSS, Prolog) |
 | `MULTI_PARADIGM` | Several paradigms (Python, JavaScript, TypeScript, Rust, Scala, C++) |
 
-All languages have level 1; the levels are only used in the set of the tools. TypeScript moved from
-`FRONTEND` to this set.
+All languages had level 1, so they got the default priority Hoch. TypeScript moved from `FRONTEND` to
+this set.
 
-## Level
+## Default priority
 
-The level of a tool in the game: `1` (should be known), `2` (intermediate) or `3` (expert). Each tool
-has exactly one level. The level is taken from the sets of the Tech Tool Trainer: set 1 (the 20 most
+Every tool has a default importance score (`tool.default_priority`, check `0` to `4`). It replaced the
+**level** of the tool: migration 0014 (TWA-14.8, decided by J on 2026-11-06) turned level 1 (Kennen) into
+`3` (Hoch), level 2 (Intermediate) into `2` (Normal) and level 3 (Expert) into `1` (Niedrig) and then removed
+the column `level`. The result in the seed: 117 tools with `3` (94 of the old level 1 and the 23 languages),
+97 with `2` and 93 with `1`. A player's own score (table `tool_priority` of the training) overrides the
+default; see game-play.md, section Priority.
+
+History of the level, which no longer exists as a column: the level of a tool in the game was `1` (should be
+known), `2` (intermediate) or `3` (expert). Each tool had exactly one level. The level is taken from the sets of the Tech Tool Trainer: set 1 (the 20 most
 important tools per path) is level 1, set 2 is level 2, set 3 is level 3. A tool that belongs to
 several paths gets the **lowest** set number, so the most known place counts. The result is 93 tools
 in level 1, 94 in level 2 and 90 in level 3. Migration 0004 stores the level in the column `tool.level`
@@ -183,7 +194,7 @@ paths, one category per tool; the 16 tools that belong to two or more paths get 
 first path in the order DevOps, backend, frontend, security, AI and data). Hints are written for TWA:
 three per tool, without naming the tool. Summaries, links, icons and examples come from the Tech Tool
 Trainer. From the sets of the Tech Tool Trainer only the set of each tool is taken over, as its
-[level](#level); the must-know flags and stages are not migrated. The texts are to be reviewed by J.
+level (now the [default priority](#default-priority)); the must-know flags and stages are not migrated. The texts are to be reviewed by J.
 
 | Key | Name | Category | Alternatives |
 |-----|------|----------|--------------|
@@ -205,6 +216,7 @@ Two alternative pairs, stored once each.
 | 2026-10-25 | The five categories of the Tech Tool Trainer (DevOps, backend, frontend, security, AI and data); the twelve type categories are dropped |
 | 2026-10-25 | One main category per tool; several categories can be added later with a table `tool_category`, without changing the existing data |
 | 2026-10-27 | One level `1` to `3` per tool, taken from the Tech Tool Trainer sets (lowest set over the paths); a column `tool.level` (migration 0004), not a table, because each tool has exactly one level |
+| 2026-11-06 | The level is turned into the default priority and removed (migration 0014, TWA-14.8): Kennen becomes Hoch, Intermediate Normal, Expert Niedrig |
 
 ## Not Included Yet
 

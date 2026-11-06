@@ -1,10 +1,10 @@
 # Game Play
 
-Status: **five games are implemented**: the knowledge check Wissens-Check (Level 0, a falling-card game)
-and Karten abräumen, both played in three levels (Kennen, Intermediate, Expert) that are set automatically;
-and the games SQL-Bausteine (PostgreSQL queries from tiles), Code beurteilen (multiple choice on code) and
-Memory (pairs of names and descriptions), each played in three difficulty levels (Kennen, Intermediate,
-Expert) that the player chooses. The full game with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
+Status: **five games are implemented**: the knowledge check Wissens-Check (a falling-card game)
+and Karten abräumen, both played on one pool of cards that the priority of each tool draws from (no
+levels since TWA-14.8); and the games SQL-Bausteine (PostgreSQL queries from tiles), Code beurteilen
+(multiple choice on code) and Memory (pairs of names and descriptions), each played in three difficulty
+levels (Kennen, Intermediate, Expert) that the player chooses. The full game with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
 (Keycloak) is not part of these games yet. The tab Statistik shows the saved progress of the two knowledge games and the stored rounds of the other three.
 
 This document is the single source for the game rules.
@@ -25,89 +25,81 @@ The Game tab offers four sets of cards. The player picks the set above the choic
 two knowledge games Wissens-Check and Karten abräumen and the game Memory use the cards of the chosen
 set. SQL-Bausteine and Code beurteilen do not use a set.
 
-| Set | Cards | Sorted by | Levels |
+| Set | Cards | Sorted by | Rounds |
 |-----|-------|-----------|--------|
-| Tools | all tools except the programming languages | the five areas | 1 to 3 (see Levels) |
-| Programmiersprachen | 23 common programming languages | the five paradigms: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | none; all languages are one level |
-| Mein Tech-Stack | all tools and languages the player gave the importance score "Hoch" or "Kern" (see Priority); the set changes with the scores | the five areas; a stack with languages gets a sixth area "Sprachen" | none; the set is one level |
-| Eigene Sets | the cards of a set the player made; so far the interview preparation: a job advertisement is pasted into the Game tab and gives a set of the matching tools | the five areas; a set with languages gets a sixth area "Sprachen" | none; the set is one level |
+| Tools | all tools except the programming languages | the five areas | one pool, drawn by priority |
+| Programmiersprachen | 23 common programming languages (the area "Programmiersprachen") | their paradigm, a feature of each language: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | one pool, drawn by priority |
+| Mein Tech-Stack | all tools and languages the player gave the importance score "Hoch" or "Kern" (see Priority); the set changes with the scores | the five areas; a stack with languages gets a sixth area "Sprachen" | one pool, drawn by priority |
+| Eigene Sets | the cards of a set the player made; so far the interview preparation: a job advertisement is pasted into the Game tab and gives a set of the matching tools | the five areas; a set with languages gets a sixth area "Sprachen" | one pool, drawn by priority |
 
-Each tool or language belongs to exactly one set. The languages are not part of the three levels of
-the tools. They have no unlocking: the set is always open, and its progress bar counts the learned
-languages. In the Wissens-Check the paradigms take the place of the areas on the floor; in Karten
-abräumen the hints name the language.
+Each tool or language belongs to exactly one of the sets Tools and Programmiersprachen. There is no
+unlocking: every set is always open, and its progress bar counts the learned cards of the set. In
+the Wissens-Check the paradigms take the place of the areas on the floor; in Karten abräumen the hints
+name the language.
 
-## Levels
-
-| Level | Purpose | Milestone | Status |
-|-------|---------|-----------|--------|
-| 0 | Knowledge check: how well does the player know each area? | MS 1 | implemented |
-| 1 and later | The real game: sorting, games per learning path | MS 2 | not planned in detail yet |
+## Games and Difficulty
 
 The Game tab first asks which game to play, with a green start button per game. The two knowledge
-games show their current level and its progress as a bar in percent (learned tools of the level).
-Both have three **difficulty levels**; the level is set automatically (see Unlocking) and is not chosen by the
-player. Each tool belongs to exactly one of them:
+games Wissens-Check and Karten abräumen show the progress of the chosen set as a bar (learned cards of
+the set). They have **no levels and no unlocking** (TWA-14.8, decided by J on 2026-11-06): the
+three levels Kennen, Intermediate and Expert of the tools were turned into default priorities (see
+Priority) and then removed. All cards of a set are one pool, and the priority of a card decides how
+often it comes up. The progress is the one saved for the player (see Saving).
 
-| Level | Name | Tools | Meaning |
-|-------|------|------:|---------|
-| 1 | Kennen | 94 | The tools everybody should know |
-| 2 | Intermediate | 97 | Less known tools for the next step |
-| 3 | Expert | 93 | Specialised tools |
-
-The three games SQL-Bausteine, Code beurteilen and Memory have the same names for their difficulty
-levels, but the player chooses the level before the game starts (see the section of each game). Their
-levels do not unlock anything and save no learning progress; the result of each finished round is stored (see Statistik).
-
-The level of a tool comes from the sets of the Tech Tool Trainer: set 1 is level 1, set 2 is level 2,
-set 3 is level 3. A tool that is in several learning paths gets the lowest set number.
-
-**Unlocking and choice of level:** level 1 is always open. Level 2 opens when every tool of level 1 is
-learned, level 3 when every tool of level 2 is learned. The game plays the first open level whose tools
-are not all learned yet; the player does not choose a level. Above the board a progress bar shows how
-many tools of the level are learned ("x von y gelernt"). The progress is the one saved for the player
-(see Saving).
+The three games SQL-Bausteine, Code beurteilen and Memory keep the three **difficulty levels** Kennen,
+Intermediate and Expert, which the player chooses before the game starts (see the section of each
+game). They do not unlock anything and save no learning progress; the result of each finished round is
+stored (see Statistik).
 
 ## Priority
 
 **Goal:** the learner decides which cards matter. Every tool and language has an **importance score**
 per player, next to the learning progress. The player learns their own tech stack first and more
-intensively. Decided by J on 2026-11-06 (TWA-14.1).
+intensively. Decided by J on 2026-11-06 (TWA-14.1). Every tool has a **default priority** that was
+taken from its old level (TWA-14.8): Kennen became Hoch (94 tools and the 23 languages, which had
+level 1), Intermediate became Normal (97 tools) and Expert became Niedrig (93 tools). The own score of
+the player overrides the default. The choice "Standard" means "no own score": the default applies.
+The default priority of a tool can be changed in the form of the tool.
 
 | Score | Name | Effect in the games |
 |------:|------|---------------------|
+| – | Standard | No own score: the default priority of the tool applies (the choice shows it, for example "Standard (Hoch)") |
 | 0 | Ausblenden | The card is not played (see below) |
 | 1 | Niedrig | Comes up rarely (weight 1) |
-| 2 | Normal | The default for every tool without a score (weight 2) |
+| 2 | Normal | Comes up normally (weight 2) |
 | 3 | Hoch | Comes up more often (weight 4); belongs to "Mein Tech-Stack" |
 | 4 | Kern | Comes up most often (weight 8); belongs to "Mein Tech-Stack" |
 
 - **Setting the score:** in the Toolübersicht each row has a choice "Priorität"; the detail view of a
   tool has the same choice on the card. Above the table the player can filter by area and score,
   sort by score, and give **all shown tools** the same score with "Setzen" (for example filter the
-  area "DevOps", then set "Hoch"). "Alle Prioritäten zurücksetzen" asks for a confirmation and puts
-  every tool back to "Normal".
+  area "DevOps", then set "Hoch"). The choice includes "Standard", which removes the own score. "Auf
+  Standard zurücksetzen" asks for a confirmation and removes all own scores, so the default
+  priorities apply again.
 - **Storing:** the score belongs to the profile of the player (see Saving) and is stored in the
-  backend (`GET`, `PUT` and `DELETE /api/training/priorities`, table `tool_priority`). Only scores that
-  differ from "Normal" are stored; a tool without a score has "Normal".
+  backend (`GET`, `PUT` and `DELETE /api/training/priorities`, table `tool_priority`). Only own scores
+  are stored, "Normal" included; `PUT` with the score `null` removes the own scores of the given tools,
+  so their default priorities apply again.
 - **Draw in the Wissens-Check:** the cards that are not learned come up in a random order in which a
   card with a higher weight tends to come first; afterwards the open cards come up again at random,
   in proportion to their weight.
 - **Draw in Karten abräumen:** a card with a higher weight is more likely to be one of the 20 cards of
   the field and to be asked first.
-- **Hidden cards (score 0):** they are not played in the Wissens-Check, Karten abräumen and Memory, and
-  they do not count in the progress bar of the Game tab. They do **not block the next level**: a level
-  is done when every shown tool of it is learned, and a level with only hidden tools is done at once.
-  A hidden card can be played again as soon as its score is raised.
-- **Mein Tech-Stack:** the fourth set of the Game tab. It holds every tool and language with "Hoch" or
-  "Kern" and is played like the interview sets: one level, no unlocking. While the stack is empty the
+- **Effective score:** the own score, otherwise the default priority. The effective score decides the
+  weight, the hiding, "Mein Tech-Stack", the sorting and the statistics.
+- **Hidden cards (effective score 0):** they are not played in the Wissens-Check, Karten abräumen and
+  Memory, and they do not count in the progress bar of the Game tab. A hidden card can be played again
+  as soon as its score is raised.
+- **Mein Tech-Stack:** the fourth set of the Game tab. It holds every tool and language with the effective score "Hoch" or
+  "Kern" (at the start 117 cards: the old level 1 and the languages) and is played like the interview
+  sets: one pool, no unlocking. While the stack is empty the
   Game tab says how to fill it.
 - **Learning progress and score are independent:** a learned card stays learned when its score
   changes. Memory, SQL-Bausteine and Code beurteilen do not draw by weight; only Memory leaves hidden
   cards out.
 - **Statistik:** the tab shows "Mein Tech-Stack" (learned of the stack) and the section "Nach
-  Priorität" with the progress per score, both only after the player has set a score. "Zum Wiederholen"
-  leaves hidden tools out and sorts tools with the same number of wrong answers by their score.
+  Priorität" with the progress per effective score. "Zum Wiederholen" leaves hidden tools out and sorts
+  tools with the same number of wrong answers by their effective score.
 - **Relation to own sets (TWA-11):** the score is a weight per card and player, a set is a named list
   of cards. They exist side by side: a set decides which cards are in a round, the score decides how
   often and whether they come up.
@@ -116,11 +108,11 @@ intensively. Decided by J on 2026-11-06 (TWA-14.1).
 ## Level 0 – Knowledge Check
 
 **Goal:** find out how well the player knows the tools of each of the five areas. Level 0 only
-checks; it does not teach. The player chooses one of the three difficulty levels in the Game tab.
+checks; it does not teach. There are no levels: the round plays the cards of the chosen set.
 
 **Round**
 
-- A round uses **all tools of the chosen level that are not learned yet**. No card is removed from the round during play.
+- A round uses **all cards of the chosen set that are not learned yet and not hidden**. No card is removed from the round during play.
 - The round lasts **90 seconds**. The player plays as many cards as possible in that time.
 - A card is **learned** when it is placed correctly **twice in a row**. A learned card leaves the
   round.
@@ -185,11 +177,11 @@ When the round is finished, the summary shows:
 - After a reload the round starts again with the tools that are **not learned yet**. The saved row of
   correct answers is kept, so a card that was placed correctly once needs one more correct answer.
   The timer starts again at 90 seconds. Learned tools are not placed again.
-- When every tool of the chosen level is learned, the Game tab shows "Alle Tools dieses Levels sind gelernt".
-- A new round starts with the level that is open now. Progress is not lost: each answer is saved at once.
+- When every card of the chosen set is learned, the Game tab shows "Alle Karten dieses Sets sind gelernt".
+- A new round starts with the cards that are not learned yet. Progress is not lost: each answer is saved at once.
 - **Zurücksetzen:** every game in the choice of the game has the button "Fortschritt zurücksetzen". After
   a confirmation that names the game, the saved progress of the player in **this game** is deleted in all
-  sets and levels (answers, rows of correct answers and learned cards). The other game and other players
+  sets (answers, rows of correct answers and learned cards). The other game and other players
   keep their progress; the bars show 0 % afterwards.
 - "Anderes Spiel wählen" returns to the choice of the game. The round in progress is discarded; the
   answers already given are saved.
@@ -198,13 +190,14 @@ When the round is finished, the summary shows:
 
 ## Karten abräumen
 
-**Goal:** learn the tools of the chosen level by naming them from their hints. The game takes its
+**Goal:** learn the cards of the chosen set by naming them from their hints. The game takes its
 rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 
 **Round**
 
 - The field shows up to **20 cards** (5 rows × 4) with the logo and name of the tool, in random order.
-  The cards are the tools of the chosen level that are not learned yet.
+  The cards are the cards of the chosen set that are not learned yet and not hidden; a card with a higher
+  weight is more likely to be in the field.
 - Above the field the question "Welches Werkzeug ist gemeint?" shows the hints of the **asked card**.
   A random open card of the field is asked; each card is asked once per round. The position of a card
   in the field gives no hint about the order of the questions.
@@ -236,11 +229,10 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - The progress is kept **per game**: a tool learned in the Wissens-Check is not learned in Karten
   abräumen.
 
-**Levels and saving**
+**Saving**
 
-- The three levels, the automatic choice of the level and the progress bar are the same as for the
-  Wissens-Check, with the progress of this game. Each answer is saved for the player as described under
-  Saving.
+- The sets and the progress bar are the same as for the Wissens-Check, with the progress of this game.
+  Each answer is saved for the player as described under Saving.
 
 ## SQL-Bausteine
 
@@ -249,10 +241,14 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - The Game tab offers SQL-Bausteine as a third game. It is independent of the set and has no unlocking
   and no saved learning progress. After the last task the result of the round is stored (see Statistik).
 - **Difficulty:** the player chooses Kennen, Intermediate or Expert above the games (group
-  "Schwierigkeit"). Kennen has six tasks (SELECT with WHERE, IS NULL, COUNT, DISTINCT and LENGTH on one table),
-  Intermediate six tasks (ILIKE, GROUP BY with HAVING, BETWEEN, IN, LIMIT), Expert five tasks (LEFT JOIN,
-  SUM with HAVING, window functions RANK and a running SUM).
-- A task names the wanted result and the tables with their columns, in German.
+  "Schwierigkeit"). Every difficulty has eight tasks. Kennen uses one table (WHERE, IS NULL, COUNT, DISTINCT,
+  LIKE, ORDER BY with LIMIT, MIN). Intermediate uses joins of two or three tables and grouping (JOIN and
+  LEFT JOIN, GROUP BY with HAVING, a join of a table with itself, AVG per group). Expert is harder
+  still: subqueries, EXISTS, a WITH query, window functions (RANK, a running SUM), joins over several tables
+  with a sum of quantity times price.
+- A task names the wanted result and **says in full sentences which tables and columns exist**, in
+  German, for example "Die Tabelle customer hat die Spalten id, name, city und created_at." The tables
+  of all tasks are customer, orders, product, order_item and employee.
 - The tiles are single words or fragments, such as `SELECT`, `FROM`, `ORDER BY` or `IS NULL`. They
   are shown in a mixed order. Some tiles are **distractors**: the query does not use them.
 - The player clicks the tiles in the order of the query. A click on a tile in the answer removes it
@@ -291,13 +287,16 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - The Game tab offers Memory as a fifth game. It has no unlocking and no saved learning progress. When the last pair is found, the result of the round is
   stored: the pairs found and the moves needed (see Statistik).
 - **Difficulty:** the player chooses Kennen, Intermediate or Expert above the games. The difficulty sets
-  the number of pairs of a round: Kennen 4, Intermediate 6, Expert 8 pairs (8, 12 or 16 cards).
+  the content of a round, not its size: a round always has **10 pairs (20 cards)**. Kennen draws the
+  tools with the default priority "Hoch", Intermediate "Normal" and Expert "Niedrig"; if the set holds
+  too few of them, the round is filled with the other cards of the set.
 - The cards come from the set chosen above the choice of the game: Tools (all tools except the
   languages), Programmiersprachen or Eigene Sets. A round uses that many entries of the set that have
   a description, drawn at random; if the set has fewer, the round is smaller.
 - Each entry gives two cards: one with the **name** and one with the **description** (summary).
 - The player turns two cards per move. A pair matches when both cards belong to the same entry and
-  show different sides. A matching pair stays face up; other cards turn back after about one second.
+  show different sides. A matching pair stays face up. Two cards that do not match **stay open until the player covers them** by
+  clicking one of the two open cards; until then no other card can be turned.
 - The round ends when all pairs are found. The result shows the moves and the wrong pairs.
 - The code is in `frontend/src/features/game/components/memory-board.tsx` and
   `frontend/src/features/game/lib/memory-deck.ts`.
@@ -315,8 +314,6 @@ which tools need repeating.
 - **Gelernte Werkzeuge:** learned tools of all tools, with the share in percent and a bar.
 - **Antworten:** right and wrong answers of the game and the share of right answers; the share is
   left out while no answer was given.
-- **Nach Level:** the learned tools of the levels Kennen, Intermediate and Expert, each with a bar.
-  The programming languages have no level and are not counted here.
 - **Nach Bereich:** the learned tools per area (DevOps, Backend, Frontend, Security, KI & Daten) and
   one row for the programming languages.
 - **Zum Wiederholen:** the tools with the most wrong answers, at most ten, highest first, then by
@@ -338,7 +335,7 @@ which tools need repeating.
 **Goal:** the tools can be changed in the app, without a migration. J decided on 2026-11-06: until
 the login (TD-17) everyone may do it; the database is the source of truth.
 
-- **Neues Tool:** the button above the table opens a form: key, name, area, level, icon, link to the
+- **Neues Tool:** the button above the table opens a form: key, name, area, default priority, icon, link to the
   documentation, summary, hints (one per line), examples (separated by a line with `---`) and
   alternatives (chosen by the name of an existing tool).
 - **Bearbeiten:** the detail view of a tool offers "Bearbeiten" with the same form. The key cannot be
@@ -357,7 +354,7 @@ the login (TD-17) everyone may do it; the database is the source of truth.
 
 The overview card shows one tool in the style of a Quartett card, with more details:
 
-- Name, logo, area (Bereich) and level
+- Name, logo and area (Bereich), for a language also its paradigm; the priority can be changed on the card
 - Summary (one sentence) and overview (three to five sentences)
 - "Wofür man es nutzt": three or four use cases
 - "Kernbegriffe": three to five key terms with a short explanation
@@ -385,9 +382,7 @@ These parts are planned for MS 2 and are not implemented yet.
 - **Time:** the 90 seconds are a first value and are to be tested.
 - **Speed:** the fall time of about half a second per row is a first value.
 - **Progress across rounds:** whether learned cards are kept between rounds (Tech Tool Trainer rule).
-  Learned cards are kept per tool, so each level keeps its own progress.
-- **Level names in the game:** the game names "Level 0" (this knowledge check) and its difficulty
-  levels 1 to 3 both use the word level. Whether the difficulty levels get other names is open.
+  Learned cards are kept per tool and per game.
 - **Tab state:** whether leaving and coming back to the Game tab should keep the round. In Level 0
   it starts a new round.
 - **UI language:** the texts in the game are German, like the rest of the current UI. The

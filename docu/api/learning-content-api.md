@@ -15,8 +15,8 @@ Module: `learning_content`. Data: [data model](../data_model/learning-content-da
   edit and delete tools. The database is the source of truth after the migration; the seed file only
   delivers the start data. With the login, editing becomes a right of a role.
 - **Rules for creating and editing** (the same as for the seed data): the key consists of lowercase
-  letters, digits and `. _ + # -`; name and summary are not empty; the level is `1` to `3`; the
-  documentation link starts with `http://` or `https://`; **a hint never contains the name of its
+  letters, digits and `. _ + # -`; name and summary are not empty; the default priority is `0` to `4`; the
+  documentation link starts with `http://` or `https://`; a tool of the category `LANGUAGE` has a paradigm and every other tool has none; **a hint never contains the name of its
   tool** (case ignored); alternatives exist, are not deleted, are not the tool itself and not
   repeated. Alternatives are symmetric, because a pair is stored once.
 - **Replace as a whole:** `PUT` replaces all data of a tool (texts, hints, examples, alternatives,
@@ -50,8 +50,9 @@ frontend of the first slice uses only the list; the detail endpoint is available
 |-------|-------------|
 | key | Readable short name |
 | name | Display name |
-| category | Category code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY` or `AI_DATA`; for the programming languages `OBJECT_ORIENTED`, `FUNCTIONAL`, `PROCEDURAL`, `DECLARATIVE` or `MULTI_PARADIGM` |
-| level | Level of the tool: `1` (know), `2` (intermediate) or `3` (expert), see [Level](../data_model/learning-content-data-model.md#level) |
+| category | Category (area) code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY`, `AI_DATA` or `LANGUAGE` (programming languages) |
+| paradigm | Paradigm of a language: `OBJECT_ORIENTED`, `FUNCTIONAL`, `PROCEDURAL`, `DECLARATIVE` or `MULTI_PARADIGM`; `null` for every tool that is not a language |
+| default_priority | Default importance score of the tool: `0` (Ausblenden) to `4` (Kern), see [Default priority](../data_model/learning-content-data-model.md#default-priority); it replaced the level |
 | summary | One sentence: what is it? (in the selected language) |
 | language | Language of the returned texts |
 | icon | Icon identifier; empty if the tool has none |

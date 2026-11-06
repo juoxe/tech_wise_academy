@@ -18,6 +18,7 @@ import {
 } from "@/features/game/lib/drop";
 import { WrongCardsReview } from "@/features/game/components/wrong-cards-review";
 import { useRecordAnswer } from "@/features/training";
+import { ProgressBar } from "@/components/shared/progress-bar";
 import type { Weights } from "@/features/game/lib/weighted";
 import { ToolIcon, type ToolSummary } from "@/features/tools";
 import { cn } from "@/lib/utils";
@@ -45,7 +46,11 @@ function FallingCard({ tool, row }: { tool: ToolSummary; row: number }) {
         top: `calc(${(row / (ROWS - 1)) * 100}% - ${(row / (ROWS - 1)) * 3.5}rem)`,
       }}
     >
-      <ToolIcon icon={tool.icon} category={tool.category} />
+      <ToolIcon
+        icon={tool.icon}
+        category={tool.category}
+        paradigm={tool.paradigm}
+      />
       <span className="min-w-0 break-words leading-snug">{tool.name}</span>
     </div>
   );
@@ -328,12 +333,13 @@ function Summary({
                   {area.withMistake} mit Fehler
                 </span>
               </div>
-              <div className="flex h-5 w-full overflow-hidden rounded-md bg-muted">
-                <div
-                  className="h-full bg-secondary"
-                  style={{ width: `${learnedPercent}%` }}
-                />
-              </div>
+              <ProgressBar
+                percent={learnedPercent}
+                label={`Gelernt in ${areaLabel(area.category)}`}
+                valueNow={area.learned}
+                valueMax={area.total}
+                className="h-5 rounded-md"
+              />
             </div>
           );
         })}

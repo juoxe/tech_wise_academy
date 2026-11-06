@@ -8,6 +8,7 @@ from typing import Protocol
 from tech_wise_academy.learning_content.model import (
     DEFAULT_LANGUAGE,
     Category,
+    Paradigm,
     Tool,
     ToolContent,
     ToolDraft,
@@ -55,8 +56,12 @@ def check_draft(draft: ToolDraft, known_keys: set[str]) -> None:
         raise ToolRuleError("Der Name darf nicht leer sein.")
     if not draft.summary.strip():
         raise ToolRuleError("Die Zusammenfassung darf nicht leer sein.")
-    if not 1 <= draft.level <= 3:
-        raise ToolRuleError("Das Level muss 1, 2 oder 3 sein.")
+    if not 0 <= draft.default_priority <= 4:
+        raise ToolRuleError("Die Standard-Priorität muss zwischen 0 und 4 liegen.")
+    if draft.category is Category.LANGUAGE and draft.paradigm is None:
+        raise ToolRuleError("Eine Programmiersprache braucht ein Paradigma.")
+    if draft.category is not Category.LANGUAGE and draft.paradigm is not None:
+        raise ToolRuleError("Nur eine Programmiersprache hat ein Paradigma.")
     if not draft.documentation_url.startswith(("http://", "https://")):
         raise ToolRuleError("Der Dokumentationslink muss mit http:// oder https:// beginnen.")
     name = draft.name.casefold()
@@ -79,10 +84,11 @@ class ToolSummary:
     key: str
     name: str
     category: Category
-    level: int
+    default_priority: int
     summary: str
     language: str
     icon: str | None
+    paradigm: Paradigm | None
 
 
 @dataclass(frozen=True)
@@ -96,10 +102,11 @@ class ToolDetail:
     key: str
     name: str
     category: Category
-    level: int
+    default_priority: int
     summary: str
     language: str
     icon: str | None
+    paradigm: Paradigm | None
     documentation_url: str
     hints: tuple[str, ...]
     examples: tuple[str, ...]
@@ -175,10 +182,11 @@ class ToolService:
                     key=tool.key,
                     name=tool.name,
                     category=tool.category,
-                    level=tool.level,
+                    default_priority=tool.default_priority,
                     summary=summary,
                     language=used_language,
                     icon=tool.icon,
+                    paradigm=tool.paradigm,
                 )
             )
         return summaries
@@ -215,10 +223,11 @@ class ToolService:
             key=tool.key,
             name=tool.name,
             category=tool.category,
-            level=tool.level,
+            default_priority=tool.default_priority,
             summary=summary,
             language=used_language,
             icon=tool.icon,
+            paradigm=tool.paradigm,
             documentation_url=tool.documentation_url,
             hints=_hints_in_language(tool.hints, language),
             examples=tool.examples,

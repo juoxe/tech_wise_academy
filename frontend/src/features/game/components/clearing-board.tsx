@@ -200,7 +200,11 @@ export function ClearingBoard({
               onClick={() => click(tool.key)}
               className={`flex min-h-20 flex-col items-center justify-center gap-2 rounded-md border border-border p-2 text-center text-base break-words ${flash}`}
             >
-              <ToolIcon icon={tool.icon} category={tool.category} />
+              <ToolIcon
+                icon={tool.icon}
+                category={tool.category}
+                paradigm={tool.paradigm}
+              />
               <span>{tool.name}</span>
             </button>
           );

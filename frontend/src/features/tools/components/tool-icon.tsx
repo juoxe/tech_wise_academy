@@ -1,6 +1,7 @@
 import {
   Boxes,
   Brain,
+  Code,
   Container,
   FileText,
   LayoutDashboard,
@@ -14,6 +15,7 @@ import type { ComponentType } from "react";
 
 import { LOGOS } from "@/features/tools/lib/logos";
 import type { ToolSummary } from "@/features/tools/api/tools-api";
+import type { Paradigm } from "@/features/tools/lib/labels";
 
 type Category = ToolSummary["category"];
 
@@ -25,6 +27,13 @@ const CATEGORY_ICONS: Readonly<
   FRONTEND: LayoutDashboard,
   SECURITY: ShieldCheck,
   AI_DATA: Brain,
+  LANGUAGE: Code,
+};
+
+/* A language without a logo shows the icon of its paradigm. */
+const PARADIGM_ICONS: Readonly<
+  Record<Paradigm, ComponentType<{ className?: string }>>
+> = {
   OBJECT_ORIENTED: Boxes,
   FUNCTIONAL: Sigma,
   PROCEDURAL: ListOrdered,
@@ -32,13 +41,16 @@ const CATEGORY_ICONS: Readonly<
   MULTI_PARADIGM: Shapes,
 };
 
-/* Logo of the tool if it has one, otherwise the icon of its category (ADR-0005). */
+/* Logo of the tool if it has one, otherwise the icon of its paradigm (a language) or its category
+   (ADR-0005). */
 export function ToolIcon({
   icon,
   category,
+  paradigm,
 }: {
   icon: string | null;
   category: Category;
+  paradigm?: Paradigm | null;
 }) {
   const logo = icon ? LOGOS[icon] : undefined;
   if (logo) {
@@ -53,7 +65,9 @@ export function ToolIcon({
       </svg>
     );
   }
-  const CategoryIcon = CATEGORY_ICONS[category];
+  const CategoryIcon = paradigm
+    ? PARADIGM_ICONS[paradigm]
+    : CATEGORY_ICONS[category];
   return (
     <CategoryIcon
       aria-hidden="true"

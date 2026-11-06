@@ -4,8 +4,11 @@
  * Design tokens (ADR-0003, colour concept in docu/architecture/design-concept.md).
  * Components use roles only (bg-primary, text-status-done), never fixed colour values.
  *   primary      light green: buttons, tab bar, focus, selection
- *   heading      dark green: headings and the title
- *   secondary    yellow: progress bars
+ *   heading      dark green of the logo (#27ae60): the title, "Wise" in the logo and large headings (h1, h2);
+ *                in light mode a darker shade of it, for contrast on white
+ *   subheading   light green: sub-headings (h3, h4)
+ *   progress-1 to progress-5  progress bars in 20 % steps: red, orange, yellow, light green, dark green
+ *   secondary    yellow: secondary actions and tags
  *   accent       hover and selection surfaces
  *   destructive  errors
  *   status-*     status colours (todo, progress, done)
@@ -21,7 +24,13 @@
   --primary-foreground: oklch(0.985 0.01 185);
   --secondary: #a16207;
   --secondary-foreground: oklch(0.2 0.02 200);
-  --heading: #4d7c0f;
+  --heading: #1d8348;
+  --subheading: #4d7c0f;
+  --progress-1: #b91c1c;
+  --progress-2: #c2410c;
+  --progress-3: #a16207;
+  --progress-4: #5f9a0b;
+  --progress-5: #166534;
   --muted: oklch(0.955 0.01 195);
   --muted-foreground: oklch(0.48 0.03 200);
   --accent: oklch(0.93 0.04 188);
@@ -49,7 +58,13 @@
   --primary-foreground: oklch(0.18 0.03 190);
   --secondary: #f1c40f;
   --secondary-foreground: oklch(0.18 0.03 190);
-  --heading: #5a8f29;
+  --heading: #27ae60;
+  --subheading: #9ccc65;
+  --progress-1: #ef4444;
+  --progress-2: #fb923c;
+  --progress-3: #facc15;
+  --progress-4: #a3e635;
+  --progress-5: #22a352;
   --muted: oklch(0.235 0.012 200);
   --muted-foreground: oklch(0.7 0.03 195);
   --accent: oklch(0.3 0.05 188);
@@ -77,6 +92,12 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-heading: var(--heading);
+  --color-subheading: var(--subheading);
+  --color-progress-1: var(--progress-1);
+  --color-progress-2: var(--progress-2);
+  --color-progress-3: var(--progress-3);
+  --color-progress-4: var(--progress-4);
+  --color-progress-5: var(--progress-5);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -106,8 +127,13 @@
   }
   h1,
   h2 {
-    /* Headings are dark green (--heading). Components can still override with a text-* class. */
+    /* Large headings are dark green (--heading). Components can still override with a text-* class. */
     @apply text-heading;
+  }
+  h3,
+  h4 {
+    /* Sub-headings are light green (--subheading). */
+    @apply text-subheading;
   }
   body {
     @apply bg-background text-foreground;

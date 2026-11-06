@@ -5,4 +5,9 @@ export { ToolOverviewCard } from "@/features/tools/components/tool-overview-card
 export type { ToolDetail, ToolSummary } from "@/features/tools/api/tools-api";
 export { useTool } from "@/features/tools/hooks/use-tool";
 export { useTools } from "@/features/tools/hooks/use-tools";
-export { categoryLabel } from "@/features/tools/lib/labels";
+export {
+  areaWithParadigm,
+  categoryLabel,
+  paradigmLabel,
+  type Paradigm,
+} from "@/features/tools/lib/labels";

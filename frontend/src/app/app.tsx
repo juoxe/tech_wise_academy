@@ -17,7 +17,7 @@ export function App() {
           <img src="/logo.svg" alt="" className="size-11" />
           <span>
             <span className="text-foreground">Tech</span>{" "}
-            <span className="text-primary">Wise</span>{" "}
+            <span className="text-heading">Wise</span>{" "}
             <span className="text-foreground">Academy</span>
           </span>
         </h1>

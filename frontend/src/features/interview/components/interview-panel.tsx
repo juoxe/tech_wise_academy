@@ -164,7 +164,11 @@ export function InterviewPanel({
                     className="flex items-start gap-3 rounded-md bg-muted p-3"
                   >
                     {tool && (
-                      <ToolIcon icon={tool.icon} category={tool.category} />
+                      <ToolIcon
+                        icon={tool.icon}
+                        category={tool.category}
+                        paradigm={tool.paradigm}
+                      />
                     )}
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <div className="flex flex-wrap items-baseline justify-between gap-2">

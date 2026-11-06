@@ -52,7 +52,7 @@ Milestone status: `DRAFT` (outlined, no epics yet) · `PLANNED` (epics cut) · `
 
 ## MS 2 – Playable MVP
 
-**Status:** IN PROGRESS – TWA-8 is being built (TWA-6, TWA-7 and TWA-9 are done); the milestone is still outlined as
+**Status:** IN PROGRESS – TWA-8 and TWA-7 (reopened) are in progress (TWA-6 and TWA-9 are done); the milestone is still outlined as
 expected results and not yet cut into a planned epic table.
 
 **Goal:** a playable MVP exists.
@@ -62,18 +62,19 @@ expected results and not yet cut into a planned epic table.
 - Learning paths on different IT topics, each with its own colour and a start screen "Choose your
   path".
 - Tool cards per path, grouped into sets of increasing difficulty.
-- Games per path that unlock one after another (e.g. sorting cards into categories, clearing
-  cards).
+- Games per path, without levels and unlocking since TWA-14.8 (e.g. sorting cards into
+  categories, clearing cards).
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
-- A statistics tab: the saved progress of the knowledge games per game, level and area, the tools to
+- A statistics tab: the saved progress of the knowledge games per game, area and importance score, the tools to
   repeat and the stored rounds of SQL-Bausteine, Code beurteilen and Memory
   ([TWA-6](backlog.md#epic-twa-6--statistics), `DONE`; reviewed by J in the browser on 2026-11-06).
-- Knowledge games: five games – Wissens-Check and Karten abräumen with three levels and saved
-  progress; SQL-Bausteine, Code beurteilen and Memory with three difficulty levels chosen by the
-  player and without saved learning progress
-  ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `DONE`, built ahead of the planning of MS 2;
-  reviewed by J in the browser on 2026-11-06).
+- Knowledge games: five games – Wissens-Check and Karten abräumen without levels (one pool drawn by
+  priority) and with saved progress; SQL-Bausteine, Code beurteilen and Memory (always 10 pairs) with
+  three difficulty levels chosen by the player and without saved learning progress
+  ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
+  MS 2; reviewed by J in the browser on 2026-11-06, reopened the same day for the small
+  improvements TWA-7.11 to TWA-7.13).
 - Interview preparation: card sets generated from a job advertisement, in the local network
   ([TWA-8](backlog.md#epic-twa-8--interview-preparation), `IN PROGRESS`, built ahead of the planning
   of MS 2).

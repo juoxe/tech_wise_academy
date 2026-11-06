@@ -11,8 +11,8 @@ import type { Scores } from "@/features/training/lib/priority";
 
 const QUERY_KEY = ["training", "priorities"] as const;
 
-/* The importance scores of the player as a map (tool key → score). Tools without an entry have the
-   default score, see `scoreOf`. */
+/* The importance scores of the player as a map (tool key → score). A tool without an entry has no
+   score, see `scoreOf`. */
 export function usePriorities() {
   const query = useQuery({
     queryKey: [...QUERY_KEY, getProfileId()],
@@ -29,13 +29,18 @@ export function usePriorities() {
 export function useSetPriorities() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ toolKeys, score }: { toolKeys: string[]; score: number }) =>
-      setPriorities(toolKeys, score),
+    mutationFn: ({
+      toolKeys,
+      score,
+    }: {
+      toolKeys: string[];
+      score: number | null;
+    }) => setPriorities(toolKeys, score),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
 
-/* Sets all tools back to the default score. */
+/* Sets all tools back to "not set". */
 export function useResetPriorities() {
   const queryClient = useQueryClient();
   return useMutation({

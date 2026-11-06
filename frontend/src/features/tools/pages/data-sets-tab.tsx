@@ -11,6 +11,7 @@ import { useDeleteTool } from "@/features/tools/hooks/use-tool-mutations";
 import { useTool } from "@/features/tools/hooks/use-tool";
 import { useTools } from "@/features/tools/hooks/use-tools";
 import {
+  effectiveScore,
   scoreOf,
   usePriorities,
   useResetPriorities,
@@ -55,12 +56,15 @@ export function DataSetsTab() {
     .filter(
       (tool) =>
         (filter.category === "all" || tool.category === filter.category) &&
-        (filter.score === "all" || scoreOf(scores, tool.key) === filter.score),
+        (filter.score === "all" ||
+          (filter.score === "unset"
+            ? scoreOf(scores, tool.key) === null
+            : effectiveScore(scores, tool) === filter.score)),
     )
     .sort(
       filter.sortBy === "score"
         ? (a, b) =>
-            scoreOf(scores, b.key) - scoreOf(scores, a.key) ||
+            effectiveScore(scores, b) - effectiveScore(scores, a) ||
             a.name.localeCompare(b.name, "de")
         : () => 0,
     );

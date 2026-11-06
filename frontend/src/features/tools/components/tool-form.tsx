@@ -5,8 +5,13 @@ import type {
   ToolDetail,
   ToolSummary,
 } from "@/features/tools/api/tools-api";
+import { SCORES } from "@/features/training";
 import { useSaveTool } from "@/features/tools/hooks/use-tool-mutations";
-import { categoryLabel } from "@/features/tools/lib/labels";
+import {
+  categoryLabel,
+  paradigmLabel,
+  type Paradigm,
+} from "@/features/tools/lib/labels";
 
 type Category = ToolSummary["category"];
 
@@ -16,17 +21,15 @@ const CATEGORIES: Category[] = [
   "FRONTEND",
   "SECURITY",
   "AI_DATA",
+  "LANGUAGE",
+];
+
+const PARADIGMS: Paradigm[] = [
   "OBJECT_ORIENTED",
   "FUNCTIONAL",
   "PROCEDURAL",
   "DECLARATIVE",
   "MULTI_PARADIGM",
-];
-
-const LEVELS = [
-  { value: 1, label: "Kennen" },
-  { value: 2, label: "Intermediate" },
-  { value: 3, label: "Expert" },
 ];
 
 /* The code examples are separated by a line that holds only three dashes. */
@@ -64,7 +67,12 @@ export function ToolForm({
   const [category, setCategory] = useState<Category>(
     tool?.category ?? "DEVOPS",
   );
-  const [level, setLevel] = useState(tool?.level ?? 1);
+  const [paradigm, setParadigm] = useState<Paradigm>(
+    tool?.paradigm ?? "OBJECT_ORIENTED",
+  );
+  const [defaultPriority, setDefaultPriority] = useState(
+    tool?.default_priority ?? 2,
+  );
   const [documentationUrl, setDocumentationUrl] = useState(
     tool?.documentation_url ?? "",
   );
@@ -102,7 +110,8 @@ export function ToolForm({
     const body: ToolBody = {
       name,
       category,
-      level,
+      paradigm: category === "LANGUAGE" ? paradigm : null,
+      default_priority: defaultPriority,
       documentation_url: documentationUrl,
       icon: icon.trim() === "" ? null : icon.trim(),
       summary,
@@ -164,15 +173,31 @@ export function ToolForm({
             ))}
           </select>
         </label>
+        {category === "LANGUAGE" && (
+          <label className="flex flex-col gap-1 text-base">
+            Paradigma
+            <select
+              value={paradigm}
+              onChange={(event) => setParadigm(event.target.value as Paradigm)}
+              className={FIELD}
+            >
+              {PARADIGMS.map((option) => (
+                <option key={option} value={option}>
+                  {paradigmLabel(option)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="flex flex-col gap-1 text-base">
-          Level
+          Standard-Priorität
           <select
-            value={level}
-            onChange={(event) => setLevel(Number(event.target.value))}
+            value={defaultPriority}
+            onChange={(event) => setDefaultPriority(Number(event.target.value))}
             className={FIELD}
           >
-            {LEVELS.map((option) => (
-              <option key={option.value} value={option.value}>
+            {SCORES.map((option) => (
+              <option key={option.score} value={option.score}>
                 {option.label}
               </option>
             ))}

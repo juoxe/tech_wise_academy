@@ -10,22 +10,41 @@ export type MemoryCard = {
 import { shuffle } from "@/features/game/lib/shuffle";
 import type { Difficulty } from "@/features/game/lib/difficulty";
 
-/* The number of pairs in a round: the higher the difficulty, the more cards to find. */
-export const PAIRS_BY_DIFFICULTY: Record<Difficulty, number> = {
-  1: 4,
-  2: 6,
-  3: 8,
+/* A round always has 10 pairs, so 20 cards. The difficulty chooses the content, not the number. */
+export const PAIRS_PER_ROUND = 10;
+
+/* The difficulty chooses the tools by their default priority: Kennen takes the tools with "Hoch",
+   Intermediate "Normal" and Expert "Niedrig" (the old levels). */
+export const DEFAULT_PRIORITY_BY_DIFFICULTY: Record<Difficulty, number> = {
+  1: 3,
+  2: 2,
+  3: 1,
 };
 
-/* Builds a round: up to the given number of entries with a summary are drawn at random, each gives two
-   cards. */
+export type MemoryEntry = {
+  key: string;
+  name: string;
+  summary: string;
+  default_priority?: number;
+};
+
+/* Builds a round: up to the given number of entries with a summary, each gives two cards. The entries
+   whose default priority fits the difficulty come first; if the set holds too few of them, the round
+   is filled with the other entries of the set. */
 export function buildDeck(
-  entries: readonly { key: string; name: string; summary: string }[],
+  entries: readonly MemoryEntry[],
   pairs: number,
+  difficulty: Difficulty = 1,
   random = Math.random,
 ): MemoryCard[] {
   const usable = entries.filter((entry) => entry.summary.trim() !== "");
-  const chosen = shuffle(usable, random).slice(0, pairs);
+  const wanted = DEFAULT_PRIORITY_BY_DIFFICULTY[difficulty];
+  const fitting = usable.filter((entry) => entry.default_priority === wanted);
+  const others = usable.filter((entry) => entry.default_priority !== wanted);
+  const chosen = [
+    ...shuffle(fitting, random),
+    ...shuffle(others, random),
+  ].slice(0, pairs);
   const cards = chosen.flatMap((entry) => [
     { toolKey: entry.key, kind: "name" as const, text: entry.name },
     { toolKey: entry.key, kind: "summary" as const, text: entry.summary },

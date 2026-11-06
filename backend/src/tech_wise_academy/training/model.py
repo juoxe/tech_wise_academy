@@ -13,19 +13,15 @@ LEARNED_AFTER: dict[str, int] = {"level0": 2, "clearing": 2}
 ROUND_GAMES: tuple[str, ...] = ("sql", "code", "memory")
 
 # The importance score a player gives to a tool (TWA-14): 0 hides the tool in the games, 1 is low,
-# 2 is normal (the default), 3 is high and 4 is the core of the player's tech stack.
+# 2 is normal, 3 is high and 4 is the core of the player's tech stack. A tool can also have no score
+# at all ("not set", TWA-14.7); then the player has no row for it.
 MIN_SCORE = 0
 MAX_SCORE = 4
-DEFAULT_SCORE = 2
 
 
-def is_valid_score(score: int) -> bool:
-    return MIN_SCORE <= score <= MAX_SCORE
-
-
-def keeps_default(score: int) -> bool:
-    """A score equal to the default is not stored: the tool simply has no row."""
-    return score == DEFAULT_SCORE
+def is_valid_score(score: int | None) -> bool:
+    """`None` is valid: it removes the score of a tool."""
+    return score is None or MIN_SCORE <= score <= MAX_SCORE
 
 
 @dataclass(frozen=True)

@@ -11,6 +11,7 @@ from tech_wise_academy.learning_content.model import (
     DEFAULT_LANGUAGE,
     Category,
     KeyConcept,
+    Paradigm,
     Tool,
     ToolContent,
     ToolDraft,
@@ -25,7 +26,8 @@ tool_table = sa.Table(
     sa.Column("key", sa.Text, nullable=False, unique=True),
     sa.Column("name", sa.Text, nullable=False),
     sa.Column("category", sa.Text, nullable=False),
-    sa.Column("level", sa.Integer, nullable=False),
+    sa.Column("default_priority", sa.Integer, nullable=False),
+    sa.Column("paradigm", sa.Text),
     sa.Column("documentation_url", sa.Text, nullable=False),
     sa.Column("icon", sa.Text),
     sa.Column("deleted_at", sa.DateTime(timezone=True)),
@@ -148,7 +150,7 @@ class ToolRepository:
                 key=row["key"],
                 name=row["name"],
                 category=Category(row["category"]),
-                level=row["level"],
+                default_priority=row["default_priority"],
                 documentation_url=row["documentation_url"],
                 icon=row["icon"],
                 summaries=summaries.get(row["id"], {}),
@@ -157,6 +159,7 @@ class ToolRepository:
                 },
                 examples=tuple(examples.get(row["id"], [])),
                 contents=contents.get(row["id"], {}),
+                paradigm=None if row["paradigm"] is None else Paradigm(row["paradigm"]),
             )
             for row in tool_rows
         )
@@ -193,7 +196,8 @@ class ToolRepository:
                     key=draft.key,
                     name=draft.name,
                     category=draft.category.value,
-                    level=draft.level,
+                    paradigm=None if draft.paradigm is None else draft.paradigm.value,
+                    default_priority=draft.default_priority,
                     documentation_url=draft.documentation_url,
                     icon=draft.icon,
                 )
@@ -213,7 +217,8 @@ class ToolRepository:
                 .values(
                     name=draft.name,
                     category=draft.category.value,
-                    level=draft.level,
+                    paradigm=None if draft.paradigm is None else draft.paradigm.value,
+                    default_priority=draft.default_priority,
                     documentation_url=draft.documentation_url,
                     icon=draft.icon,
                 )

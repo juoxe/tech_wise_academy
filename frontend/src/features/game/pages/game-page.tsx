@@ -19,8 +19,9 @@ import {
   useInterviewSets,
 } from "@/features/interview";
 import {
-  STACK_SCORE,
-  scoreOf,
+  effectiveScore,
+  inStack,
+  isHidden,
   usePriorities,
   useProgress,
   useResetProgress,
@@ -31,6 +32,7 @@ import {
 } from "@/features/training";
 import { useTools } from "@/features/tools/hooks/use-tools";
 import type { ToolSummary } from "@/features/tools";
+import { ProgressBar } from "@/components/shared/progress-bar";
 import { QueryState } from "@/components/shared/query-state";
 
 /* The games: the knowledge check (falling cards) and the card clearing (hint and field). */
@@ -49,15 +51,10 @@ const GAMES: { game: TrainingGame; name: string; description: string }[] = [
   },
 ];
 
-/* The three levels: level 1 holds the tools everybody should know, level 3 the expert tools. */
-const LEVELS = DIFFICULTIES;
-
-type Level = Difficulty;
-
-/* The sets of cards: the tools (three levels, sorted by area), the programming languages (one level,
-   sorted by paradigm), "Mein Tech-Stack" (the tools and languages the player gave a high score, one
-   level) and the own sets, which hold the interview preparation: sets generated from a job
-   advertisement (one level). */
+/* The sets of cards: the tools (sorted by area), the programming languages (sorted by paradigm),
+   "Mein Tech-Stack" (the tools and languages with a high priority) and the own sets, which hold the
+   interview preparation: sets generated from a job advertisement. There are no levels: every set is
+   one pool, and the priority of a tool decides how often it comes up. */
 const SETS = [
   { set: "tools", name: "Tools" },
   { set: "languages", name: "Programmiersprachen" },
@@ -68,7 +65,7 @@ const SETS = [
 type ToolSet = (typeof SETS)[number]["set"];
 
 function isLanguage(tool: ToolSummary): boolean {
-  return PARADIGMS.includes(tool.category);
+  return tool.category === "LANGUAGE";
 }
 
 /* The floor of the Wissens-Check. An interview set and the tech stack can mix tools and languages. */
@@ -81,10 +78,8 @@ function areasOf(set: ToolSet, tools: ToolSummary[]): readonly Area[] {
     : CATEGORIES;
 }
 
-/* Where the player stands in one game: the level that is played now and its progress. */
+/* Where the player stands in one game: the cards of the set that are played and its progress. */
 type Status = {
-  level: Level;
-  levelName: string;
   title: string;
   tools: ToolSummary[];
   learnedKeys: Set<string>;
@@ -97,8 +92,8 @@ const BUTTON_ON =
 const BUTTON_OFF =
   "inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary";
 
-/* The level is set automatically: the first open level whose tools are not all learned yet. A level
-   opens when every tool of the level before it is learned. Level 1 is always open. */
+/* The cards of a set without the hidden tools (effective priority 0), and how many of them are
+   learned. There are no levels and no unlocking. */
 function statusOf(
   allTools: ToolSummary[],
   entries: ProgressEntry[],
@@ -109,58 +104,26 @@ function statusOf(
   const learnedKeys = new Set(
     entries.filter((entry) => entry.learned).map((entry) => entry.tool_key),
   );
-  /* A tool with the score 0 is hidden: it is not played and does not block the next level. */
-  const isShown = (tool: ToolSummary) => scoreOf(scores, tool.key) > 0;
-  if (set !== "tools") {
-    const title =
-      set === "languages"
+  const title =
+    set === "tools"
+      ? "Tools"
+      : set === "languages"
         ? "Programmiersprachen"
         : set === "stack"
           ? "Mein Tech-Stack"
           : interview.title;
-    const tools = (
-      set === "languages"
+  const tools = (
+    set === "tools"
+      ? allTools.filter((tool) => !isLanguage(tool))
+      : set === "languages"
         ? allTools.filter(isLanguage)
         : set === "stack"
-          ? allTools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE)
+          ? allTools.filter((tool) => inStack(scores, tool))
           : interview.tools
-    ).filter(isShown);
-    const learnedCount = tools.filter((tool) =>
-      learnedKeys.has(tool.key),
-    ).length;
-    return {
-      level: 1,
-      levelName: title,
-      title,
-      tools,
-      learnedKeys,
-      learnedCount,
-      percent:
-        tools.length === 0
-          ? 0
-          : Math.round((learnedCount / tools.length) * 100),
-    };
-  }
-  const toolsOf = (levelNumber: Level) =>
-    allTools.filter(
-      (tool) =>
-        !isLanguage(tool) && tool.level === levelNumber && isShown(tool),
-    );
-  /* A level is done when every shown tool is learned; a level with only hidden tools is done too. */
-  const isLevelDone = (levelNumber: Level) =>
-    toolsOf(levelNumber).every((tool) => learnedKeys.has(tool.key));
-  const isUnlocked = (levelNumber: Level) =>
-    levelNumber === 1 || isLevelDone((levelNumber - 1) as Level);
-  const level: Level =
-    LEVELS.find(
-      (option) => isUnlocked(option.level) && !isLevelDone(option.level),
-    )?.level ?? 3;
-  const tools = toolsOf(level);
+  ).filter((tool) => !isHidden(scores, tool));
   const learnedCount = tools.filter((tool) => learnedKeys.has(tool.key)).length;
   return {
-    level,
-    levelName: LEVELS.find((option) => option.level === level)?.name ?? "",
-    title: `Level ${level} · ${LEVELS.find((option) => option.level === level)?.name ?? ""}`,
+    title,
     tools,
     learnedKeys,
     learnedCount,
@@ -209,11 +172,11 @@ export function GamePage() {
     interview,
     scores,
   );
-  const { level, title, learnedKeys, learnedCount, percent } = status;
+  const { title, learnedKeys, learnedCount, percent } = status;
   const toolList = status.tools;
-  const levelKeys = new Set(toolList.map((tool) => tool.key));
+  const setKeys = new Set(toolList.map((tool) => tool.key));
   const saved: SavedStreak[] = (progress.data ?? [])
-    .filter((entry) => levelKeys.has(entry.tool_key))
+    .filter((entry) => setKeys.has(entry.tool_key))
     .map((entry) => ({
       toolKey: entry.tool_key,
       streak: entry.correct_in_a_row,
@@ -225,7 +188,7 @@ export function GamePage() {
   const areas = areasOf(set, toolList);
   /* The importance scores: a card with a higher score comes up more often (see game-play.md). */
   const weights = Object.fromEntries(
-    toolList.map((tool) => [tool.key, weightOf(scoreOf(scores, tool.key))]),
+    toolList.map((tool) => [tool.key, weightOf(effectiveScore(scores, tool))]),
   );
   /* The cards of Memory: the chosen set without the hidden tools. */
   const memoryEntries = (
@@ -234,9 +197,9 @@ export function GamePage() {
       : set === "interview"
         ? interview.tools
         : set === "stack"
-          ? allTools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE)
+          ? allTools.filter((tool) => inStack(scores, tool))
           : allTools.filter((tool) => !isLanguage(tool))
-  ).filter((tool) => scoreOf(scores, tool.key) > 0);
+  ).filter((tool) => !isHidden(scores, tool));
 
   async function playAgain() {
     await progress.refetch();
@@ -372,19 +335,10 @@ export function GamePage() {
                     {gameStatus.percent} % gelernt
                   </span>
                 </div>
-                <div
-                  role="progressbar"
-                  aria-label={`Fortschritt ${option.name}`}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={gameStatus.percent}
-                  className="h-3 w-full overflow-hidden rounded-full bg-muted"
-                >
-                  <div
-                    className="h-full bg-secondary transition-all"
-                    style={{ width: `${gameStatus.percent}%` }}
-                  />
-                </div>
+                <ProgressBar
+                  percent={gameStatus.percent}
+                  label={`Fortschritt ${option.name}`}
+                />
               </div>
               {confirmReset === option.game ? (
                 <div
@@ -393,8 +347,8 @@ export function GamePage() {
                   className="flex flex-col gap-3 rounded-md border border-destructive p-4"
                 >
                   <p className="text-base">
-                    Den Fortschritt von „{option.name}“ in allen Sets und Levels
-                    wirklich löschen? Das lässt sich nicht rückgängig machen.
+                    Den Fortschritt von „{option.name}“ in allen Sets wirklich
+                    löschen? Das lässt sich nicht rückgängig machen.
                   </p>
                   {resetProgress.error && (
                     <p role="alert" className="text-base text-destructive">
@@ -532,19 +486,12 @@ export function GamePage() {
             {learnedCount} von {toolList.length} gelernt
           </span>
         </div>
-        <div
-          role="progressbar"
-          aria-label="Fortschritt im Level"
-          aria-valuemin={0}
-          aria-valuemax={toolList.length}
-          aria-valuenow={learnedCount}
-          className="h-3 w-full overflow-hidden rounded-full bg-muted"
-        >
-          <div
-            className="h-full bg-secondary transition-all"
-            style={{ width: `${percent}%` }}
-          />
-        </div>
+        <ProgressBar
+          percent={percent}
+          label="Fortschritt im Set"
+          valueNow={learnedCount}
+          valueMax={toolList.length}
+        />
       </div>
       <QueryState
         isLoading={tools.isLoading || progress.isLoading}
@@ -555,19 +502,15 @@ export function GamePage() {
         {allLearned ? (
           <section className="flex flex-col gap-4">
             <h2 className="text-2xl font-semibold">
-              {set === "interview" || set === "stack"
-                ? "Alle Karten dieses Sets sind gelernt"
-                : "Alle Tools dieses Levels sind gelernt"}
+              Alle Karten dieses Sets sind gelernt
             </h2>
             <p className="text-lg text-muted-foreground">
-              {set === "interview" || set === "stack"
-                ? "Für dieses Set gibt es keine offenen Karten mehr."
-                : "Für dieses Level gibt es keine offenen Karten mehr."}
+              Für dieses Set gibt es keine offenen Karten mehr.
             </p>
           </section>
         ) : game === "level0" ? (
           <CardDropBoard
-            key={`level0-${set}-${interviewSetId}-${level}-${roundNumber}`}
+            key={`level0-${set}-${interviewSetId}-${roundNumber}`}
             tools={toolList}
             saved={saved}
             areas={areas}
@@ -576,7 +519,7 @@ export function GamePage() {
           />
         ) : (
           <ClearingBoard
-            key={`clearing-${set}-${interviewSetId}-${level}-${roundNumber}`}
+            key={`clearing-${set}-${interviewSetId}-${roundNumber}`}
             tools={openTools}
             weights={weights}
             onNextRound={playAgain}

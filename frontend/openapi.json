@@ -485,7 +485,7 @@
           "training"
         ],
         "summary": "List Priorities",
-        "description": "The importance scores that differ from the default (`DEFAULT_SCORE`).",
+        "description": "The importance scores the player has set; a tool that is not listed has no score.",
         "operationId": "list_priorities_api_training_priorities_get",
         "parameters": [
           {
@@ -858,11 +858,7 @@
           "FRONTEND",
           "SECURITY",
           "AI_DATA",
-          "OBJECT_ORIENTED",
-          "FUNCTIONAL",
-          "PROCEDURAL",
-          "DECLARATIVE",
-          "MULTI_PARADIGM"
+          "LANGUAGE"
         ],
         "title": "Category"
       },
@@ -1008,6 +1004,18 @@
         ],
         "title": "KeyConceptOut"
       },
+      "Paradigm": {
+        "type": "string",
+        "enum": [
+          "OBJECT_ORIENTED",
+          "FUNCTIONAL",
+          "PROCEDURAL",
+          "DECLARATIVE",
+          "MULTI_PARADIGM"
+        ],
+        "title": "Paradigm",
+        "description": "How a programming language works: a feature of a language, not an area of its own."
+      },
       "PrioritiesIn": {
         "properties": {
           "tool_keys": {
@@ -1022,9 +1030,16 @@
             "title": "Tool Keys"
           },
           "score": {
-            "type": "integer",
-            "maximum": 4.0,
-            "minimum": 0.0,
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 4.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Score"
           }
         },
@@ -1053,7 +1068,7 @@
           "score"
         ],
         "title": "PriorityOut",
-        "description": "A tool with a score that differs from the default."
+        "description": "A tool the player has given a score."
       },
       "ProgressOut": {
         "properties": {
@@ -1192,9 +1207,19 @@
           "category": {
             "$ref": "#/components/schemas/Category"
           },
-          "level": {
+          "paradigm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Paradigm"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_priority": {
             "type": "integer",
-            "title": "Level"
+            "title": "Default Priority"
           },
           "documentation_url": {
             "type": "string",
@@ -1251,7 +1276,7 @@
         "required": [
           "name",
           "category",
-          "level",
+          "default_priority",
           "documentation_url",
           "summary"
         ],
@@ -1314,9 +1339,19 @@
           "category": {
             "$ref": "#/components/schemas/Category"
           },
-          "level": {
+          "paradigm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Paradigm"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_priority": {
             "type": "integer",
-            "title": "Level"
+            "title": "Default Priority"
           },
           "documentation_url": {
             "type": "string",
@@ -1377,7 +1412,7 @@
         "required": [
           "name",
           "category",
-          "level",
+          "default_priority",
           "documentation_url",
           "summary",
           "key"
@@ -1397,9 +1432,9 @@
           "category": {
             "$ref": "#/components/schemas/Category"
           },
-          "level": {
+          "default_priority": {
             "type": "integer",
-            "title": "Level"
+            "title": "Default Priority"
           },
           "summary": {
             "type": "string",
@@ -1419,6 +1454,16 @@
               }
             ],
             "title": "Icon"
+          },
+          "paradigm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Paradigm"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "documentation_url": {
             "type": "string",
@@ -1461,10 +1506,11 @@
           "key",
           "name",
           "category",
-          "level",
+          "default_priority",
           "summary",
           "language",
           "icon",
+          "paradigm",
           "documentation_url",
           "hints",
           "examples",
@@ -1486,9 +1532,9 @@
           "category": {
             "$ref": "#/components/schemas/Category"
           },
-          "level": {
+          "default_priority": {
             "type": "integer",
-            "title": "Level"
+            "title": "Default Priority"
           },
           "summary": {
             "type": "string",
@@ -1508,6 +1554,16 @@
               }
             ],
             "title": "Icon"
+          },
+          "paradigm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Paradigm"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -1515,10 +1571,11 @@
           "key",
           "name",
           "category",
-          "level",
+          "default_priority",
           "summary",
           "language",
-          "icon"
+          "icon",
+          "paradigm"
         ],
         "title": "ToolSummaryOut"
       },

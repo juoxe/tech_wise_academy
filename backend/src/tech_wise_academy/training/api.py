@@ -66,7 +66,7 @@ class ProgressOut(BaseModel):
 
 
 class PriorityOut(BaseModel):
-    """A tool with a score that differs from the default."""
+    """A tool the player has given a score."""
 
     tool_key: str
     score: int
@@ -78,7 +78,8 @@ class PrioritiesIn(BaseModel):
     tool_keys: list[Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9._+#-]*$", max_length=100)]] = (
         Field(min_length=1, max_length=1000)
     )
-    score: int = Field(ge=MIN_SCORE, le=MAX_SCORE)
+    # `null` removes the scores of the tools: they are "not set" again.
+    score: Annotated[int, Field(ge=MIN_SCORE, le=MAX_SCORE)] | None
 
 
 ProfileHeader = Annotated[uuid.UUID, Header(alias="X-Profile-Id")]
@@ -162,7 +163,7 @@ async def reset_progress(
 
 @router.get("/priorities", response_model=list[PriorityOut])
 async def list_priorities(profile_id: ProfileHeader, service: ServiceDep) -> list[PriorityOut]:
-    """The importance scores that differ from the default (`DEFAULT_SCORE`)."""
+    """The importance scores the player has set; a tool that is not listed has no score."""
     scores = await service.list_scores(profile_id)
     return [PriorityOut(tool_key=key, score=scores[key]) for key in sorted(scores)]
 

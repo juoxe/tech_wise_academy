@@ -4,7 +4,7 @@ import { QueryState } from "@/components/shared/query-state";
 import { ToolIcon } from "@/features/tools/components/tool-icon";
 import { useTool } from "@/features/tools/hooks/use-tool";
 import { PrioritySelect } from "@/features/tools/components/priority-select";
-import { categoryLabel } from "@/features/tools/lib/labels";
+import { areaWithParadigm } from "@/features/tools/lib/labels";
 import { scoreOf, usePriorities, useSetPriorities } from "@/features/training";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -17,7 +17,15 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 /* The importance score of the player for this tool, changed right on the card. */
-function CardPriority({ toolKey, name }: { toolKey: string; name: string }) {
+function CardPriority({
+  toolKey,
+  name,
+  defaultScore,
+}: {
+  toolKey: string;
+  name: string;
+  defaultScore: number;
+}) {
   const { scores } = usePriorities();
   const setPriorities = useSetPriorities();
   return (
@@ -26,6 +34,7 @@ function CardPriority({ toolKey, name }: { toolKey: string; name: string }) {
       <PrioritySelect
         label={`Priorität von ${name}`}
         value={scoreOf(scores, toolKey)}
+        defaultScore={defaultScore}
         onChange={(score) =>
           setPriorities.mutate({ toolKeys: [toolKey], score })
         }
@@ -75,17 +84,25 @@ export function ToolOverviewCard({
           className="flex flex-col gap-5 rounded-md border border-border bg-card p-6"
         >
           <header className="flex items-center gap-3">
-            <ToolIcon icon={detail.icon} category={detail.category} />
+            <ToolIcon
+              icon={detail.icon}
+              category={detail.category}
+              paradigm={detail.paradigm}
+            />
             <div className="flex min-w-0 flex-col">
               <h3 className="break-words text-2xl font-semibold">
                 {detail.name}
               </h3>
               <p className="text-base text-muted-foreground">
-                {categoryLabel(detail.category)} · Level {detail.level}
+                {areaWithParadigm(detail)}
               </p>
             </div>
             {showPriority && (
-              <CardPriority toolKey={detail.key} name={detail.name} />
+              <CardPriority
+                toolKey={detail.key}
+                name={detail.name}
+                defaultScore={detail.default_priority}
+              />
             )}
           </header>
 

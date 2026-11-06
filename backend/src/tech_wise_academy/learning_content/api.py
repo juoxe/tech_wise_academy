@@ -9,6 +9,7 @@ from tech_wise_academy.learning_content.model import (
     DEFAULT_LANGUAGE,
     Category,
     KeyConcept,
+    Paradigm,
     ToolContent,
     ToolDraft,
 )
@@ -35,10 +36,11 @@ class ToolSummaryOut(BaseModel):
     key: str
     name: str
     category: Category
-    level: int
+    default_priority: int
     summary: str
     language: str
     icon: str | None
+    paradigm: Paradigm | None
 
 
 class KeyConceptOut(BaseModel):
@@ -68,7 +70,8 @@ class ToolBody(BaseModel):
 
     name: str
     category: Category
-    level: int
+    paradigm: Paradigm | None = None
+    default_priority: int
     documentation_url: str
     icon: str | None = None
     summary: str
@@ -88,7 +91,8 @@ def _draft(key: str, body: ToolBody) -> ToolDraft:
         key=key,
         name=body.name.strip(),
         category=body.category,
-        level=body.level,
+        paradigm=body.paradigm,
+        default_priority=body.default_priority,
         documentation_url=body.documentation_url.strip(),
         icon=body.icon or None,
         summary=body.summary.strip(),
@@ -125,10 +129,11 @@ def _summary_out(summary: ToolSummary) -> ToolSummaryOut:
         key=summary.key,
         name=summary.name,
         category=summary.category,
-        level=summary.level,
+        default_priority=summary.default_priority,
         summary=summary.summary,
         language=summary.language,
         icon=summary.icon,
+        paradigm=summary.paradigm,
     )
 
 
@@ -137,10 +142,11 @@ def _detail_out(detail: ToolDetail) -> ToolDetailOut:
         key=detail.key,
         name=detail.name,
         category=detail.category,
-        level=detail.level,
+        default_priority=detail.default_priority,
         summary=detail.summary,
         language=detail.language,
         icon=detail.icon,
+        paradigm=detail.paradigm,
         documentation_url=detail.documentation_url,
         hints=list(detail.hints),
         examples=list(detail.examples),

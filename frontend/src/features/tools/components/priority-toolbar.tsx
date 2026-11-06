@@ -4,16 +4,16 @@ import { PrioritySelect } from "@/features/tools/components/priority-select";
 import { categoryLabel } from "@/features/tools/lib/labels";
 import type { ToolSummary } from "@/features/tools/api/tools-api";
 import {
-  DEFAULT_SCORE,
+  DEFAULT_LABEL,
   SCORES,
-  scoreLabel,
+  type MaybeScore,
   type Score,
 } from "@/features/training";
 
 type Category = ToolSummary["category"];
 
 export type PriorityFilter = {
-  score: "all" | Score;
+  score: "all" | "unset" | Score;
   category: "all" | Category;
   sortBy: "name" | "score";
 };
@@ -24,11 +24,7 @@ const CATEGORIES: Category[] = [
   "FRONTEND",
   "SECURITY",
   "AI_DATA",
-  "OBJECT_ORIENTED",
-  "FUNCTIONAL",
-  "PROCEDURAL",
-  "DECLARATIVE",
-  "MULTI_PARADIGM",
+  "LANGUAGE",
 ];
 
 const FIELD =
@@ -52,10 +48,10 @@ export function PriorityToolbar({
   onFilter: (filter: PriorityFilter) => void;
   shownCount: number;
   busy: boolean;
-  onSetShown: (score: Score) => void;
+  onSetShown: (score: MaybeScore) => void;
   onReset: () => void;
 }) {
-  const [bulk, setBulk] = useState<Score>(DEFAULT_SCORE);
+  const [bulk, setBulk] = useState<MaybeScore>(null);
   const [confirmReset, setConfirmReset] = useState(false);
 
   return (
@@ -92,14 +88,15 @@ export function PriorityToolbar({
               onFilter({
                 ...filter,
                 score:
-                  event.target.value === "all"
-                    ? "all"
+                  event.target.value === "all" || event.target.value === "unset"
+                    ? event.target.value
                     : (Number(event.target.value) as Score),
               })
             }
             className={FIELD}
           >
             <option value="all">Alle</option>
+            <option value="unset">{DEFAULT_LABEL} (nicht geändert)</option>
             {SCORES.map((option) => (
               <option key={option.score} value={option.score}>
                 {option.label}
@@ -145,11 +142,11 @@ export function PriorityToolbar({
       {confirmReset ? (
         <div
           role="alertdialog"
-          aria-label="Prioritäten zurücksetzen"
+          aria-label="Auf Standard zurücksetzen"
           className="flex flex-col gap-3 rounded-md border border-destructive p-4"
         >
           <p className="text-base">
-            Alle Prioritäten wirklich auf „{scoreLabel(DEFAULT_SCORE)}“
+            Alle eigenen Prioritäten wirklich auf „{DEFAULT_LABEL}“
             zurücksetzen? Das lässt sich nicht rückgängig machen.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -180,7 +177,7 @@ export function PriorityToolbar({
             onClick={() => setConfirmReset(true)}
             className={BUTTON}
           >
-            Alle Prioritäten zurücksetzen
+            Auf Standard zurücksetzen
           </button>
         </div>
       )}

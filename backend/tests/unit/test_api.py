@@ -14,7 +14,7 @@ class FakeReader:
                 key="docker",
                 name="Docker",
                 category=Category.DEVOPS,
-                level=1,
+                default_priority=2,
                 documentation_url="https://docs.docker.com/",
                 icon="docker",
                 summaries={"de": "Container-Laufzeit."},
@@ -42,10 +42,11 @@ def test_list_returns_summaries_in_german_by_default() -> None:
             "key": "docker",
             "name": "Docker",
             "category": "DEVOPS",
-            "level": 1,
+            "default_priority": 2,
             "summary": "Container-Laufzeit.",
             "language": "de",
             "icon": "docker",
+            "paradigm": None,
         }
     ]
 
