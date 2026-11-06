@@ -13,8 +13,8 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-3](#epic-twa-3--mandatory-decisions-before-the-first-code) | Mandatory Decisions Before the First Code | MS 1 | DONE |
 | [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
-| [TWA-6](#epic-twa-6--statistics) | Statistics | MS 2 | IN PROGRESS |
-| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
+| [TWA-6](#epic-twa-6--statistics) | Statistics | MS 2 | DONE |
+| [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | DONE |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
 | [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | DONE |
 | [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
@@ -22,8 +22,9 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
 | [TWA-13](#epic-twa-13--code-quality-and-security) | Code Quality and Security | – | TODO |
 | [TWA-14](#epic-twa-14--personal-card-priority) | Personal Card Priority | MS 2 | TODO |
+| [TWA-15](#epic-twa-15--more-games) | More Games | – | IDEA |
 
-**Next free epic number: 15**
+**Next free epic number: 16**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -810,7 +811,7 @@ skeleton in TWA-4 ("TWA-4: Add project skeleton"); the number TWA-5 stays taken.
 
 ## Epic TWA-6 – Statistics
 
-**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
+**Status:** DONE · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -830,7 +831,7 @@ already returns (learned, correct and wrong answers per tool); only TWA-6.3 adds
 J asked on 2026-11-05 to plan and build the tab. No new library is needed: the bars are the same
 progress bars as in the Game tab, in the colour role `secondary`. The statistics use the profile of
 the browser (`X-Profile-Id`); with login (Keycloak) they become per user.
-All three stories are done; the epic stays IN PROGRESS until J has reviewed the tab in the browser.
+All three stories are done. Reviewed by J in the browser on 2026-11-06.
 
 ---
 
@@ -927,7 +928,7 @@ A learner cannot see how the results develop over several rounds there.
 
 ## Epic TWA-7 – Knowledge Games
 
-**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
+**Status:** DONE · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -946,8 +947,8 @@ documentation
 
 **Note:** the rules are documented only in [game-play.md](../game-play.md). J assigned the epic to
 MS 2. The stories below record what was built on branch `twa-7-knowledge-games` (the first games
-were committed in 71f586e; the later stories are in the working tree until J commits them). The epic
-stays IN PROGRESS until J has reviewed all five games in the browser.
+were committed in 71f586e; the later stories are in the working tree until J commits them).
+Reviewed by J in the browser on 2026-11-06.
 
 ---
 
@@ -2568,3 +2569,151 @@ must still set the scores by hand.
 **Acceptance Criteria**
 
 - To be written when the idea is planned.
+
+---
+
+## Epic TWA-15 – More Games
+
+**Status:** IDEA
+
+**Description**
+
+As a learner, we want more games, both to review what we already learned and to learn in new ways,
+so that practising stays varied and the cards stay in memory. Today there are five games
+(Wissens-Check, Karten abräumen, SQL-Bausteine, Code beurteilen, Memory); all of them are about
+learning cards the first time or about single skills.
+
+**Affected components:** frontend (feature `game`), backend (feature `training` where progress is
+needed), documentation (game-play.md)
+
+**Working documents:** [game-play](../game-play.md)
+
+**Note:** Idea of J, 2026-11-06. The stories are proposals; J picks which ones are planned. Rules of
+a game are documented only in game-play.md. Needs no new technology.
+
+---
+
+### TWA-15.1 – Review Round
+
+**Status:** IDEA
+
+**Problem Description**
+
+The tab Statistik lists the tools with the most wrong answers ("Zum Wiederholen"), but nothing lets
+the learner practise exactly these tools. The list shows what to repeat, but the repeating has to be
+done by hand in the other games.
+
+**Action Steps**
+
+1. Add a game or mode "Wiederholen" that plays the tools with wrong answers (the same list as "Zum
+   Wiederholen"), using the way of asking of Karten abräumen.
+2. Let a tool leave the list after it was answered correctly twice in a row.
+3. Document the rules in game-play.md.
+
+**Acceptance Criteria**
+
+- The round contains only tools with wrong answers.
+- Correct answers reduce the list (a tool leaves it after two correct answers in a row).
+- An empty list shows a short text instead of a round.
+- The rules are documented only in game-play.md; texts are German.
+
+---
+
+### TWA-15.2 – Refresh Learned Cards
+
+**Status:** IDEA
+
+**Problem Description**
+
+A card that is learned stays learned forever, even after weeks without seeing it. The learner has no
+way to find out whether a learned card is still known, so the cards can fade from memory unnoticed.
+
+**Action Steps**
+
+1. Decide with J the rule (proposal: a learned card is due again after a number of days, for
+   example 3, 7, 21, growing with every correct review).
+2. Store the time of the last review per tool and game (backend, feature `training`, Alembic
+   migration).
+3. Add a round "Auffrischen" with the due cards.
+4. Document the rule in game-play.md.
+
+**Acceptance Criteria**
+
+- Due cards are offered in a refresh round.
+- A wrong answer makes the card not learned again.
+- The rule is decided by J and documented in game-play.md.
+- The last review time is stored per tool and game and survives a reload.
+
+---
+
+### TWA-15.3 – Game: Alternatives
+
+**Status:** IDEA
+
+**Problem Description**
+
+The tools store their alternatives (symmetric: if A is an alternative to B, B is one to A), but no
+game uses this data. The learner trains single cards and not the connection between similar tools.
+
+**Action Steps**
+
+1. Add a new game "Alternativen": the player is shown a tool and picks its alternatives from several
+   tools, using the stored alternatives of the tools.
+2. Take the distractors from tools that are not alternatives of the shown tool.
+3. Offer three difficulty levels as in the other games.
+4. Document the rules in game-play.md.
+
+**Acceptance Criteria**
+
+- The right alternatives come from the stored data of the tool.
+- The distractors are tools that are not alternatives of the shown tool.
+- The game has three difficulty levels as the other games.
+- The rules are documented only in game-play.md; texts are German.
+
+---
+
+### TWA-15.4 – Game: Use Cases
+
+**Status:** IDEA
+
+**Problem Description**
+
+The learning content of the tools contains use cases (`use_cases`), but no game asks for them. The
+learner knows names and descriptions, but is not asked to choose the fitting tool for a task.
+
+**Action Steps**
+
+1. Add a new game "Einsatzfälle": the player is shown a use case from the learning content
+   (`use_cases`) and chooses the fitting tool.
+2. Use only tools that have learning content, and make sure the use case never names the tool.
+3. Offer three difficulty levels as in the other games.
+4. Document the rules in game-play.md.
+
+**Acceptance Criteria**
+
+- Only tools with learning content are used.
+- The shown use case never names the tool.
+- The game has three difficulty levels as the other games.
+- The rules are documented only in game-play.md; texts are German.
+
+---
+
+### TWA-15.5 – Collect More Game Ideas
+
+**Status:** IDEA
+
+**Problem Description**
+
+More game ideas will come (for example a quartet duel on the overview cards, a speed round, a daily
+challenge). Without one place for them, they are lost or planned without a decision of J.
+
+**Action Steps**
+
+1. J names further ideas.
+2. Write each idea as a story of this epic with the three parts.
+3. J decides which stories are planned, in which order and to which milestone they belong.
+
+**Acceptance Criteria**
+
+- Every idea of J is a story with Problem Description, Action Steps and Acceptance Criteria.
+- The order and the milestone of the planned stories are decided by J.

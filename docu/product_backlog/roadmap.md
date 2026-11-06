@@ -52,7 +52,7 @@ Milestone status: `DRAFT` (outlined, no epics yet) · `PLANNED` (epics cut) · `
 
 ## MS 2 – Playable MVP
 
-**Status:** IN PROGRESS – TWA-7 and TWA-8 are being built; the milestone is still outlined as
+**Status:** IN PROGRESS – TWA-8 is being built (TWA-6, TWA-7 and TWA-9 are done); the milestone is still outlined as
 expected results and not yet cut into a planned epic table.
 
 **Goal:** a playable MVP exists.
@@ -68,12 +68,12 @@ expected results and not yet cut into a planned epic table.
   is shown as learned cards.
 - A statistics tab: the saved progress of the knowledge games per game, level and area, the tools to
   repeat and the stored rounds of SQL-Bausteine, Code beurteilen and Memory
-  ([TWA-6](backlog.md#epic-twa-6--statistics), `IN PROGRESS`, all stories done, waiting for J's review).
+  ([TWA-6](backlog.md#epic-twa-6--statistics), `DONE`; reviewed by J in the browser on 2026-11-06).
 - Knowledge games: five games – Wissens-Check and Karten abräumen with three levels and saved
   progress; SQL-Bausteine, Code beurteilen and Memory with three difficulty levels chosen by the
   player and without saved learning progress
-  ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
-  MS 2).
+  ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `DONE`, built ahead of the planning of MS 2;
+  reviewed by J in the browser on 2026-11-06).
 - Interview preparation: card sets generated from a job advertisement, in the local network
   ([TWA-8](backlog.md#epic-twa-8--interview-preparation), `IN PROGRESS`, built ahead of the planning
   of MS 2).
