@@ -17,11 +17,11 @@ The app has a menu bar with three tabs, in this order:
 |-----|---------|
 | Game | The choice of the game ("Welches Game willst du spielen?"), then the game. |
 | Statistik | The saved progress of the two knowledge games and the results of the other three games (see Statistik). |
-| Toolübersicht | All tools as a list over the full width of the screen. A click on a row opens the detail view with "Bearbeiten", "Löschen" and "Schließen"; "Neues Tool" opens the form to create a tool (see Tools maintain). |
+| Toolübersicht | All tools as a list over the full width of the screen, with the importance score of each tool and a bar to filter, sort and set scores (see Priority). A click on a row opens the detail view with "Bearbeiten", "Löschen" and "Schließen"; "Neues Tool" opens the form to create a tool (see Tools maintain). |
 
 ## Sets
 
-The Game tab offers three sets of cards. The player picks the set above the choice of the game. The
+The Game tab offers four sets of cards. The player picks the set above the choice of the game. The
 two knowledge games Wissens-Check and Karten abräumen and the game Memory use the cards of the chosen
 set. SQL-Bausteine and Code beurteilen do not use a set.
 
@@ -29,6 +29,7 @@ set. SQL-Bausteine and Code beurteilen do not use a set.
 |-----|-------|-----------|--------|
 | Tools | all tools except the programming languages | the five areas | 1 to 3 (see Levels) |
 | Programmiersprachen | 23 common programming languages | the five paradigms: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | none; all languages are one level |
+| Mein Tech-Stack | all tools and languages the player gave the importance score "Hoch" or "Kern" (see Priority); the set changes with the scores | the five areas; a stack with languages gets a sixth area "Sprachen" | none; the set is one level |
 | Eigene Sets | the cards of a set the player made; so far the interview preparation: a job advertisement is pasted into the Game tab and gives a set of the matching tools | the five areas; a set with languages gets a sixth area "Sprachen" | none; the set is one level |
 
 Each tool or language belongs to exactly one set. The languages are not part of the three levels of
@@ -66,6 +67,51 @@ learned, level 3 when every tool of level 2 is learned. The game plays the first
 are not all learned yet; the player does not choose a level. Above the board a progress bar shows how
 many tools of the level are learned ("x von y gelernt"). The progress is the one saved for the player
 (see Saving).
+
+## Priority
+
+**Goal:** the learner decides which cards matter. Every tool and language has an **importance score**
+per player, next to the learning progress. The player learns their own tech stack first and more
+intensively. Decided by J on 2026-11-06 (TWA-14.1).
+
+| Score | Name | Effect in the games |
+|------:|------|---------------------|
+| 0 | Ausblenden | The card is not played (see below) |
+| 1 | Niedrig | Comes up rarely (weight 1) |
+| 2 | Normal | The default for every tool without a score (weight 2) |
+| 3 | Hoch | Comes up more often (weight 4); belongs to "Mein Tech-Stack" |
+| 4 | Kern | Comes up most often (weight 8); belongs to "Mein Tech-Stack" |
+
+- **Setting the score:** in the Toolübersicht each row has a choice "Priorität"; the detail view of a
+  tool has the same choice on the card. Above the table the player can filter by area and score,
+  sort by score, and give **all shown tools** the same score with "Setzen" (for example filter the
+  area "DevOps", then set "Hoch"). "Alle Prioritäten zurücksetzen" asks for a confirmation and puts
+  every tool back to "Normal".
+- **Storing:** the score belongs to the profile of the player (see Saving) and is stored in the
+  backend (`GET`, `PUT` and `DELETE /api/training/priorities`, table `tool_priority`). Only scores that
+  differ from "Normal" are stored; a tool without a score has "Normal".
+- **Draw in the Wissens-Check:** the cards that are not learned come up in a random order in which a
+  card with a higher weight tends to come first; afterwards the open cards come up again at random,
+  in proportion to their weight.
+- **Draw in Karten abräumen:** a card with a higher weight is more likely to be one of the 20 cards of
+  the field and to be asked first.
+- **Hidden cards (score 0):** they are not played in the Wissens-Check, Karten abräumen and Memory, and
+  they do not count in the progress bar of the Game tab. They do **not block the next level**: a level
+  is done when every shown tool of it is learned, and a level with only hidden tools is done at once.
+  A hidden card can be played again as soon as its score is raised.
+- **Mein Tech-Stack:** the fourth set of the Game tab. It holds every tool and language with "Hoch" or
+  "Kern" and is played like the interview sets: one level, no unlocking. While the stack is empty the
+  Game tab says how to fill it.
+- **Learning progress and score are independent:** a learned card stays learned when its score
+  changes. Memory, SQL-Bausteine and Code beurteilen do not draw by weight; only Memory leaves hidden
+  cards out.
+- **Statistik:** the tab shows "Mein Tech-Stack" (learned of the stack) and the section "Nach
+  Priorität" with the progress per score, both only after the player has set a score. "Zum Wiederholen"
+  leaves hidden tools out and sorts tools with the same number of wrong answers by their score.
+- **Relation to own sets (TWA-11):** the score is a weight per card and player, a set is a named list
+  of cards. They exist side by side: a set decides which cards are in a round, the score decides how
+  often and whether they come up.
+- The score is not shared between players and becomes per user with the login (TD-17).
 
 ## Level 0 – Knowledge Check
 

@@ -94,6 +94,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/training/priorities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Priorities
+         * @description The importance scores that differ from the default (`DEFAULT_SCORE`).
+         */
+        get: operations["list_priorities_api_training_priorities_get"];
+        /** Set Priorities */
+        put: operations["set_priorities_api_training_priorities_put"];
+        post?: never;
+        /** Reset Priorities */
+        delete: operations["reset_priorities_api_training_priorities_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/interview-sets": {
         parameters: {
             query?: never;
@@ -221,6 +243,26 @@ export interface components {
             term: string;
             /** Explanation */
             explanation: string;
+        };
+        /**
+         * PrioritiesIn
+         * @description One score for several tools: a single tool, an area or a whole tech stack.
+         */
+        PrioritiesIn: {
+            /** Tool Keys */
+            tool_keys: string[];
+            /** Score */
+            score: number;
+        };
+        /**
+         * PriorityOut
+         * @description A tool with a score that differs from the default.
+         */
+        PriorityOut: {
+            /** Tool Key */
+            tool_key: string;
+            /** Score */
+            score: number;
         };
         /** ProgressOut */
         ProgressOut: {
@@ -698,6 +740,99 @@ export interface operations {
             query: {
                 game: "level0" | "clearing";
             };
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_priorities_api_training_priorities_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriorityOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_priorities_api_training_priorities_put: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PrioritiesIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_priorities_api_training_priorities_delete: {
+        parameters: {
+            query?: never;
             header: {
                 "X-Profile-Id": string;
             };

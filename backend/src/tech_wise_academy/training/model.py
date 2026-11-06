@@ -12,6 +12,21 @@ LEARNED_AFTER: dict[str, int] = {"level0": 2, "clearing": 2}
 # `total`, so that `solved <= total` holds for every game.
 ROUND_GAMES: tuple[str, ...] = ("sql", "code", "memory")
 
+# The importance score a player gives to a tool (TWA-14): 0 hides the tool in the games, 1 is low,
+# 2 is normal (the default), 3 is high and 4 is the core of the player's tech stack.
+MIN_SCORE = 0
+MAX_SCORE = 4
+DEFAULT_SCORE = 2
+
+
+def is_valid_score(score: int) -> bool:
+    return MIN_SCORE <= score <= MAX_SCORE
+
+
+def keeps_default(score: int) -> bool:
+    """A score equal to the default is not stored: the tool simply has no row."""
+    return score == DEFAULT_SCORE
+
 
 @dataclass(frozen=True)
 class RoundResult:

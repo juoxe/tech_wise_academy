@@ -21,7 +21,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
 | [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
 | [TWA-13](#epic-twa-13--code-quality-and-security) | Code Quality and Security | – | TODO |
-| [TWA-14](#epic-twa-14--personal-card-priority) | Personal Card Priority | MS 2 | TODO |
+| [TWA-14](#epic-twa-14--personal-card-priority) | Personal Card Priority | MS 2 | IN PROGRESS |
 | [TWA-15](#epic-twa-15--more-games) | More Games | – | IDEA |
 
 **Next free epic number: 16**
@@ -2388,7 +2388,7 @@ exports.
 
 ## Epic TWA-14 – Personal Card Priority
 
-**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -2402,7 +2402,7 @@ Today every tool counts the same: the games ask all tools of a level, and only t
 
 **Working documents:** [game-play](../game-play.md)
 
-**Note:** J asked on 2026-11-06 to build this next. The score belongs to the profile of the browser
+**Note:** J asked on 2026-11-06 to build this next and accepted all proposals of TWA-14.1 on the same day. The score belongs to the profile of the browser
 (`X-Profile-Id`, like the progress) and becomes per user with the login (Keycloak, TD-17). No new
 library or technology is needed. Relation to [TWA-11](#epic-twa-11--own-card-sets) (own card sets):
 the score is a weight per card and per player, a set is a named list of cards; both can exist side
@@ -2412,7 +2412,9 @@ by side, [TWA-14.1](#twa-141--decide-what-the-score-means) decides how the two m
 
 ### TWA-14.1 – Decide What the Score Means
 
-**Status:** TODO
+**Status:** DONE
+
+**Result:** decided by J on 2026-11-06 (all proposals accepted): scale 0 to 4 (Ausblenden, Niedrig, Normal as the default, Hoch, Kern); weights 0, 1, 2, 4, 8 in the draw; score 0 hides a card and does not block the next level; learned cards stay learned; "Mein Tech-Stack" is the set of the tools with Hoch or Kern; the score and own sets (TWA-11) exist side by side. Written in [game-play.md](../game-play.md), section Priority.
 
 **Problem Description**
 
@@ -2443,7 +2445,9 @@ it changes the games. Without these rules backend, UI and games would each guess
 
 ### TWA-14.2 – Store the Score per Player and Tool
 
-**Status:** TODO · **Depends on:** TWA-14.1
+**Status:** DONE · **Depends on:** TWA-14.1
+
+**Result:** implemented: table `tool_priority` (migration `0012_tool_priority.py`, check on the range 0 to 4, only scores that differ from the default are stored), `GET`, `PUT` and `DELETE /api/training/priorities` in `backend/src/tech_wise_academy/training/` (`PUT` gives one score to several tools, so a single tool, an area or a stack use the same call), rules `is_valid_score` and `keeps_default` in `model.py`, 6 new unit tests in `tests/unit/test_training_priorities.py`. Checked: ruff, ty, import-linter and 59 unit tests pass; the migration ran on the real database and the endpoints stored and returned scores through the browser.
 
 **Problem Description**
 
@@ -2452,7 +2456,7 @@ score, so a choice of the learner would be lost with every reload.
 
 **Action Steps**
 
-1. New table (profile ID, tool key, score) in the feature `training`, with Alembic migration 0011
+1. New table (profile ID, tool key, score) in the feature `training`, with Alembic migration 0012
    and a check on the allowed values; tools without a row have the default score.
 2. Endpoints to list the scores of the player, to set the score of one tool, and to reset all scores
    (follow the training API rules; no version in the path).
@@ -2473,7 +2477,9 @@ score, so a choice of the learner would be lost with every reload.
 
 ### TWA-14.3 – Set the Score in the UI
 
-**Status:** TODO · **Depends on:** TWA-14.2
+**Status:** DONE · **Depends on:** TWA-14.2
+
+**Result:** implemented in `frontend/src/features/tools/`: the choice `PrioritySelect` in every row of the Toolübersicht and on the card of the detail view (`showPriority`), the bar `PriorityToolbar` (filter by area and score, sort by score, give all shown tools one score, reset all with a confirmation), hooks `usePriorities`, `useSetPriorities` and `useResetPriorities` in `features/training`. Checked in the browser against the real database: 59 DevOps tools set to Hoch in one action, one tool set to Kern and one to Ausblenden in their rows, the values were stored as expected; typecheck, lint, format check and build pass; design-token-checker found no violation.
 
 **Problem Description**
 
@@ -2501,7 +2507,9 @@ over 300 tools cannot be set one by one without help.
 
 ### TWA-14.4 – Use the Score in the Games
 
-**Status:** TODO · **Depends on:** TWA-14.1, TWA-14.2
+**Status:** DONE · **Depends on:** TWA-14.1, TWA-14.2
+
+**Result:** implemented: weighted draw in `frontend/src/features/game/lib/weighted.ts` used by `drop.ts` (Wissens-Check) and `clearing.ts` (Karten abräumen), hidden tools (score 0) left out of the two knowledge games and Memory and not blocking the next level (`statusOf` in `game-page.tsx`), and the new set "Mein Tech-Stack" (score Hoch or Kern, one level). Checked: a simulation of the draw over 20000 runs gave the ratio 1 : 2 : 4 : 8 for the weights 1, 2, 4, 8 and never drew weight 0; in the browser the stack set held 58 of 59 tools when one tool was hidden, and the Wissens-Check started on it. Not checked in the browser: a full round of Karten abräumen with weights.
 
 **Problem Description**
 
@@ -2529,7 +2537,9 @@ tech stack meets many cards that do not matter to them.
 
 ### TWA-14.5 – Use the Score in the Statistics
 
-**Status:** TODO · **Depends on:** TWA-14.2, TWA-6
+**Status:** DONE · **Depends on:** TWA-14.2, TWA-6
+
+**Result:** implemented in `frontend/src/features/statistics/`: "Mein Tech-Stack" (learned of the stack) and the section "Nach Priorität" per score, both only after a score was set (`stackShare`, `byScore`), and "Zum Wiederholen" without hidden tools and with the score as tie-break (`toolsToRepeat`). Checked in the browser: the tab showed Kern 1, Hoch 57, Normal 248, Ausblenden 1 and the hidden tool was missing in the list to repeat. Answers of a deleted tool are not counted (TWA-9.4).
 
 **Problem Description**
 

@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tech_wise_academy.training.model import Progress, RoundResult
+from tech_wise_academy.training.model import Progress, RoundResult, keeps_default
 
 metadata = sa.MetaData()
 
@@ -35,6 +35,14 @@ round_results_table = sa.Table(
     sa.Column(
         "played_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
     ),
+)
+
+tool_priority_table = sa.Table(
+    "tool_priority",
+    metadata,
+    sa.Column("profile_id", sa.Uuid, primary_key=True),
+    sa.Column("tool_key", sa.Text, primary_key=True),
+    sa.Column("score", sa.Integer, nullable=False),
 )
 
 KEY_COLUMNS = ("profile_id", "game", "tool_key")
@@ -159,3 +167,42 @@ class TrainingRepository:
             )
             await connection.execute(statement)
         return updated
+
+    async def list_scores(self, profile_id: uuid.UUID) -> dict[str, int]:
+        """The stored scores of a player; a tool that is not in the result has the default."""
+        statement = sa.select(tool_priority_table.c.tool_key, tool_priority_table.c.score).where(
+            tool_priority_table.c.profile_id == profile_id
+        )
+        async with self._engine.connect() as connection:
+            rows = (await connection.execute(statement)).all()
+        return {tool_key: score for tool_key, score in rows}
+
+    async def set_scores(self, profile_id: uuid.UUID, tool_keys: list[str], score: int) -> None:
+        """Sets one score for several tools; the default is not stored, its rows are removed."""
+        async with self._engine.begin() as connection:
+            if keeps_default(score):
+                await connection.execute(
+                    sa.delete(tool_priority_table).where(
+                        tool_priority_table.c.profile_id == profile_id,
+                        tool_priority_table.c.tool_key.in_(tool_keys),
+                    )
+                )
+                return
+            statement = insert(tool_priority_table).values(
+                [
+                    {"profile_id": profile_id, "tool_key": tool_key, "score": score}
+                    for tool_key in tool_keys
+                ]
+            )
+            await connection.execute(
+                statement.on_conflict_do_update(
+                    index_elements=["profile_id", "tool_key"],
+                    set_={"score": statement.excluded.score},
+                )
+            )
+
+    async def reset_scores(self, profile_id: uuid.UUID) -> None:
+        async with self._engine.begin() as connection:
+            await connection.execute(
+                sa.delete(tool_priority_table).where(tool_priority_table.c.profile_id == profile_id)
+            )

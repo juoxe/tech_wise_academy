@@ -1,10 +1,12 @@
 import { DIFFICULTIES } from "@/features/game";
 import { categoryLabel, useTools } from "@/features/tools";
 import {
+  usePriorities,
   useProgress,
   useResults,
   type ProgressEntry,
   type ResultSummary,
+  type Scores,
   type TrainingGame,
 } from "@/features/training";
 import { QueryState } from "@/components/shared/query-state";
@@ -13,9 +15,11 @@ import {
   ROUND_GAMES,
   byArea,
   byLevel,
+  byScore,
   describeResult,
   isLanguage,
   shareOf,
+  stackShare,
   summarize,
   toolsToRepeat,
   type Share,
@@ -59,14 +63,18 @@ function GameStatistics({
   name,
   tools,
   entries,
+  scores,
 }: {
   name: string;
   tools: ToolSummary[];
   entries: ProgressEntry[];
+  scores: Scores;
 }) {
   const summary = summarize(tools, entries);
   const languages = tools.filter(isLanguage);
-  const repeat = toolsToRepeat(tools, entries);
+  const repeat = toolsToRepeat(tools, entries, 10, scores);
+  const stack = stackShare(tools, entries, scores);
+  const perScore = byScore(tools, entries, scores);
   return (
     <section
       aria-label={name}
@@ -75,6 +83,7 @@ function GameStatistics({
       <h2 className="text-2xl font-semibold">{name}</h2>
 
       <ShareRow label="Gelernte Werkzeuge" share={summary} />
+      {stack.total > 0 && <ShareRow label="Mein Tech-Stack" share={stack} />}
       <p className="text-base">
         Antworten: <span className="font-semibold">{summary.correct}</span>{" "}
         richtig ·{" "}
@@ -97,6 +106,15 @@ function GameStatistics({
           />
         ))}
       </div>
+
+      {perScore.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h3 className="text-lg font-semibold">Nach Priorität</h3>
+          {perScore.map(({ score, label, share }) => (
+            <ShareRow key={score} label={label} share={share} />
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <h3 className="text-lg font-semibold">Nach Bereich</h3>
@@ -198,6 +216,7 @@ export function StatisticsPage() {
   const level0 = useProgress("level0");
   const clearing = useProgress("clearing");
   const results = useResults();
+  const { scores } = usePriorities();
   const progressByGame = { level0, clearing };
   const allTools = tools.data ?? [];
   const nothingPlayed =
@@ -224,6 +243,7 @@ export function StatisticsPage() {
             name={name}
             tools={allTools}
             entries={progressByGame[game].data ?? []}
+            scores={scores}
           />
         ))}
         <RoundGamesStatistics summaries={results.data ?? []} />

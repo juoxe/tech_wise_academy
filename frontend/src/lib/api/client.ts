@@ -95,3 +95,19 @@ export async function deleteJson(
     throw new ApiError(response.status);
   }
 }
+
+/** Replaces a resource with a JSON body; the backend answers without a body (status 204). */
+export async function putNoContent(
+  path: string,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Promise<void> {
+  const response = await fetch(path, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...headers },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw await failure(response);
+  }
+}

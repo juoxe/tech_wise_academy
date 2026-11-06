@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import { QueryState } from "@/components/shared/query-state";
 import { ToolIcon } from "@/features/tools/components/tool-icon";
 import { useTool } from "@/features/tools/hooks/use-tool";
+import { PrioritySelect } from "@/features/tools/components/priority-select";
 import { categoryLabel } from "@/features/tools/lib/labels";
+import { scoreOf, usePriorities, useSetPriorities } from "@/features/training";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -11,6 +13,24 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <h4 className="text-lg font-semibold">{title}</h4>
       {children}
     </section>
+  );
+}
+
+/* The importance score of the player for this tool, changed right on the card. */
+function CardPriority({ toolKey, name }: { toolKey: string; name: string }) {
+  const { scores } = usePriorities();
+  const setPriorities = useSetPriorities();
+  return (
+    <label className="ml-auto flex items-center gap-2 text-base">
+      Priorität
+      <PrioritySelect
+        label={`Priorität von ${name}`}
+        value={scoreOf(scores, toolKey)}
+        onChange={(score) =>
+          setPriorities.mutate({ toolKeys: [toolKey], score })
+        }
+      />
+    </label>
   );
 }
 
@@ -27,13 +47,16 @@ function BulletList({ items }: { items: string[] }) {
 /* The overview card of one tool or language, like a Quartett card with what a learner should know:
    overview, use cases, key concepts, when to use it and when not, things worth knowing, an example,
    alternatives and the documentation link. The hints are only shown with showHints (detail view);
-   the games do not show them, because they are the answers to the cards. */
+   the games do not show them, because they are the answers to the cards. The importance score can
+   be changed on the card with showPriority (detail view). */
 export function ToolOverviewCard({
   toolKey,
   showHints = false,
+  showPriority = false,
 }: {
   toolKey: string;
   showHints?: boolean;
+  showPriority?: boolean;
 }) {
   const tool = useTool(toolKey);
   const detail = tool.data;
@@ -61,6 +84,9 @@ export function ToolOverviewCard({
                 {categoryLabel(detail.category)} · Level {detail.level}
               </p>
             </div>
+            {showPriority && (
+              <CardPriority toolKey={detail.key} name={detail.name} />
+            )}
           </header>
 
           <p className="text-lg font-semibold">{detail.summary}</p>

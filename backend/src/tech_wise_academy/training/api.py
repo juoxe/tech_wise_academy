@@ -7,7 +7,13 @@ from typing import Annotated, Literal, Self
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from pydantic import BaseModel, Field, model_validator
 
-from tech_wise_academy.training.model import Progress, ResultSummary, RoundResult
+from tech_wise_academy.training.model import (
+    MAX_SCORE,
+    MIN_SCORE,
+    Progress,
+    ResultSummary,
+    RoundResult,
+)
 from tech_wise_academy.training.service import TrainingService
 
 router = APIRouter(prefix="/training", tags=["training"])
@@ -57,6 +63,22 @@ class ProgressOut(BaseModel):
     learned: bool
     correct_total: int
     wrong_total: int
+
+
+class PriorityOut(BaseModel):
+    """A tool with a score that differs from the default."""
+
+    tool_key: str
+    score: int
+
+
+class PrioritiesIn(BaseModel):
+    """One score for several tools: a single tool, an area or a whole tech stack."""
+
+    tool_keys: list[Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9._+#-]*$", max_length=100)]] = (
+        Field(min_length=1, max_length=1000)
+    )
+    score: int = Field(ge=MIN_SCORE, le=MAX_SCORE)
 
 
 ProfileHeader = Annotated[uuid.UUID, Header(alias="X-Profile-Id")]
@@ -135,4 +157,27 @@ async def reset_progress(
     game: Annotated[GameName, Query()],
 ) -> Response:
     await service.reset_progress(profile_id, game)
+    return Response(status_code=204)
+
+
+@router.get("/priorities", response_model=list[PriorityOut])
+async def list_priorities(profile_id: ProfileHeader, service: ServiceDep) -> list[PriorityOut]:
+    """The importance scores that differ from the default (`DEFAULT_SCORE`)."""
+    scores = await service.list_scores(profile_id)
+    return [PriorityOut(tool_key=key, score=scores[key]) for key in sorted(scores)]
+
+
+@router.put("/priorities", status_code=204)
+async def set_priorities(
+    body: PrioritiesIn,
+    profile_id: ProfileHeader,
+    service: ServiceDep,
+) -> Response:
+    await service.set_scores(profile_id, body.tool_keys, body.score)
+    return Response(status_code=204)
+
+
+@router.delete("/priorities", status_code=204)
+async def reset_priorities(profile_id: ProfileHeader, service: ServiceDep) -> Response:
+    await service.reset_scores(profile_id)
     return Response(status_code=204)

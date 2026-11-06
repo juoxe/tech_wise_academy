@@ -19,9 +19,14 @@ import {
   useInterviewSets,
 } from "@/features/interview";
 import {
+  STACK_SCORE,
+  scoreOf,
+  usePriorities,
   useProgress,
   useResetProgress,
+  weightOf,
   type ProgressEntry,
+  type Scores,
   type TrainingGame,
 } from "@/features/training";
 import { useTools } from "@/features/tools/hooks/use-tools";
@@ -50,11 +55,13 @@ const LEVELS = DIFFICULTIES;
 type Level = Difficulty;
 
 /* The sets of cards: the tools (three levels, sorted by area), the programming languages (one level,
-   sorted by paradigm) and the own sets, which hold the interview preparation: sets generated from a job advertisement (one
-   level). */
+   sorted by paradigm), "Mein Tech-Stack" (the tools and languages the player gave a high score, one
+   level) and the own sets, which hold the interview preparation: sets generated from a job
+   advertisement (one level). */
 const SETS = [
   { set: "tools", name: "Tools" },
   { set: "languages", name: "Programmiersprachen" },
+  { set: "stack", name: "Mein Tech-Stack" },
   { set: "interview", name: "Eigene Sets" },
 ] as const;
 
@@ -64,12 +71,12 @@ function isLanguage(tool: ToolSummary): boolean {
   return PARADIGMS.includes(tool.category);
 }
 
-/* The floor of the Wissens-Check. An interview set can mix tools and languages. */
+/* The floor of the Wissens-Check. An interview set and the tech stack can mix tools and languages. */
 function areasOf(set: ToolSet, tools: ToolSummary[]): readonly Area[] {
   if (set === "languages") {
     return PARADIGMS;
   }
-  return set === "interview" && tools.some(isLanguage)
+  return (set === "interview" || set === "stack") && tools.some(isLanguage)
     ? MIXED_AREAS
     : CATEGORIES;
 }
@@ -97,14 +104,27 @@ function statusOf(
   entries: ProgressEntry[],
   set: ToolSet,
   interview: { title: string; tools: ToolSummary[] },
+  scores: Scores,
 ): Status {
   const learnedKeys = new Set(
     entries.filter((entry) => entry.learned).map((entry) => entry.tool_key),
   );
+  /* A tool with the score 0 is hidden: it is not played and does not block the next level. */
+  const isShown = (tool: ToolSummary) => scoreOf(scores, tool.key) > 0;
   if (set !== "tools") {
-    const title = set === "languages" ? "Programmiersprachen" : interview.title;
-    const tools =
-      set === "languages" ? allTools.filter(isLanguage) : interview.tools;
+    const title =
+      set === "languages"
+        ? "Programmiersprachen"
+        : set === "stack"
+          ? "Mein Tech-Stack"
+          : interview.title;
+    const tools = (
+      set === "languages"
+        ? allTools.filter(isLanguage)
+        : set === "stack"
+          ? allTools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE)
+          : interview.tools
+    ).filter(isShown);
     const learnedCount = tools.filter((tool) =>
       learnedKeys.has(tool.key),
     ).length;
@@ -122,13 +142,13 @@ function statusOf(
     };
   }
   const toolsOf = (levelNumber: Level) =>
-    allTools.filter((tool) => !isLanguage(tool) && tool.level === levelNumber);
-  const isLevelDone = (levelNumber: Level) => {
-    const inLevel = toolsOf(levelNumber);
-    return (
-      inLevel.length > 0 && inLevel.every((tool) => learnedKeys.has(tool.key))
+    allTools.filter(
+      (tool) =>
+        !isLanguage(tool) && tool.level === levelNumber && isShown(tool),
     );
-  };
+  /* A level is done when every shown tool is learned; a level with only hidden tools is done too. */
+  const isLevelDone = (levelNumber: Level) =>
+    toolsOf(levelNumber).every((tool) => learnedKeys.has(tool.key));
   const isUnlocked = (levelNumber: Level) =>
     levelNumber === 1 || isLevelDone((levelNumber - 1) as Level);
   const level: Level =
@@ -181,7 +201,14 @@ export function GamePage() {
       (card) => byKey.get(card.tool_key) ?? [],
     ),
   };
-  const status = statusOf(allTools, progress.data ?? [], set, interview);
+  const { scores } = usePriorities();
+  const status = statusOf(
+    allTools,
+    progress.data ?? [],
+    set,
+    interview,
+    scores,
+  );
   const { level, title, learnedKeys, learnedCount, percent } = status;
   const toolList = status.tools;
   const levelKeys = new Set(toolList.map((tool) => tool.key));
@@ -196,6 +223,20 @@ export function GamePage() {
   const openTools = toolList.filter((tool) => !learnedKeys.has(tool.key));
   const gameName = GAMES.find((option) => option.game === game)?.name;
   const areas = areasOf(set, toolList);
+  /* The importance scores: a card with a higher score comes up more often (see game-play.md). */
+  const weights = Object.fromEntries(
+    toolList.map((tool) => [tool.key, weightOf(scoreOf(scores, tool.key))]),
+  );
+  /* The cards of Memory: the chosen set without the hidden tools. */
+  const memoryEntries = (
+    set === "languages"
+      ? allTools.filter(isLanguage)
+      : set === "interview"
+        ? interview.tools
+        : set === "stack"
+          ? allTools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE)
+          : allTools.filter((tool) => !isLanguage(tool))
+  ).filter((tool) => scoreOf(scores, tool.key) > 0);
 
   async function playAgain() {
     await progress.refetch();
@@ -232,16 +273,7 @@ export function GamePage() {
           isEmpty={false}
           emptyMessage=""
         >
-          <MemoryBoard
-            difficulty={difficulty}
-            entries={
-              set === "languages"
-                ? allTools.filter(isLanguage)
-                : set === "interview"
-                  ? interview.tools
-                  : allTools.filter((tool) => !isLanguage(tool))
-            }
-          />
+          <MemoryBoard difficulty={difficulty} entries={memoryEntries} />
         </QueryState>
       </div>
     );
@@ -307,107 +339,114 @@ export function GamePage() {
             onSelect={setChosenSetId}
           />
         )}
-        {(set === "interview" && toolList.length === 0 ? [] : GAMES).map(
-          (option) => {
-            const gameStatus = statusOf(
-              allTools,
-              progressByGame[option.game].data ?? [],
-              set,
-              interview,
-            );
-            return (
-              <section
-                key={option.game}
-                className="flex flex-col gap-3 rounded-md border border-border p-6"
-              >
-                <h2 className="text-2xl font-semibold">{option.name}</h2>
-                <p className="text-base text-muted-foreground">
-                  {option.description}
-                </p>
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-wrap justify-between gap-2 text-base">
-                    <span className="font-semibold">{gameStatus.title}</span>
-                    <span className="text-muted-foreground">
-                      {gameStatus.percent} % gelernt
-                    </span>
-                  </div>
-                  <div
-                    role="progressbar"
-                    aria-label={`Fortschritt ${option.name}`}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={gameStatus.percent}
-                    className="h-3 w-full overflow-hidden rounded-full bg-muted"
-                  >
-                    <div
-                      className="h-full bg-secondary transition-all"
-                      style={{ width: `${gameStatus.percent}%` }}
-                    />
-                  </div>
+        {set === "stack" && toolList.length === 0 && (
+          <p className="text-base text-muted-foreground">
+            Dein Tech-Stack ist noch leer. Gib den Tools, die du intensiv lernen
+            willst, in der Toolübersicht die Priorität „Hoch“ oder „Kern“.
+          </p>
+        )}
+        {((set === "interview" || set === "stack") && toolList.length === 0
+          ? []
+          : GAMES
+        ).map((option) => {
+          const gameStatus = statusOf(
+            allTools,
+            progressByGame[option.game].data ?? [],
+            set,
+            interview,
+            scores,
+          );
+          return (
+            <section
+              key={option.game}
+              className="flex flex-col gap-3 rounded-md border border-border p-6"
+            >
+              <h2 className="text-2xl font-semibold">{option.name}</h2>
+              <p className="text-base text-muted-foreground">
+                {option.description}
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap justify-between gap-2 text-base">
+                  <span className="font-semibold">{gameStatus.title}</span>
+                  <span className="text-muted-foreground">
+                    {gameStatus.percent} % gelernt
+                  </span>
                 </div>
-                {confirmReset === option.game ? (
+                <div
+                  role="progressbar"
+                  aria-label={`Fortschritt ${option.name}`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={gameStatus.percent}
+                  className="h-3 w-full overflow-hidden rounded-full bg-muted"
+                >
                   <div
-                    role="alertdialog"
-                    aria-label={`Fortschritt ${option.name} zurücksetzen`}
-                    className="flex flex-col gap-3 rounded-md border border-destructive p-4"
-                  >
-                    <p className="text-base">
-                      Den Fortschritt von „{option.name}“ in allen Sets und
-                      Levels wirklich löschen? Das lässt sich nicht rückgängig
-                      machen.
+                    className="h-full bg-secondary transition-all"
+                    style={{ width: `${gameStatus.percent}%` }}
+                  />
+                </div>
+              </div>
+              {confirmReset === option.game ? (
+                <div
+                  role="alertdialog"
+                  aria-label={`Fortschritt ${option.name} zurücksetzen`}
+                  className="flex flex-col gap-3 rounded-md border border-destructive p-4"
+                >
+                  <p className="text-base">
+                    Den Fortschritt von „{option.name}“ in allen Sets und Levels
+                    wirklich löschen? Das lässt sich nicht rückgängig machen.
+                  </p>
+                  {resetProgress.error && (
+                    <p role="alert" className="text-base text-destructive">
+                      Das Zurücksetzen hat nicht geklappt.
                     </p>
-                    {resetProgress.error && (
-                      <p role="alert" className="text-base text-destructive">
-                        Das Zurücksetzen hat nicht geklappt.
-                      </p>
-                    )}
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        disabled={resetProgress.isPending}
-                        onClick={() =>
-                          resetProgress.mutate(option.game, {
-                            onSuccess: () => setConfirmReset(null),
-                          })
-                        }
-                        className="rounded-md border border-destructive px-4 py-2 text-base font-semibold text-destructive hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
-                      >
-                        Ja, zurücksetzen
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          resetProgress.reset();
-                          setConfirmReset(null);
-                        }}
-                        className={BUTTON_OFF}
-                      >
-                        Abbrechen
-                      </button>
-                    </div>
-                  </div>
-                ) : (
+                  )}
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => start(option.game)}
-                      className={BUTTON_ON}
+                      disabled={resetProgress.isPending}
+                      onClick={() =>
+                        resetProgress.mutate(option.game, {
+                          onSuccess: () => setConfirmReset(null),
+                        })
+                      }
+                      className="rounded-md border border-destructive px-4 py-2 text-base font-semibold text-destructive hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
                     >
-                      Starten
+                      Ja, zurücksetzen
                     </button>
                     <button
                       type="button"
-                      onClick={() => setConfirmReset(option.game)}
+                      onClick={() => {
+                        resetProgress.reset();
+                        setConfirmReset(null);
+                      }}
                       className={BUTTON_OFF}
                     >
-                      Fortschritt zurücksetzen
+                      Abbrechen
                     </button>
                   </div>
-                )}
-              </section>
-            );
-          },
-        )}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => start(option.game)}
+                    className={BUTTON_ON}
+                  >
+                    Starten
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmReset(option.game)}
+                    className={BUTTON_OFF}
+                  >
+                    Fortschritt zurücksetzen
+                  </button>
+                </div>
+              )}
+            </section>
+          );
+        })}
         <div
           className="flex flex-wrap items-center gap-2"
           role="group"
@@ -516,12 +555,12 @@ export function GamePage() {
         {allLearned ? (
           <section className="flex flex-col gap-4">
             <h2 className="text-2xl font-semibold">
-              {set === "interview"
+              {set === "interview" || set === "stack"
                 ? "Alle Karten dieses Sets sind gelernt"
                 : "Alle Tools dieses Levels sind gelernt"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              {set === "interview"
+              {set === "interview" || set === "stack"
                 ? "Für dieses Set gibt es keine offenen Karten mehr."
                 : "Für dieses Level gibt es keine offenen Karten mehr."}
             </p>
@@ -532,12 +571,14 @@ export function GamePage() {
             tools={toolList}
             saved={saved}
             areas={areas}
+            weights={weights}
             onPlayAgain={playAgain}
           />
         ) : (
           <ClearingBoard
             key={`clearing-${set}-${interviewSetId}-${level}-${roundNumber}`}
             tools={openTools}
+            weights={weights}
             onNextRound={playAgain}
           />
         )}

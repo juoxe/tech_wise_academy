@@ -2,10 +2,20 @@ import { useState } from "react";
 
 import { ToolForm } from "@/features/tools/components/tool-form";
 import { ToolOverviewCard } from "@/features/tools/components/tool-overview-card";
+import {
+  PriorityToolbar,
+  type PriorityFilter,
+} from "@/features/tools/components/priority-toolbar";
 import { ToolsTable } from "@/features/tools/components/tools-table";
 import { useDeleteTool } from "@/features/tools/hooks/use-tool-mutations";
 import { useTool } from "@/features/tools/hooks/use-tool";
 import { useTools } from "@/features/tools/hooks/use-tools";
+import {
+  scoreOf,
+  usePriorities,
+  useResetPriorities,
+  useSetPriorities,
+} from "@/features/training";
 
 const BUTTON =
   "rounded-md border border-border px-4 py-2 text-base font-semibold hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50";
@@ -31,7 +41,29 @@ export function DataSetsTab() {
   const edited = useTool(editedKey);
   const selectedKey =
     view.kind === "detail" || view.kind === "edit" ? view.key : undefined;
+  const { scores } = usePriorities();
+  const setPriorities = useSetPriorities();
+  const resetPriorities = useResetPriorities();
+  const [filter, setFilter] = useState<PriorityFilter>({
+    score: "all",
+    category: "all",
+    sortBy: "name",
+  });
   const tools = data ?? [];
+  /* The tools that are shown: filtered by area and score, sorted by name or by score (highest first). */
+  const shown = tools
+    .filter(
+      (tool) =>
+        (filter.category === "all" || tool.category === filter.category) &&
+        (filter.score === "all" || scoreOf(scores, tool.key) === filter.score),
+    )
+    .sort(
+      filter.sortBy === "score"
+        ? (a, b) =>
+            scoreOf(scores, b.key) - scoreOf(scores, a.key) ||
+            a.name.localeCompare(b.name, "de")
+        : () => 0,
+    );
 
   function close() {
     deleteTool.reset();
@@ -141,11 +173,28 @@ export function DataSetsTab() {
               </button>
             </div>
           )}
-          <ToolOverviewCard toolKey={view.key} showHints />
+          <ToolOverviewCard toolKey={view.key} showHints showPriority />
         </section>
       )}
+      <PriorityToolbar
+        filter={filter}
+        onFilter={setFilter}
+        shownCount={shown.length}
+        busy={setPriorities.isPending || resetPriorities.isPending}
+        onSetShown={(score) =>
+          setPriorities.mutate({
+            toolKeys: shown.map((tool) => tool.key),
+            score,
+          })
+        }
+        onReset={() => resetPriorities.mutate()}
+      />
       <ToolsTable
-        tools={tools}
+        tools={shown}
+        scores={scores}
+        onScore={(key, score) =>
+          setPriorities.mutate({ toolKeys: [key], score })
+        }
         isLoading={isLoading}
         error={error}
         selectedKey={selectedKey}

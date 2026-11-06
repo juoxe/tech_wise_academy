@@ -93,8 +93,8 @@ expected results and not yet cut into a planned epic table.
   ([TWA-12](backlog.md#epic-twa-12--learning-content-in-depth), `IN PROGRESS`).
 - Personal card priority: a score per card and player for how important a tool is to the learner,
   set on the card and in the tool overview, used by the games (draw weight, "Mein Tech-Stack") and
-  the statistics ([TWA-14](backlog.md#epic-twa-14--personal-card-priority), `TODO`, next to be
-  built, J's priority). Relation to TWA-11 is decided in TWA-14.1.
+  the statistics ([TWA-14](backlog.md#epic-twa-14--personal-card-priority), `IN PROGRESS`, built on
+  2026-11-06, waiting for J's review). Relation to TWA-11 is decided in TWA-14.1.
 
 ---
 

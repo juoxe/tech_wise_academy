@@ -1,3 +1,9 @@
+import {
+  weightedIndex,
+  weightedShuffle,
+  weightFor,
+  type Weights,
+} from "@/features/game/lib/weighted";
 import { categoryLabel, type ToolSummary } from "@/features/tools";
 
 export type Category = ToolSummary["category"];
@@ -69,6 +75,8 @@ export type Drop = {
   lastOutcome: Outcome | null;
   secondsLeft: number;
   timeUp: boolean;
+  /* How much more often a card comes up (importance score); a card without a weight counts as 1. */
+  weights: Weights;
 };
 
 export type AreaProgress = {
@@ -78,13 +86,6 @@ export type AreaProgress = {
   open: number;
   withMistake: number;
 };
-
-function shuffle<T>(items: readonly T[]): T[] {
-  return items
-    .map((item) => ({ item, order: Math.random() }))
-    .sort((a, b) => a.order - b.order)
-    .map(({ item }) => item);
-}
 
 /* Takes the next card: first each fresh card once, then a random open card. */
 function next(drop: Drop): Drop {
@@ -99,7 +100,9 @@ function next(drop: Drop): Drop {
   if (drop.open.length === 0) {
     return { ...drop, falling: null };
   }
-  const index = Math.floor(Math.random() * drop.open.length);
+  const index = weightedIndex(drop.open, (tool) =>
+    weightFor(drop.weights, tool.key),
+  );
   const card = drop.open[index];
   if (!card) {
     return { ...drop, falling: null };
@@ -124,6 +127,7 @@ export function createDrop(
   tools: readonly ToolSummary[],
   saved: readonly SavedStreak[] = [],
   areas: readonly Area[] = CATEGORIES,
+  weights: Weights = {},
 ): Drop {
   const learned = saved
     .filter((entry) => entry.learned)
@@ -135,7 +139,8 @@ export function createDrop(
   return next({
     areas,
     cards: [...tools],
-    fresh: shuffle(unlearned),
+    fresh: weightedShuffle(unlearned, (tool) => weightFor(weights, tool.key)),
+    weights,
     open: [],
     falling: null,
     streak,

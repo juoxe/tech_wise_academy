@@ -7,9 +7,14 @@ from tech_wise_academy.training.model import (
     Progress,
     ResultSummary,
     apply_answer,
+    is_valid_score,
     summarize_results,
 )
 from tech_wise_academy.training.repository import TrainingRepository
+
+
+class InvalidScoreError(ValueError):
+    """The score is outside the scale of the importance score."""
 
 
 class TrainingService:
@@ -51,3 +56,17 @@ class TrainingService:
     async def reset_progress(self, profile_id: uuid.UUID, game: str) -> None:
         """Deletes the progress of the player in one game; other games and players stay."""
         await self._repository.reset_progress(profile_id, game)
+
+    async def list_scores(self, profile_id: uuid.UUID) -> dict[str, int]:
+        """The scores of the player that differ from the default."""
+        return await self._repository.list_scores(profile_id)
+
+    async def set_scores(self, profile_id: uuid.UUID, tool_keys: list[str], score: int) -> None:
+        """Gives all the tools the same importance score."""
+        if not is_valid_score(score):
+            raise InvalidScoreError(score)
+        await self._repository.set_scores(profile_id, sorted(set(tool_keys)), score)
+
+    async def reset_scores(self, profile_id: uuid.UUID) -> None:
+        """All tools of the player go back to the default score."""
+        await self._repository.reset_scores(profile_id)

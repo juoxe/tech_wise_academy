@@ -1,8 +1,14 @@
 import type { ToolSummary } from "@/features/tools";
-import type {
-  ProgressEntry,
-  RoundGame,
-  RoundResult,
+import {
+  DEFAULT_SCORE,
+  SCORES,
+  STACK_SCORE,
+  scoreOf,
+  type ProgressEntry,
+  type RoundGame,
+  type RoundResult,
+  type Score,
+  type Scores,
 } from "@/features/training";
 
 /* The five areas of the tools. Every other category is a programming language (sorted by paradigm). */
@@ -126,24 +132,64 @@ export function byArea(
   }));
 }
 
-/* The tools with the most wrong answers: highest first, then by name. Tools without a wrong answer are
-   left out. */
+/* "Mein Tech-Stack": the learned tools among the tools with a high importance score. */
+export function stackShare(
+  tools: readonly ToolSummary[],
+  entries: readonly ProgressEntry[],
+  scores: Scores,
+): Share {
+  return shareOf(
+    tools.filter((tool) => scoreOf(scores, tool.key) >= STACK_SCORE),
+    entries,
+  );
+}
+
+/* The progress per importance score. Empty as long as every tool has the default score, so that the
+   statistics look as before until the player sets a score. Scores without a tool are left out. */
+export function byScore(
+  tools: readonly ToolSummary[],
+  entries: readonly ProgressEntry[],
+  scores: Scores,
+): { score: Score; label: string; share: Share }[] {
+  if (tools.every((tool) => scoreOf(scores, tool.key) === DEFAULT_SCORE)) {
+    return [];
+  }
+  return [...SCORES]
+    .reverse()
+    .map(({ score, label }) => ({
+      score,
+      label,
+      share: shareOf(
+        tools.filter((tool) => scoreOf(scores, tool.key) === score),
+        entries,
+      ),
+    }))
+    .filter(({ share }) => share.total > 0);
+}
+
+/* The tools with the most wrong answers: highest first, then the higher importance score, then by
+   name. Tools without a wrong answer and hidden tools (score 0) are left out. */
 export function toolsToRepeat(
   tools: readonly ToolSummary[],
   entries: readonly ProgressEntry[],
   limit = 10,
+  scores: Scores = new Map(),
 ): ToolToRepeat[] {
   const byKey = new Map(tools.map((tool) => [tool.key, tool]));
   return entries
     .flatMap((entry) => {
       const tool = byKey.get(entry.tool_key);
-      return tool !== undefined && entry.wrong_total > 0
+      return tool !== undefined &&
+        entry.wrong_total > 0 &&
+        scoreOf(scores, tool.key) > 0
         ? [{ tool, wrong: entry.wrong_total, correct: entry.correct_total }]
         : [];
     })
     .sort(
       (a, b) =>
-        b.wrong - a.wrong || a.tool.name.localeCompare(b.tool.name, "de"),
+        b.wrong - a.wrong ||
+        scoreOf(scores, b.tool.key) - scoreOf(scores, a.tool.key) ||
+        a.tool.name.localeCompare(b.tool.name, "de"),
     )
     .slice(0, limit);
 }

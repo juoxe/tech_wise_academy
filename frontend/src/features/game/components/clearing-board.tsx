@@ -16,6 +16,7 @@ import {
 } from "@/features/game/lib/clearing";
 import { WrongCardsReview } from "@/features/game/components/wrong-cards-review";
 import { useRecordAnswer } from "@/features/training";
+import type { Weights } from "@/features/game/lib/weighted";
 import { ToolIcon, useTool, type ToolSummary } from "@/features/tools";
 
 const FLASH_MS = 600;
@@ -24,12 +25,17 @@ const FLASH_MS = 600;
    above the field; a click on the right card clears it. */
 export function ClearingBoard({
   tools,
+  weights = {},
   onNextRound,
 }: {
   tools: ToolSummary[];
+  /* How much more often a card is in the field and asked (importance score). */
+  weights?: Weights;
   onNextRound: () => void;
 }) {
-  const [clearing, setClearing] = useState<Clearing>(() => startRound(tools));
+  const [clearing, setClearing] = useState<Clearing>(() =>
+    startRound(tools, weights),
+  );
   const asked = askedTool(clearing);
   const hint = useTool(asked?.key);
   const done = isRoundDone(clearing);

@@ -1,3 +1,9 @@
+import {
+  weightedIndex,
+  weightedShuffle,
+  weightFor,
+  type Weights,
+} from "@/features/game/lib/weighted";
 import type { ToolSummary } from "@/features/tools";
 
 /* Cards in one field: 5 rows of 4, as in the Tech Tool Trainer. */
@@ -17,6 +23,8 @@ export type Outcome = {
    mistake. */
 export type Clearing = {
   field: ToolSummary[];
+  /* How much more often a card is asked (importance score); a card without a weight counts as 1. */
+  weights: Weights;
   cleared: string[];
   asked: string;
   mistakes: Record<string, number>;
@@ -32,30 +40,32 @@ export type Answer = {
   correct: boolean;
 };
 
-function shuffle<T>(items: readonly T[]): T[] {
-  return items
-    .map((item) => ({ item, order: Math.random() }))
-    .sort((a, b) => a.order - b.order)
-    .map(({ item }) => item);
-}
-
-/* A random card of the field that is not cleared yet; empty when every card is cleared. */
+/* A random card of the field that is not cleared yet, heavier cards more often; empty when every
+   card is cleared. */
 function pickAsked(
   field: readonly ToolSummary[],
   cleared: readonly string[],
+  weights: Weights,
 ): string {
   const open = field.filter((tool) => !cleared.includes(tool.key));
-  const index = Math.floor(Math.random() * open.length);
+  const index = weightedIndex(open, (tool) => weightFor(weights, tool.key));
   return open[index]?.key ?? "";
 }
 
-/* A round starts with a random selection of the tools that are not learned yet. */
-export function startRound(tools: readonly ToolSummary[]): Clearing {
-  const field = shuffle(tools).slice(0, FIELD_SIZE);
+/* A round starts with a random selection of the tools that are not learned yet. A tool with a
+   higher weight (importance score) is more likely to be in the field and to be asked first. */
+export function startRound(
+  tools: readonly ToolSummary[],
+  weights: Weights = {},
+): Clearing {
+  const field = weightedShuffle(tools, (tool) =>
+    weightFor(weights, tool.key),
+  ).slice(0, FIELD_SIZE);
   return {
     field,
+    weights,
     cleared: [],
-    asked: pickAsked(field, []),
+    asked: pickAsked(field, [], weights),
     mistakes: {},
     hintsShown: {},
     hintSeeds: Object.fromEntries(
@@ -133,7 +143,7 @@ export function guess(
       clearing: {
         ...clearing,
         cleared,
-        asked: pickAsked(clearing.field, cleared),
+        asked: pickAsked(clearing.field, cleared, clearing.weights),
         lastOutcome: { key, correct: true },
       },
       answer: firstTry ? { toolKey: key, correct: true } : null,

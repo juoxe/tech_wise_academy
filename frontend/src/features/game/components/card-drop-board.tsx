@@ -18,6 +18,7 @@ import {
 } from "@/features/game/lib/drop";
 import { WrongCardsReview } from "@/features/game/components/wrong-cards-review";
 import { useRecordAnswer } from "@/features/training";
+import type { Weights } from "@/features/game/lib/weighted";
 import { ToolIcon, type ToolSummary } from "@/features/tools";
 import { cn } from "@/lib/utils";
 
@@ -56,14 +57,19 @@ export function CardDropBoard({
   tools,
   saved,
   areas = CATEGORIES,
+  weights = {},
   onPlayAgain,
 }: {
   tools: ToolSummary[];
   saved: SavedStreak[];
   areas?: readonly Area[];
+  /* How much more often a card falls (importance score). */
+  weights?: Weights;
   onPlayAgain: () => void;
 }) {
-  const [drop, setDrop] = useState<Drop>(() => createDrop(tools, saved, areas));
+  const [drop, setDrop] = useState<Drop>(() =>
+    createDrop(tools, saved, areas, weights),
+  );
   const recordAnswer = useRecordAnswer();
   const fallingKey = drop.falling?.tool.key ?? null;
   const finished = isFinished(drop);

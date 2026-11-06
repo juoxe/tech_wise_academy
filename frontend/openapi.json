@@ -479,6 +479,132 @@
         }
       }
     },
+    "/api/training/priorities": {
+      "get": {
+        "tags": [
+          "training"
+        ],
+        "summary": "List Priorities",
+        "description": "The importance scores that differ from the default (`DEFAULT_SCORE`).",
+        "operationId": "list_priorities_api_training_priorities_get",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityOut"
+                  },
+                  "title": "Response List Priorities Api Training Priorities Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "training"
+        ],
+        "summary": "Set Priorities",
+        "operationId": "set_priorities_api_training_priorities_put",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrioritiesIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "training"
+        ],
+        "summary": "Reset Priorities",
+        "operationId": "reset_priorities_api_training_priorities_delete",
+        "parameters": [
+          {
+            "name": "X-Profile-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "X-Profile-Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/interview-sets": {
       "post": {
         "tags": [
@@ -881,6 +1007,53 @@
           "explanation"
         ],
         "title": "KeyConceptOut"
+      },
+      "PrioritiesIn": {
+        "properties": {
+          "tool_keys": {
+            "items": {
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^[a-z0-9][a-z0-9._+#-]*$"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Tool Keys"
+          },
+          "score": {
+            "type": "integer",
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool_keys",
+          "score"
+        ],
+        "title": "PrioritiesIn",
+        "description": "One score for several tools: a single tool, an area or a whole tech stack."
+      },
+      "PriorityOut": {
+        "properties": {
+          "tool_key": {
+            "type": "string",
+            "title": "Tool Key"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool_key",
+          "score"
+        ],
+        "title": "PriorityOut",
+        "description": "A tool with a score that differs from the default."
       },
       "ProgressOut": {
         "properties": {

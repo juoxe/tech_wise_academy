@@ -1,4 +1,10 @@
-import { deleteJson, getJson, postJson, postNoContent } from "@/lib/api/client";
+import {
+  deleteJson,
+  getJson,
+  postJson,
+  postNoContent,
+  putNoContent,
+} from "@/lib/api/client";
 import { getProfileId } from "@/features/training/lib/profile";
 
 export type TrainingGame = "level0" | "clearing";
@@ -75,6 +81,38 @@ export function fetchProgress(game: TrainingGame): Promise<ProgressEntry[]> {
 /** Deletes the saved progress of the current player in one game (all sets and levels). */
 export function resetProgress(game: TrainingGame): Promise<void> {
   return deleteJson(`/api/training/progress?game=${game}`, {
+    "X-Profile-Id": getProfileId(),
+  });
+}
+
+/** A tool whose importance score differs from the default (field names as in the API). */
+export type PriorityEntry = {
+  tool_key: string;
+  score: number;
+};
+
+/** The scores of the current player that differ from the default. */
+export function fetchPriorities(): Promise<PriorityEntry[]> {
+  return getJson("/api/training/priorities", {
+    "X-Profile-Id": getProfileId(),
+  });
+}
+
+/** Gives all the tools the same score; the default score removes the stored value. */
+export function setPriorities(
+  toolKeys: string[],
+  score: number,
+): Promise<void> {
+  return putNoContent(
+    "/api/training/priorities",
+    { tool_keys: toolKeys, score },
+    { "X-Profile-Id": getProfileId() },
+  );
+}
+
+/** Sets every tool of the current player back to the default score. */
+export function resetPriorities(): Promise<void> {
+  return deleteJson("/api/training/priorities", {
     "X-Profile-Id": getProfileId(),
   });
 }
