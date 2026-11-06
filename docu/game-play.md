@@ -52,6 +52,10 @@ player. Each tool belongs to exactly one of them:
 | 2 | Intermediate | 97 | Less known tools for the next step |
 | 3 | Expert | 93 | Specialised tools |
 
+The three games SQL-Bausteine, Code beurteilen and Memory have the same names for their difficulty
+levels, but the player chooses the level before the game starts (see the section of each game). Their
+levels do not unlock anything and save no learning progress; the result of each finished round is stored (see Statistik).
+
 The level of a tool comes from the sets of the Tech Tool Trainer: set 1 is level 1, set 2 is level 2,
 set 3 is level 3. A tool that is in several learning paths gets the lowest set number.
 
@@ -194,8 +198,12 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 
 **Goal:** learn to write PostgreSQL queries by putting their parts in the right order.
 
-- The Game tab offers SQL-Bausteine as a third game. It is independent of the set and has no levels,
-  no unlocking and no saved progress.
+- The Game tab offers SQL-Bausteine as a third game. It is independent of the set and has no unlocking
+  and no saved learning progress. After the last task the result of the round is stored (see Statistik).
+- **Difficulty:** the player chooses Kennen, Intermediate or Expert above the games (group
+  "Schwierigkeit"). Kennen has six tasks (SELECT with WHERE, IS NULL, COUNT, DISTINCT and LENGTH on one table),
+  Intermediate six tasks (ILIKE, GROUP BY with HAVING, BETWEEN, IN, LIMIT), Expert five tasks (LEFT JOIN,
+  SUM with HAVING, window functions RANK and a running SUM).
 - A task names the wanted result and the tables with their columns, in German.
 - The tiles are single words or fragments, such as `SELECT`, `FROM`, `ORDER BY` or `IS NULL`. They
   are shown in a mixed order. Some tiles are **distractors**: the query does not use them.
@@ -212,7 +220,13 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 **Goal:** learn to spot weaknesses in code by judging statements about a short example.
 
 - The Game tab offers Code beurteilen as a fourth game. It is independent of the set and has no
-  levels, no unlocking and no saved progress.
+  unlocking and no saved learning progress. After the last example the result of the round is stored (see
+  Statistik).
+- **Difficulty:** the player chooses Kennen, Intermediate or Expert above the games. Kennen has five
+  examples (for instance SELECT *, innerHTML, eval on input, a secret in the code, CORS with *),
+  Intermediate six (SQL injection, hard-coded password, unclosed file, debug mode on a server, table name
+  in SQL, error text sent to the client), Expert five (open redirect, weak hash, missing authorisation,
+  random reset codes, timing attack on a comparison).
 - A task shows a short code example in Python, SQL or TypeScript and a German question.
 - Under the example there are several statements. **Any number of them can be right**: none, one,
   several or all. The player marks every statement that is right.
@@ -226,10 +240,13 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 
 **Goal:** connect each tool or programming language with its description.
 
-- The Game tab offers Memory as a fifth game. It has no levels, no unlocking and no saved progress.
+- The Game tab offers Memory as a fifth game. It has no unlocking and no saved learning progress. When the last pair is found, the result of the round is
+  stored: the pairs found and the moves needed (see Statistik).
+- **Difficulty:** the player chooses Kennen, Intermediate or Expert above the games. The difficulty sets
+  the number of pairs of a round: Kennen 4, Intermediate 6, Expert 8 pairs (8, 12 or 16 cards).
 - The cards come from the set chosen above the choice of the game: Tools (all tools except the
-  languages), Programmiersprachen or Eigene Sets. A round uses up to six entries of the set that have
-  a description.
+  languages), Programmiersprachen or Eigene Sets. A round uses that many entries of the set that have
+  a description, drawn at random; if the set has fewer, the round is smaller.
 - Each entry gives two cards: one with the **name** and one with the **description** (summary).
 - The player turns two cards per move. A pair matches when both cards belong to the same entry and
   show different sides. A matching pair stays face up; other cards turn back after about one second.

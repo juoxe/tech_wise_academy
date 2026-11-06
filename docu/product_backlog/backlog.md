@@ -832,10 +832,11 @@ The epic has no milestone and no stories yet; it is planned in detail when MS 2 
 
 As a learner, we want to find out which tools we already know by playing five games, so that we know
 where to learn. The Game tab offers five games: Wissens-Check and Karten abräumen (three levels each,
-saved progress), SQL-Bausteine (tiles, no levels, no progress), Code beurteilen (multiple choice, no
-levels, no progress) and Memory (pairs of names and descriptions, no levels, no progress). In the games
-with levels the level is set automatically, and the level after one is open when every tool of the
-level before is learned.
+set automatically, saved progress), SQL-Bausteine (tiles, three difficulty levels chosen by the player,
+no learning progress), Code beurteilen (multiple choice, three difficulty levels chosen by the player, no
+learning progress) and Memory (pairs of names and descriptions, three difficulty levels chosen by the
+player, no learning progress). The results of their rounds are stored (TWA-6.3). In the two knowledge games the level is set automatically, and the level after one is open
+when every tool of the level before is learned.
 
 **Affected components:** frontend (Game tab, feature `game`), backend (feature `training`),
 documentation
@@ -1140,6 +1141,40 @@ check the area, the hints or the name, but no game pairs a tool or language with
 - The rules are documented in docu/game-play.md.
 
 **Result:** implemented in `frontend/src/features/game/components/memory-board.tsx`, `frontend/src/features/game/lib/memory-deck.ts` and `frontend/src/features/game/pages/game-page.tsx` (fifth game in the choice of the game); the shared shuffle moved to `frontend/src/features/game/lib/shuffle.ts`. Rules in [game-play.md](../game-play.md), section Memory. Checked: typecheck, lint and format check pass; in the browser the round shows 12 cards (six pairs), a move and a wrong pair are counted, and non-matching cards turn back. A matching pair was not clicked in the browser.
+
+---
+
+### TWA-7.10 – Difficulty Levels and More Content for the New Games
+
+**Status:** DONE
+
+**Problem Description**
+
+SQL-Bausteine, Code beurteilen and Memory have one fixed set of content and no difficulty. A beginner
+and an advanced learner get the same tasks, and the games hold too few examples to repeat them.
+
+**Action Steps**
+
+1. Give the three games a difficulty that the player chooses before the game starts: Kennen,
+   Intermediate or Expert, the names of the levels in the knowledge games.
+2. SQL-Bausteine: add tasks and give each task a level (Kennen: 6 tasks, Intermediate: 6 tasks, Expert:
+   5 tasks).
+3. Code beurteilen: add examples and give each example a level (Kennen: 5, Intermediate: 6, Expert: 5).
+4. Memory: the number of pairs in a round depends on the difficulty (Kennen 4, Intermediate 6, Expert 8).
+5. The levels do not unlock anything and save no progress.
+6. Keep the content as static content in the frontend; no new data source.
+7. Update docu/game-play.md and the epic description of TWA-7 in the same change.
+
+**Acceptance Criteria**
+
+- Above the three new games the Game tab offers the choice of the difficulty; Kennen is the default.
+- SQL-Bausteine and Code beurteilen play only the tasks of the chosen difficulty; each difficulty has at
+  least three tasks.
+- Memory shows 4, 6 or 8 pairs, according to the chosen difficulty.
+- The rules are documented in docu/game-play.md; the epic and the roadmap say the same.
+- The texts are German; the code and this story are English.
+
+**Result:** implemented in `frontend/src/features/game/lib/difficulty.ts` (new), `frontend/src/features/game/lib/sql-tasks.ts`, `frontend/src/features/game/lib/code-review-tasks.ts`, `frontend/src/features/game/lib/memory-deck.ts`, the boards `sql-tile-board.tsx`, `code-review-board.tsx`, `memory-board.tsx` and `frontend/src/features/game/pages/game-page.tsx` (difficulty choice). Rules in [game-play.md](../game-play.md), sections SQL-Bausteine, Code beurteilen and Memory. Checked: typecheck, lint and format check pass; in the browser, before the content was extended, the SQL-Bausteine levels showed their own task counts (Kennen 4, Expert 3) and Code beurteilen Kennen showed 3 examples. With the extended content the browser shows SQL 6/6/5 tasks and Code 5/6/5 examples for Kennen/Intermediate/Expert. Checked in the browser on 2026-11-06 with the backend running: Memory shows 4, 6 and 8 pairs for Kennen, Intermediate and Expert.
 
 ---
 

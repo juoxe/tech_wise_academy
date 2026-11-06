@@ -5,6 +5,7 @@ import { ClearingBoard } from "@/features/game/components/clearing-board";
 import { CodeReviewBoard } from "@/features/game/components/code-review-board";
 import { MemoryBoard } from "@/features/game/components/memory-board";
 import { SqlTileBoard } from "@/features/game/components/sql-tile-board";
+import { DIFFICULTIES, type Difficulty } from "@/features/game/lib/difficulty";
 import {
   CATEGORIES,
   MIXED_AREAS,
@@ -44,13 +45,9 @@ const GAMES: { game: TrainingGame; name: string; description: string }[] = [
 ];
 
 /* The three levels: level 1 holds the tools everybody should know, level 3 the expert tools. */
-const LEVELS = [
-  { level: 1, name: "Kennen" },
-  { level: 2, name: "Intermediate" },
-  { level: 3, name: "Expert" },
-] as const;
+const LEVELS = DIFFICULTIES;
 
-type Level = (typeof LEVELS)[number]["level"];
+type Level = Difficulty;
 
 /* The sets of cards: the tools (three levels, sorted by area), the programming languages (one level,
    sorted by paradigm) and the own sets, which hold the interview preparation: sets generated from a job advertisement (one
@@ -161,6 +158,7 @@ export function GamePage() {
   const [sqlPlaying, setSqlPlaying] = useState(false);
   const [codeReviewPlaying, setCodeReviewPlaying] = useState(false);
   const [memoryPlaying, setMemoryPlaying] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>(1);
   const [roundNumber, setRoundNumber] = useState(0);
   const [confirmReset, setConfirmReset] = useState<TrainingGame | null>(null);
   const resetProgress = useResetProgress();
@@ -228,15 +226,23 @@ export function GamePage() {
             Anderes Spiel wählen
           </button>
         </div>
-        <MemoryBoard
-          entries={
-            set === "languages"
-              ? allTools.filter(isLanguage)
-              : set === "interview"
-                ? interview.tools
-                : allTools.filter((tool) => !isLanguage(tool))
-          }
-        />
+        <QueryState
+          isLoading={tools.isLoading || interviewSet.isLoading}
+          error={tools.error ?? interviewSet.error}
+          isEmpty={false}
+          emptyMessage=""
+        >
+          <MemoryBoard
+            difficulty={difficulty}
+            entries={
+              set === "languages"
+                ? allTools.filter(isLanguage)
+                : set === "interview"
+                  ? interview.tools
+                  : allTools.filter((tool) => !isLanguage(tool))
+            }
+          />
+        </QueryState>
       </div>
     );
   }
@@ -254,7 +260,7 @@ export function GamePage() {
             Anderes Spiel wählen
           </button>
         </div>
-        <CodeReviewBoard />
+        <CodeReviewBoard difficulty={difficulty} />
       </div>
     );
   }
@@ -272,7 +278,7 @@ export function GamePage() {
             Anderes Spiel wählen
           </button>
         </div>
-        <SqlTileBoard />
+        <SqlTileBoard difficulty={difficulty} />
       </div>
     );
   }
@@ -402,6 +408,24 @@ export function GamePage() {
             );
           },
         )}
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="Schwierigkeit für SQL-Bausteine, Code beurteilen und Memory"
+        >
+          <span className="text-base font-semibold">Schwierigkeit:</span>
+          {DIFFICULTIES.map((option) => (
+            <button
+              key={option.level}
+              type="button"
+              aria-pressed={difficulty === option.level}
+              onClick={() => setDifficulty(option.level)}
+              className={difficulty === option.level ? BUTTON_ON : BUTTON_OFF}
+            >
+              {option.name}
+            </button>
+          ))}
+        </div>
         <section className="flex flex-col gap-3 rounded-md border border-border p-6">
           <h2 className="text-2xl font-semibold">SQL-Bausteine</h2>
           <p className="text-base text-muted-foreground">

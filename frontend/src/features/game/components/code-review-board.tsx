@@ -1,7 +1,8 @@
 import { useState } from "react";
 
+import type { Difficulty } from "@/features/game/lib/difficulty";
 import {
-  CODE_TASKS,
+  codeTasksOf,
   isTaskSolved,
 } from "@/features/game/lib/code-review-tasks";
 import { cn } from "@/lib/utils";
@@ -13,14 +14,16 @@ const PRIMARY =
   "rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50";
 
 /* The game Code beurteilen: a code example and several statements about it. The learner marks every
-   statement that is right; any number can be right. The check shows the reason of each statement. */
-export function CodeReviewBoard() {
+   statement that is right; any number can be right. The check shows the reason of each statement. The
+   difficulty chooses the examples. */
+export function CodeReviewBoard({ difficulty }: { difficulty: Difficulty }) {
+  const tasks = codeTasksOf(difficulty);
   const [index, setIndex] = useState(0);
   const [marked, setMarked] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
   const [solved, setSolved] = useState(0);
   const [finished, setFinished] = useState(false);
-  const task = CODE_TASKS[index];
+  const task = tasks[index];
 
   function toggle(statement: number) {
     if (checked) {
@@ -44,7 +47,7 @@ export function CodeReviewBoard() {
   }
 
   function next() {
-    if (index + 1 >= CODE_TASKS.length) {
+    if (index + 1 >= tasks.length) {
       setFinished(true);
       return;
     }
@@ -71,7 +74,7 @@ export function CodeReviewBoard() {
           Alle Beispiele durchgespielt
         </h2>
         <p className="text-lg">
-          {solved} von {CODE_TASKS.length} Beispielen richtig beurteilt.
+          {solved} von {tasks.length} Beispielen richtig beurteilt.
         </p>
         <div>
           <button type="button" onClick={restart} className={PRIMARY}>
@@ -89,7 +92,7 @@ export function CodeReviewBoard() {
     >
       <div className="flex flex-wrap items-center justify-between gap-2 text-base">
         <span className="font-semibold">
-          Beispiel {index + 1} von {CODE_TASKS.length} · {task.language}
+          Beispiel {index + 1} von {tasks.length} · {task.language}
         </span>
         <span className="text-muted-foreground">Richtig: {solved}</span>
       </div>
@@ -146,7 +149,7 @@ export function CodeReviewBoard() {
       <div className="flex flex-wrap gap-2">
         {checked ? (
           <button type="button" onClick={next} className={PRIMARY}>
-            {index + 1 < CODE_TASKS.length ? "Weiter" : "Zum Ergebnis"}
+            {index + 1 < tasks.length ? "Weiter" : "Zum Ergebnis"}
           </button>
         ) : (
           <button type="button" onClick={check} className={PRIMARY}>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
+import type { Difficulty } from "@/features/game/lib/difficulty";
 import {
+  PAIRS_BY_DIFFICULTY,
   buildDeck,
   isPair,
   type MemoryCard,
@@ -16,9 +18,19 @@ const PRIMARY =
 type Entry = { key: string; name: string; summary: string };
 
 /* The game Memory: a name card and a description card per tool or language. The player turns two
-   cards per move; a pair stays face up. The round ends when every pair is found. */
-export function MemoryBoard({ entries }: { entries: Entry[] }) {
-  const [deck, setDeck] = useState<MemoryCard[]>(() => buildDeck(entries));
+   cards per move; a pair stays face up. The round ends when every pair is found. The difficulty sets
+   the number of pairs. */
+export function MemoryBoard({
+  entries,
+  difficulty,
+}: {
+  entries: Entry[];
+  difficulty: Difficulty;
+}) {
+  const pairs = PAIRS_BY_DIFFICULTY[difficulty];
+  const [deck, setDeck] = useState<MemoryCard[]>(() =>
+    buildDeck(entries, pairs),
+  );
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
   const [moves, setMoves] = useState(0);
@@ -59,7 +71,7 @@ export function MemoryBoard({ entries }: { entries: Entry[] }) {
   }
 
   function restart() {
-    setDeck(buildDeck(entries));
+    setDeck(buildDeck(entries, pairs));
     setFlipped([]);
     setMatched([]);
     setMoves(0);

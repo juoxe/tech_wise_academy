@@ -112,7 +112,7 @@ export function ToolOverviewCard({
               {detail.examples.map((example) => (
                 <pre
                   key={example}
-                  className="overflow-x-auto rounded-md bg-muted p-3 text-sm"
+                  className="overflow-x-auto rounded-md bg-muted p-3 text-base"
                 >
                   <code>{example}</code>
                 </pre>

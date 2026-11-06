@@ -1,8 +1,9 @@
 import { useState } from "react";
 
+import type { Difficulty } from "@/features/game/lib/difficulty";
 import {
-  SQL_TASKS,
   isSolved,
+  sqlTasksOf,
   taskAt,
   tilesOf,
   type SqlTask,
@@ -36,13 +37,15 @@ function newRound(task: SqlTask): Round {
 }
 
 /* The game SQL-Bausteine: the player builds a PostgreSQL query from tiles by clicking them in the
-   order of the query. Tiles that the solution does not use stay in the pool. */
-export function SqlTileBoard() {
+   order of the query. Tiles that the solution does not use stay in the pool. The difficulty chooses
+   the tasks. */
+export function SqlTileBoard({ difficulty }: { difficulty: Difficulty }) {
+  const tasks = sqlTasksOf(difficulty);
   const [index, setIndex] = useState(0);
   const [solved, setSolved] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [round, setRound] = useState<Round>(() => newRound(taskAt(0)));
-  const task = taskAt(index);
+  const [round, setRound] = useState<Round>(() => newRound(taskAt(tasks, 0)));
+  const task = taskAt(tasks, index);
 
   function pick(tile: number) {
     setRound((current) => ({
@@ -82,19 +85,19 @@ export function SqlTileBoard() {
 
   function next() {
     const following = index + 1;
-    if (following >= SQL_TASKS.length) {
+    if (following >= tasks.length) {
       setFinished(true);
       return;
     }
     setIndex(following);
-    setRound(newRound(taskAt(following)));
+    setRound(newRound(taskAt(tasks, following)));
   }
 
   function restart() {
     setIndex(0);
     setSolved(0);
     setFinished(false);
-    setRound(newRound(taskAt(0)));
+    setRound(newRound(taskAt(tasks, 0)));
   }
 
   if (finished) {
@@ -107,7 +110,7 @@ export function SqlTileBoard() {
           Alle Aufgaben durchgespielt
         </h2>
         <p className="text-lg">
-          {solved} von {SQL_TASKS.length} Abfragen richtig.
+          {solved} von {tasks.length} Abfragen richtig.
         </p>
         <div>
           <button
@@ -131,7 +134,7 @@ export function SqlTileBoard() {
     >
       <div className="flex flex-wrap items-center justify-between gap-2 text-base">
         <span className="font-semibold">
-          Aufgabe {index + 1} von {SQL_TASKS.length}
+          Aufgabe {index + 1} von {tasks.length}
         </span>
         <span className="text-muted-foreground">Richtig: {solved}</span>
       </div>
@@ -190,7 +193,7 @@ export function SqlTileBoard() {
             onClick={next}
             className="rounded-md bg-primary px-4 py-2 text-base font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary"
           >
-            {index + 1 < SQL_TASKS.length ? "Weiter" : "Zum Ergebnis"}
+            {index + 1 < tasks.length ? "Weiter" : "Zum Ergebnis"}
           </button>
         ) : (
           <button

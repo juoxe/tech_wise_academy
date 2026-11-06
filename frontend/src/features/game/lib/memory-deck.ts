@@ -8,16 +8,24 @@ export type MemoryCard = {
 };
 
 import { shuffle } from "@/features/game/lib/shuffle";
+import type { Difficulty } from "@/features/game/lib/difficulty";
 
-export const PAIRS_PER_ROUND = 6;
+/* The number of pairs in a round: the higher the difficulty, the more cards to find. */
+export const PAIRS_BY_DIFFICULTY: Record<Difficulty, number> = {
+  1: 4,
+  2: 6,
+  3: 8,
+};
 
-/* Builds a round: up to six entries with a summary are drawn at random, each gives two cards. */
+/* Builds a round: up to the given number of entries with a summary are drawn at random, each gives two
+   cards. */
 export function buildDeck(
   entries: readonly { key: string; name: string; summary: string }[],
+  pairs: number,
   random = Math.random,
 ): MemoryCard[] {
   const usable = entries.filter((entry) => entry.summary.trim() !== "");
-  const chosen = shuffle(usable, random).slice(0, PAIRS_PER_ROUND);
+  const chosen = shuffle(usable, random).slice(0, pairs);
   const cards = chosen.flatMap((entry) => [
     { toolKey: entry.key, kind: "name" as const, text: entry.name },
     { toolKey: entry.key, kind: "summary" as const, text: entry.summary },
