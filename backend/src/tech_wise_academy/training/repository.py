@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from tech_wise_academy.training.model import Progress
+from tech_wise_academy.training.model import Progress, RoundResult
 
 metadata = sa.MetaData()
 
@@ -21,6 +21,20 @@ learning_progress_table = sa.Table(
     sa.Column("learned", sa.Boolean, nullable=False),
     sa.Column("correct_total", sa.Integer, nullable=False),
     sa.Column("wrong_total", sa.Integer, nullable=False),
+)
+
+round_results_table = sa.Table(
+    "round_results",
+    metadata,
+    sa.Column("id", sa.Uuid, primary_key=True),
+    sa.Column("profile_id", sa.Uuid, nullable=False),
+    sa.Column("game", sa.Text, nullable=False),
+    sa.Column("difficulty", sa.Integer, nullable=False),
+    sa.Column("solved", sa.Integer, nullable=False),
+    sa.Column("total", sa.Integer, nullable=False),
+    sa.Column(
+        "played_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()
+    ),
 )
 
 KEY_COLUMNS = ("profile_id", "game", "tool_key")
@@ -63,6 +77,46 @@ class TrainingRepository:
         )
         async with self._engine.begin() as connection:
             await connection.execute(statement)
+
+    async def add_result(
+        self,
+        profile_id: uuid.UUID,
+        game: str,
+        difficulty: int,
+        solved: int,
+        total: int,
+    ) -> None:
+        """Stores the result of one finished round; the time is set by the database."""
+        statement = sa.insert(round_results_table).values(
+            id=uuid.uuid4(),
+            profile_id=profile_id,
+            game=game,
+            difficulty=difficulty,
+            solved=solved,
+            total=total,
+        )
+        async with self._engine.begin() as connection:
+            await connection.execute(statement)
+
+    async def list_results(self, profile_id: uuid.UUID) -> tuple[RoundResult, ...]:
+        """All stored results of one player, oldest first."""
+        statement = (
+            sa.select(round_results_table)
+            .where(round_results_table.c.profile_id == profile_id)
+            .order_by(round_results_table.c.played_at)
+        )
+        async with self._engine.connect() as connection:
+            rows = (await connection.execute(statement)).mappings().all()
+        return tuple(
+            RoundResult(
+                game=row["game"],
+                difficulty=row["difficulty"],
+                solved=row["solved"],
+                total=row["total"],
+                played_at=row["played_at"],
+            )
+            for row in rows
+        )
 
     async def update_progress(
         self,

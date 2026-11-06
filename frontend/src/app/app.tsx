@@ -1,4 +1,5 @@
 import { GamePage } from "@/features/game";
+import { StatisticsPage } from "@/features/statistics";
 import { DataSetsTab } from "@/features/tools";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -24,6 +25,9 @@ export function App() {
           <TabsTrigger value="game" className={TAB}>
             Game
           </TabsTrigger>
+          <TabsTrigger value="statistics" className={TAB}>
+            Statistik
+          </TabsTrigger>
           <TabsTrigger value="tools" className={TAB}>
             Toolübersicht
           </TabsTrigger>
@@ -32,6 +36,9 @@ export function App() {
       <main className="p-6">
         <TabsContent value="game">
           <GamePage />
+        </TabsContent>
+        <TabsContent value="statistics">
+          <StatisticsPage />
         </TabsContent>
         <TabsContent value="tools">
           <DataSetsTab />

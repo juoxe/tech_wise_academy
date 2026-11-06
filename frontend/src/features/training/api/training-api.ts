@@ -1,7 +1,47 @@
-import { deleteJson, getJson, postJson } from "@/lib/api/client";
+import { deleteJson, getJson, postJson, postNoContent } from "@/lib/api/client";
 import { getProfileId } from "@/features/training/lib/profile";
 
 export type TrainingGame = "level0" | "clearing";
+
+/** The games without saved learning progress; each finished round is stored as one result. */
+export type RoundGame = "sql" | "code" | "memory";
+
+/** One stored round: `solved` of `total` (Memory: the pairs found of the moves needed). */
+export type RoundResult = {
+  solved: number;
+  total: number;
+  played_at: string;
+};
+
+/** The rounds, the best and the latest result of the player in one game and difficulty. */
+export type ResultSummary = {
+  game: RoundGame;
+  difficulty: number;
+  rounds: number;
+  best: RoundResult;
+  last: RoundResult;
+};
+
+/** Stores the result of a finished round of SQL-Bausteine, Code beurteilen or Memory. */
+export function recordResult(
+  game: RoundGame,
+  difficulty: number,
+  solved: number,
+  total: number,
+): Promise<void> {
+  return postNoContent(
+    "/api/training/results",
+    { game, difficulty, solved, total },
+    { "X-Profile-Id": getProfileId() },
+  );
+}
+
+/** The result summaries of the current player. */
+export function fetchResults(): Promise<ResultSummary[]> {
+  return getJson("/api/training/results", {
+    "X-Profile-Id": getProfileId(),
+  });
+}
 
 /** The saved progress of one tool for the current player (field names as in the API). */
 export type ProgressEntry = {

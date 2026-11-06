@@ -38,6 +38,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/training/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Results */
+        get: operations["list_results_api_training_results_get"];
+        put?: never;
+        /** Record Result */
+        post: operations["record_result_api_training_results_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/training/answers": {
         parameters: {
             query?: never;
@@ -66,7 +84,8 @@ export interface paths {
         get: operations["list_progress_api_training_progress_get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Reset Progress */
+        delete: operations["reset_progress_api_training_progress_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -213,6 +232,46 @@ export interface components {
             /** Wrong Total */
             wrong_total: number;
         };
+        /**
+         * ResultIn
+         * @description The result of a finished round: `solved` of `total` (Memory: pairs found of moves).
+         */
+        ResultIn: {
+            /**
+             * Game
+             * @enum {string}
+             */
+            game: "sql" | "code" | "memory";
+            /** Difficulty */
+            difficulty: number;
+            /** Solved */
+            solved: number;
+            /** Total */
+            total: number;
+        };
+        /** ResultSummaryOut */
+        ResultSummaryOut: {
+            /** Game */
+            game: string;
+            /** Difficulty */
+            difficulty: number;
+            /** Rounds */
+            rounds: number;
+            best: components["schemas"]["RoundResultOut"];
+            last: components["schemas"]["RoundResultOut"];
+        };
+        /** RoundResultOut */
+        RoundResultOut: {
+            /** Solved */
+            solved: number;
+            /** Total */
+            total: number;
+            /**
+             * Played At
+             * Format: date-time
+             */
+            played_at: string;
+        };
         /** ToolContentOut */
         ToolContentOut: {
             /** Overview */
@@ -355,6 +414,70 @@ export interface operations {
             };
         };
     };
+    list_results_api_training_results_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResultSummaryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_result_api_training_results_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResultIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     record_answer_api_training_answers_post: {
         parameters: {
             query?: never;
@@ -411,6 +534,37 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ProgressOut"][];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_progress_api_training_progress_delete: {
+        parameters: {
+            query: {
+                game: "level0" | "clearing";
+            };
+            header: {
+                "X-Profile-Id": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

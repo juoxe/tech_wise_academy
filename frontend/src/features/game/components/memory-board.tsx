@@ -7,6 +7,7 @@ import {
   isPair,
   type MemoryCard,
 } from "@/features/game/lib/memory-deck";
+import { useRecordResult } from "@/features/training";
 import { cn } from "@/lib/utils";
 
 /* Cards that do not match turn back after this time. */
@@ -37,6 +38,16 @@ export function MemoryBoard({
   const [wrongPairs, setWrongPairs] = useState(0);
   const pairCount = deck.length / 2;
   const finished = deck.length > 0 && matched.length === pairCount;
+  const recordResult = useRecordResult();
+
+  /* A finished round is stored once: the pairs found and the moves needed. */
+  useEffect(() => {
+    if (finished) {
+      void recordResult("memory", difficulty, pairCount, moves);
+    }
+    // Only the end of a round matters; the other values do not change after it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
 
   /* Two flipped cards are compared after a short time: a pair stays, otherwise both turn back. */
   useEffect(() => {

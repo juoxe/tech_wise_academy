@@ -2,7 +2,13 @@
 
 import uuid
 
-from tech_wise_academy.training.model import LEARNED_AFTER, Progress, apply_answer
+from tech_wise_academy.training.model import (
+    LEARNED_AFTER,
+    Progress,
+    ResultSummary,
+    apply_answer,
+    summarize_results,
+)
 from tech_wise_academy.training.repository import TrainingRepository
 
 
@@ -26,6 +32,21 @@ class TrainingService:
 
     async def list_progress(self, profile_id: uuid.UUID, game: str) -> tuple[Progress, ...]:
         return await self._repository.list_progress(profile_id, game)
+
+    async def record_result(
+        self,
+        profile_id: uuid.UUID,
+        game: str,
+        difficulty: int,
+        solved: int,
+        total: int,
+    ) -> None:
+        """Stores the result of a finished round of a game without saved learning progress."""
+        await self._repository.add_result(profile_id, game, difficulty, solved, total)
+
+    async def list_result_summaries(self, profile_id: uuid.UUID) -> tuple[ResultSummary, ...]:
+        """The rounds, the best and the latest result per game and difficulty of the player."""
+        return summarize_results(await self._repository.list_results(profile_id))
 
     async def reset_progress(self, profile_id: uuid.UUID, game: str) -> None:
         """Deletes the progress of the player in one game; other games and players stay."""

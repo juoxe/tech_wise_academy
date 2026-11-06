@@ -5,6 +5,7 @@ import {
   codeTasksOf,
   isTaskSolved,
 } from "@/features/game/lib/code-review-tasks";
+import { useRecordResult } from "@/features/training";
 import { cn } from "@/lib/utils";
 
 const BUTTON =
@@ -18,6 +19,7 @@ const PRIMARY =
    difficulty chooses the examples. */
 export function CodeReviewBoard({ difficulty }: { difficulty: Difficulty }) {
   const tasks = codeTasksOf(difficulty);
+  const recordResult = useRecordResult();
   const [index, setIndex] = useState(0);
   const [marked, setMarked] = useState<number[]>([]);
   const [checked, setChecked] = useState(false);
@@ -48,6 +50,7 @@ export function CodeReviewBoard({ difficulty }: { difficulty: Difficulty }) {
 
   function next() {
     if (index + 1 >= tasks.length) {
+      void recordResult("code", difficulty, solved, tasks.length);
       setFinished(true);
       return;
     }

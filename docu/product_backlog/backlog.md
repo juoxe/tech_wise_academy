@@ -13,7 +13,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-3](#epic-twa-3--mandatory-decisions-before-the-first-code) | Mandatory Decisions Before the First Code | MS 1 | DONE |
 | [TWA-4](#epic-twa-4--runnable-project-skeleton) | Runnable Project Skeleton | MS 1 | DONE |
 | [TWA-5](#epic-twa-5--playable-game) | Playable Game | MS 1 | REJECTED |
-| [TWA-6](#epic-twa-6--statistics) | Statistics | – | IDEA |
+| [TWA-6](#epic-twa-6--statistics) | Statistics | MS 2 | IN PROGRESS |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
 | [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | IN PROGRESS |
@@ -809,18 +809,118 @@ skeleton in TWA-4 ("TWA-4: Add project skeleton"); the number TWA-5 stays taken.
 
 ## Epic TWA-6 – Statistics
 
-**Status:** IDEA
+**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
-As a learner, we want to see how my learning progress develops per game and per area, so that I can
-judge where I stand and what to learn next.
+As a learner, we want to see how our learning progress stands per game, per level and per area, so
+that we can judge where we stand and what to learn next. A new tab "Statistik" shows the saved
+progress of the two knowledge games (Wissens-Check and Karten abräumen) as numbers and bars, and the
+stored rounds of the other three games.
 
-**Affected components:** frontend (Game tab, statistics page), backend (feature `training`),
-documentation
+**Affected components:** frontend (new tab "Statistik", feature `statistics`; the games SQL-Bausteine,
+Code beurteilen and Memory), backend (feature `training`, table `round_results`), documentation. The
+statistics of the knowledge games are computed from the progress that `GET /api/training/progress`
+already returns (learned, correct and wrong answers per tool); only TWA-6.3 adds a backend endpoint.
+
+**Working documents:** [game-play](../game-play.md)
 
 **Note:** the statistics page per user is an expected result of MS 2 (see the [roadmap](roadmap.md)).
-The epic has no milestone and no stories yet; it is planned in detail when MS 2 is planned.
+J asked on 2026-11-05 to plan and build the tab. No new library is needed: the bars are the same
+progress bars as in the Game tab, in the colour role `secondary`. The statistics use the profile of
+the browser (`X-Profile-Id`); with login (Keycloak) they become per user.
+All three stories are done; the epic stays IN PROGRESS until J has reviewed the tab in the browser.
+
+---
+
+### TWA-6.1 – Statistics Tab with Progress per Game, Level and Area
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner sees the progress of a game only as one bar in the Game tab, for the level that is played
+right now. There is no place that shows how many tools are learned in all, per level and per area,
+and how many answers were right or wrong.
+
+**Action Steps**
+
+1. Add a tab "Statistik" between "Game" and "Toolübersicht".
+2. Show for each of the two knowledge games: learned tools of all tools, the share in percent, the
+   number of right and wrong answers and the share of right answers.
+3. Show for the tools set the progress per level (Kennen, Intermediate, Expert) and per area (DevOps,
+   Backend, Frontend, Security, KI & Daten) as a bar with "x von y gelernt"; the programming
+   languages are shown as one row.
+4. Compute everything in the frontend from the saved progress and the tool list; no backend change.
+5. Show a loading state, an error state and an empty state (nothing played yet).
+6. Document the tab in [game-play.md](../game-play.md) (section "Statistik").
+
+**Acceptance Criteria**
+
+- The menu bar shows the tab "Statistik" between "Game" and "Toolübersicht".
+- For each knowledge game the tab shows the learned tools, the percentage and the right and wrong
+  answers.
+- The tab shows the progress per level and per area as bars with counts.
+- Before anything is played the tab says that there is no data yet.
+- A failed request shows the error message, not an empty page.
+- The texts are German; the code and this story are English.
+- The rules are documented in docu/game-play.md.
+
+**Result:** implemented in `frontend/src/features/statistics/` (`lib/statistics.ts`, `pages/statistics-page.tsx`, `index.ts`), the tab in `frontend/src/app/app.tsx`, and the exports `DIFFICULTIES` (feature `game`) and `useTools` (feature `tools`). Rules in [game-play.md](../game-play.md), section Statistik. Checked: typecheck, lint and format check pass; in the browser a throwaway profile with test answers shows the learned tools, answers, levels (94 + 97 + 93) and areas (with the 23 languages 307 tools), and a profile without answers shows "Noch keine Daten". The test profile was deleted again. The error state comes from the shared `QueryState` and was not provoked in the browser.
+
+---
+
+### TWA-6.2 – Tools to Repeat
+
+**Status:** DONE
+
+**Problem Description**
+
+A learner who answers a tool wrong again and again does not see which tools these are. The wrong
+cards are shown only at the end of one round of the Wissens-Check and are gone afterwards.
+
+**Action Steps**
+
+1. Show in the tab "Statistik" per game a list of the tools with the most wrong answers (at most
+   ten), with the number of wrong and right answers.
+2. Leave out tools without a wrong answer and tools that were never answered.
+3. Sort by wrong answers (descending), then by name.
+4. Show a short text when there is no wrong answer yet.
+
+**Acceptance Criteria**
+
+- Each knowledge game shows its list of tools to repeat, at most ten tools.
+- A tool with wrong answers shows its name, area, wrong and right answers.
+- The list is sorted by the number of wrong answers, highest first.
+- Without wrong answers the list is replaced by a short text.
+
+**Result:** implemented together with TWA-6.1 (`toolsToRepeat` in `frontend/src/features/statistics/lib/statistics.ts`, list in the page). Checked in the browser with the test profile: Angular (2 wrong, 1 right) is listed before Ansible (1 wrong, 0 right), Alertmanager (no wrong answer) is not listed. The text for "no wrong answers" was not shown in the browser.
+
+---
+
+### TWA-6.3 – Statistics of the Games Without Saved Progress
+
+**Status:** DONE
+
+**Problem Description**
+
+SQL-Bausteine, Code beurteilen and Memory save no results, so the tab "Statistik" cannot show them.
+A learner cannot see how the results develop over several rounds there.
+
+**Action Steps**
+
+1. Decide what to save per round (game, difficulty, tasks solved, number of tasks, date).
+2. Add a backend endpoint to store and list the results of a player.
+3. Save the result at the end of a round in the three games.
+4. Show the results per game and difficulty in the tab "Statistik".
+
+**Acceptance Criteria**
+
+- The result of a finished round of each of the three games is saved for the player.
+- The tab "Statistik" shows the best and the last result per game and difficulty.
+- The change follows the backend rules (feature `training`, Alembic migration for the new table).
+
+**Result:** implemented in the backend (feature `training`): table `round_results` (migration `0010_round_results.py`, checks on game, difficulty and `solved <= total`), `POST /api/training/results` (204) and `GET /api/training/results` (rounds, best and latest result per game and difficulty); the rule `summarize_results` is in `model.py`. Frontend: `useRecordResult` and `useResults` in feature `training`, the boards of the three games store the result when a round ends, and the section "Weitere Spiele" in the tab "Statistik". Decision on what to save: per round the game, the difficulty, `solved` of `total` and the time; Memory stores the pairs found as `solved` and the moves as `total`, so that `solved <= total` holds for every game. A round that is left before its end is not stored; a failed save is ignored so that it does not stop the game. `frontend/openapi.json` and `schema.d.ts` were generated again. Checked: backend ruff format, ty, import-linter and 41 unit tests pass (`ruff check` reports only the existing E501 in `local_loop.py`); frontend typecheck, lint and format check pass; the migration ran on the local database; in the browser with a throwaway profile one finished round of each game was stored and shown ("SQL-Bausteine · Kennen · 1 Runde · Zuletzt: 0 von 6 richtig", Memory "4 Paare in 7 Zügen"), the test rows were deleted afterwards. Not checked: the best result over several rounds in the browser (covered by the unit test), and a failing save.
 
 ---
 

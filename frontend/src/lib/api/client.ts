@@ -40,6 +40,22 @@ export async function postJson<T>(
   return (await response.json()) as T;
 }
 
+/** Sends a JSON body; the backend answers without a body (status 204). */
+export async function postNoContent(
+  path: string,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Promise<void> {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...headers },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw new ApiError(response.status);
+  }
+}
+
 /** Deletes a resource; the backend answers without a body. */
 export async function deleteJson(
   path: string,

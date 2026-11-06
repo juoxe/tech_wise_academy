@@ -9,6 +9,7 @@ import {
   type SqlTask,
 } from "@/features/game/lib/sql-tasks";
 import { shuffle } from "@/features/game/lib/shuffle";
+import { useRecordResult } from "@/features/training";
 import { cn } from "@/lib/utils";
 
 const TILE =
@@ -41,6 +42,7 @@ function newRound(task: SqlTask): Round {
    the tasks. */
 export function SqlTileBoard({ difficulty }: { difficulty: Difficulty }) {
   const tasks = sqlTasksOf(difficulty);
+  const recordResult = useRecordResult();
   const [index, setIndex] = useState(0);
   const [solved, setSolved] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -86,6 +88,7 @@ export function SqlTileBoard({ difficulty }: { difficulty: Difficulty }) {
   function next() {
     const following = index + 1;
     if (following >= tasks.length) {
+      void recordResult("sql", difficulty, solved, tasks.length);
       setFinished(true);
       return;
     }

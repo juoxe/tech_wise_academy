@@ -1,7 +1,8 @@
 """Event loop for local runs on Windows.
 
 psycopg's async mode does not work with the default Windows event loop (ProactorEventLoop), so
-local runs start uvicorn with this factory: `uvicorn --loop tech_wise_academy.local_loop:selector_loop`.
+local runs start uvicorn with this factory:
+`uvicorn --loop tech_wise_academy.local_loop:selector_loop`.
 Linux containers do not need it.
 """
 

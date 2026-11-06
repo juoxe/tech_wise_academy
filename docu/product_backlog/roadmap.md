@@ -66,9 +66,12 @@ expected results and not yet cut into a planned epic table.
   cards).
 - Learning progress per user: a card counts as learned after repeated correct answers; progress
   is shown as learned cards.
-- A statistics page per user (idea [TWA-6](backlog.md#epic-twa-6--statistics), not yet planned).
+- A statistics tab: the saved progress of the knowledge games per game, level and area, the tools to
+  repeat and the stored rounds of SQL-Bausteine, Code beurteilen and Memory
+  ([TWA-6](backlog.md#epic-twa-6--statistics), `IN PROGRESS`, all stories done, waiting for J's review).
 - Knowledge games: five games – Wissens-Check and Karten abräumen with three levels and saved
-  progress; SQL-Bausteine, Code beurteilen and Memory without levels and progress
+  progress; SQL-Bausteine, Code beurteilen and Memory with three difficulty levels chosen by the
+  player and without saved learning progress
   ([TWA-7](backlog.md#epic-twa-7--knowledge-games), `IN PROGRESS`, built ahead of the planning of
   MS 2).
 - Interview preparation: card sets generated from a job advertisement, in the local network

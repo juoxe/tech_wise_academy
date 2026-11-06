@@ -1,17 +1,48 @@
 """HTTP API of the training. The player is identified by the header X-Profile-Id for now."""
 
 import uuid
-from typing import Annotated, Literal
+from datetime import datetime
+from typing import Annotated, Literal, Self
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
-from tech_wise_academy.training.model import Progress
+from tech_wise_academy.training.model import Progress, ResultSummary, RoundResult
 from tech_wise_academy.training.service import TrainingService
 
 router = APIRouter(prefix="/training", tags=["training"])
 
 GameName = Literal["level0", "clearing"]
+RoundGameName = Literal["sql", "code", "memory"]
+
+
+class ResultIn(BaseModel):
+    """The result of a finished round: `solved` of `total` (Memory: pairs found of moves)."""
+
+    game: RoundGameName
+    difficulty: int = Field(ge=1, le=3)
+    solved: int = Field(ge=0, le=1000)
+    total: int = Field(ge=1, le=1000)
+
+    @model_validator(mode="after")
+    def solved_is_at_most_total(self) -> Self:
+        if self.solved > self.total:
+            raise ValueError("solved must not be greater than total")
+        return self
+
+
+class RoundResultOut(BaseModel):
+    solved: int
+    total: int
+    played_at: datetime
+
+
+class ResultSummaryOut(BaseModel):
+    game: str
+    difficulty: int
+    rounds: int
+    best: RoundResultOut
+    last: RoundResultOut
 
 
 class AnswerIn(BaseModel):
@@ -47,6 +78,35 @@ def _out(progress: Progress) -> ProgressOut:
         correct_total=progress.correct_total,
         wrong_total=progress.wrong_total,
     )
+
+
+def _result_out(result: RoundResult) -> RoundResultOut:
+    return RoundResultOut(solved=result.solved, total=result.total, played_at=result.played_at)
+
+
+def _summary_out(summary: ResultSummary) -> ResultSummaryOut:
+    return ResultSummaryOut(
+        game=summary.game,
+        difficulty=summary.difficulty,
+        rounds=summary.rounds,
+        best=_result_out(summary.best),
+        last=_result_out(summary.last),
+    )
+
+
+@router.post("/results", status_code=204)
+async def record_result(
+    body: ResultIn,
+    profile_id: ProfileHeader,
+    service: ServiceDep,
+) -> Response:
+    await service.record_result(profile_id, body.game, body.difficulty, body.solved, body.total)
+    return Response(status_code=204)
+
+
+@router.get("/results", response_model=list[ResultSummaryOut])
+async def list_results(profile_id: ProfileHeader, service: ServiceDep) -> list[ResultSummaryOut]:
+    return [_summary_out(summary) for summary in await service.list_result_summaries(profile_id)]
 
 
 @router.post("/answers", response_model=ProgressOut)

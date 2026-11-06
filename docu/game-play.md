@@ -1,20 +1,22 @@
 # Game Play
 
 Status: **five games are implemented**: the knowledge check Wissens-Check (Level 0, a falling-card game)
-and Karten abräumen, both played in three levels (Kennen, Intermediate, Expert); and the games without
-levels SQL-Bausteine (PostgreSQL queries from tiles), Code beurteilen (multiple choice on code) and Memory
-(pairs of names and descriptions). The full game with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
-(Keycloak) and statistics are not part of these games yet.
+and Karten abräumen, both played in three levels (Kennen, Intermediate, Expert) that are set automatically;
+and the games SQL-Bausteine (PostgreSQL queries from tiles), Code beurteilen (multiple choice on code) and
+Memory (pairs of names and descriptions), each played in three difficulty levels (Kennen, Intermediate,
+Expert) that the player chooses. The full game with sorting and content follows in MS 2 (see the [roadmap](product_backlog/roadmap.md)). Login
+(Keycloak) is not part of these games yet. The tab Statistik shows the saved progress of the two knowledge games and the stored rounds of the other three.
 
 This document is the single source for the game rules.
 
 ## Overview
 
-The app has a menu bar with two tabs, in this order:
+The app has a menu bar with three tabs, in this order:
 
 | Tab | Content |
 |-----|---------|
 | Game | The choice of the game ("Welches Game willst du spielen?"), then the game. |
+| Statistik | The saved progress of the two knowledge games and the results of the other three games (see Statistik). |
 | Toolübersicht | All tools as a list over the full width of the screen. |
 
 ## Sets
@@ -253,6 +255,37 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
 - The round ends when all pairs are found. The result shows the moves and the wrong pairs.
 - The code is in `frontend/src/features/game/components/memory-board.tsx` and
   `frontend/src/features/game/lib/memory-deck.ts`.
+
+## Statistik
+
+**Goal:** show the learner where they stand: how many tools are learned, how the answers went and
+which tools need repeating.
+
+- The tab "Statistik" has one section per knowledge game: Wissens-Check and Karten abräumen, and a section
+  "Weitere Spiele" for SQL-Bausteine, Code beurteilen and Memory.
+- Everything is computed in the frontend from the saved progress of the player and the tool list. It
+  counts all tools of the app (the tools and the programming languages), independent of the set that is
+  chosen in the Game tab.
+- **Gelernte Werkzeuge:** learned tools of all tools, with the share in percent and a bar.
+- **Antworten:** right and wrong answers of the game and the share of right answers; the share is
+  left out while no answer was given.
+- **Nach Level:** the learned tools of the levels Kennen, Intermediate and Expert, each with a bar.
+  The programming languages have no level and are not counted here.
+- **Nach Bereich:** the learned tools per area (DevOps, Backend, Frontend, Security, KI & Daten) and
+  one row for the programming languages.
+- **Zum Wiederholen:** the tools with the most wrong answers, at most ten, highest first, then by
+  name; each with its area and the wrong and right answers. Tools without a wrong answer are not
+  listed; without any wrong answer a short text is shown.
+- Before anything is played the tab shows "Noch keine Daten. Spiele zuerst eine Runde im Game-Tab."
+- The statistics belong to the profile of the browser (see Saving) and become per user with the login.
+- **Weitere Spiele:** SQL-Bausteine, Code beurteilen and Memory save no learning progress. Every round that is
+  played to the end is stored as one result of the player: the game, the difficulty, the tasks solved of
+  all tasks (Memory: the pairs found and the moves needed) and the time. For each game and difficulty the
+  tab shows the number of rounds, the latest and the best round. The best round has the highest share of
+  solved in total; of equal ones the later wins. A round that is left before the end is not stored. A
+  failed save does not stop the game.
+- The results are stored by the backend (`POST` and `GET /api/training/results`, table `round_results`).
+- The code is in `frontend/src/features/statistics/`.
 
 ## Übersichtskarte
 
