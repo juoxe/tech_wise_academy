@@ -80,9 +80,8 @@ expected results and not yet cut into a planned epic table.
 - A generalised overview with create, edit, delete and detail view: a reusable table and detail
   view for the tools, so that the tools can be maintained in the UI
   ([TWA-9](backlog.md#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view),
-  `IN PROGRESS`; TWA-9.1 and TWA-9.2 done). Depends on: TWA-4 (tool overview and Tool API); stories
-  TWA-9.3 (create and edit) and TWA-9.4 (delete) wait for J's decision on who may edit and delete,
-  and on the role of the seed file.
+  `DONE`; all four stories done). Depends on: TWA-4 (tool overview and Tool API); TWA-9.3 (create
+  and edit) and TWA-9.4 (delete) were built after J's decision of 2026-11-06.
 - Tool extraction from any text: the tools a text names, the tools of a mentioned ecosystem and
   concepts shown as topics, independent of interviews; the matching quality moved here from
   TWA-8.7 ([TWA-10](backlog.md#epic-twa-10--tool-extraction-from-text), `TODO`).

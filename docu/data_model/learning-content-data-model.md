@@ -53,6 +53,7 @@ Decided by J on 2026-10-25: the **first slice is German**; English follows in MS
 | level | integer `1` to `3` | ✓ | input | The level of the tool in the game, see [Level](#level) |
 | documentation_url | text | ✓ | input | Link to the official documentation, for reading on |
 | icon | text, optional | | input | Identifier of the tool's icon in the icon source (open decision TD-33). Empty = the frontend shows the icon of the category |
+| deleted_at | timestamp with time zone, optional | | set on delete | Soft delete (migration 0011, TWA-9.4): a tool with a value is hidden by the API and stays in the table, so progress, embeddings and sets that refer to its key never dangle. The key stays taken |
 
 ## tool_translation
 
@@ -129,7 +130,8 @@ alternative to Docker, Docker is an alternative to Podman. Each pair is stored *
 - Check `tool_id < alternative_tool_id`: a tool is never its own alternative, and (A, B) and (B, A)
   cannot both exist.
 - The API returns the alternatives of a tool from both sides of the pair (key and name).
-- Only tools that exist in `tool` can be linked.
+- Only tools that exist in `tool` can be linked. When the API saves a pair, it puts the smaller ID
+  first so that the check holds; a pair with a deleted tool is not returned.
 
 ## Category
 
@@ -228,7 +230,7 @@ Two alternative pairs, stored once each.
 | 4 | Examples: only `code`? | Only `code` | **decided** (J, 2026-10-25) |
 | 5 | The start categories | The five categories of the Tech Tool Trainer | **decided** (J, 2026-10-25) |
 | 6 | Seed tools | All 277 tools of the Tech Tool Trainer (five paths), taken over on 2026-10-27 by J's decision; the seven first tools stay as they were | **decided** (J, 2026-10-25; extended by J, 2026-10-27) |
-| 7 | API: read access only | Read only | **decided** (J, 2026-10-25) |
+| 7 | API: read access only | Read only | **decided** (J, 2026-10-25); **changed by J on 2026-11-06**: tools can be created, edited and deleted through the API until the login (TD-17), the database is the source of truth, delete is a soft delete |
 | 8 | Icon: optional field `icon`; which icon source is used | Field decided; source is open decision TD-33 | field decided, source open |
 | 9 | Category kinds | One enum | **decided: option A** (J, 2026-10-25) |
 | 10 | Languages in the first slice | German first, English in MS 3 | **decided** (J, 2026-10-25) |

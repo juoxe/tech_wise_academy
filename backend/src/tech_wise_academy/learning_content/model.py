@@ -51,3 +51,20 @@ class Tool:
     hints: Mapping[str, tuple[str, ...]]
     examples: tuple[str, ...]
     contents: Mapping[str, ToolContent] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class ToolDraft:
+    """The data a maintainer enters for a tool (create and edit); the texts are German."""
+
+    key: str
+    name: str
+    category: Category
+    level: int
+    documentation_url: str
+    icon: str | None
+    summary: str
+    hints: tuple[str, ...]
+    examples: tuple[str, ...]
+    alternatives: tuple[str, ...]
+    content: ToolContent | None

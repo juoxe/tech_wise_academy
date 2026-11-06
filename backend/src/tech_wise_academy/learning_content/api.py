@@ -3,10 +3,23 @@
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from tech_wise_academy.learning_content.model import DEFAULT_LANGUAGE, Category, ToolContent
-from tech_wise_academy.learning_content.service import ToolDetail, ToolService, ToolSummary
+from tech_wise_academy.learning_content.model import (
+    DEFAULT_LANGUAGE,
+    Category,
+    KeyConcept,
+    ToolContent,
+    ToolDraft,
+)
+from tech_wise_academy.learning_content.service import (
+    ToolDetail,
+    ToolKeyTakenError,
+    ToolNotFoundError,
+    ToolRuleError,
+    ToolService,
+    ToolSummary,
+)
 
 router = APIRouter(prefix="/tools", tags=["tools"])
 
@@ -48,6 +61,54 @@ class ToolDetailOut(ToolSummaryOut):
     examples: list[str]
     alternatives: list[AlternativeOut]
     content: ToolContentOut | None
+
+
+class ToolBody(BaseModel):
+    """All editable data of a tool; the texts are German. Used to replace a tool as a whole."""
+
+    name: str
+    category: Category
+    level: int
+    documentation_url: str
+    icon: str | None = None
+    summary: str
+    hints: list[str] = Field(default_factory=list)
+    examples: list[str] = Field(default_factory=list)
+    alternatives: list[str] = Field(default_factory=list)
+    content: ToolContentOut | None = None
+
+
+class ToolCreate(ToolBody):
+    key: str
+
+
+def _draft(key: str, body: ToolBody) -> ToolDraft:
+    content = body.content
+    return ToolDraft(
+        key=key,
+        name=body.name.strip(),
+        category=body.category,
+        level=body.level,
+        documentation_url=body.documentation_url.strip(),
+        icon=body.icon or None,
+        summary=body.summary.strip(),
+        hints=tuple(body.hints),
+        examples=tuple(body.examples),
+        alternatives=tuple(body.alternatives),
+        content=None
+        if content is None
+        else ToolContent(
+            overview=content.overview,
+            use_cases=tuple(content.use_cases),
+            key_concepts=tuple(
+                KeyConcept(term=item.term, explanation=item.explanation)
+                for item in content.key_concepts
+            ),
+            when_to_use=content.when_to_use,
+            when_not_to_use=content.when_not_to_use,
+            good_to_know=tuple(content.good_to_know),
+        ),
+    )
 
 
 def get_service(request: Request) -> ToolService:
@@ -125,3 +186,31 @@ async def get_tool(
     if detail is None:
         raise HTTPException(status_code=404, detail=f"Tool '{key}' not found")
     return _detail_out(detail)
+
+
+@router.post("", response_model=ToolDetailOut, status_code=201)
+async def create_tool(body: ToolCreate, service: ServiceDep) -> ToolDetailOut:
+    try:
+        return _detail_out(await service.create_tool(_draft(body.key, body)))
+    except ToolRuleError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ToolKeyTakenError as error:
+        raise HTTPException(status_code=409, detail=f"Tool '{body.key}' exists already") from error
+
+
+@router.put("/{key}", response_model=ToolDetailOut)
+async def update_tool(key: str, body: ToolBody, service: ServiceDep) -> ToolDetailOut:
+    try:
+        return _detail_out(await service.update_tool(_draft(key, body)))
+    except ToolRuleError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ToolNotFoundError as error:
+        raise HTTPException(status_code=404, detail=f"Tool '{key}' not found") from error
+
+
+@router.delete("/{key}", status_code=204)
+async def delete_tool(key: str, service: ServiceDep) -> None:
+    try:
+        await service.delete_tool(key)
+    except ToolNotFoundError as error:
+        raise HTTPException(status_code=404, detail=f"Tool '{key}' not found") from error

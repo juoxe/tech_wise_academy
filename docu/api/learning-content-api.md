@@ -11,8 +11,19 @@ Module: `learning_content`. Data: [data model](../data_model/learning-content-da
 
 - **Versioning** ([ADR-0001](../adr/0001-architecture-concept.md)): no version in the path;
   changes are compatible; a path version (`/api/v1/...`) is introduced when external clients appear.
-- **Read only:** creating and editing tools needs roles and sign-in (TD-17) and is not part of the
-  first slice.
+- **Editing without roles:** J decided on 2026-11-06 that until the login (TD-17) everyone may create,
+  edit and delete tools. The database is the source of truth after the migration; the seed file only
+  delivers the start data. With the login, editing becomes a right of a role.
+- **Rules for creating and editing** (the same as for the seed data): the key consists of lowercase
+  letters, digits and `. _ + # -`; name and summary are not empty; the level is `1` to `3`; the
+  documentation link starts with `http://` or `https://`; **a hint never contains the name of its
+  tool** (case ignored); alternatives exist, are not deleted, are not the tool itself and not
+  repeated. Alternatives are symmetric, because a pair is stored once.
+- **Replace as a whole:** `PUT` replaces all data of a tool (texts, hints, examples, alternatives,
+  content); fields that are left out are emptied. The key cannot be changed.
+- **Soft delete:** `DELETE` only marks the tool as deleted. It disappears from every list, detail and
+  alternative, and from the games and the interview sets. Saved progress, embeddings and sets keep
+  their reference, so nothing dangles. The key of a deleted tool stays taken.
 - **Language:** the optional query parameter `lang` selects the language of the texts (summary
   and hints). It defaults to `de`; in the first slice only German exists. Each response says in
   `language` which language the texts are in. English follows in MS 3 with the same parameter.
@@ -25,6 +36,10 @@ Module: `learning_content`. Data: [data model](../data_model/learning-content-da
 |--------|------|---------|---------|--------|
 | GET | `/api/tools?lang=de` | List all tools | `200` list of tool summaries | `422` unknown language |
 | GET | `/api/tools/{key}?lang=de` | Get one tool with hints, examples and alternatives | `200` tool | `404` unknown key, `422` unknown language |
+
+| POST | `/api/tools` | Create a tool; body: `key` and the fields of the tool (German texts) | `201` the tool | `409` key exists (also deleted), `422` a rule is broken (the `detail` names it, in German) |
+| PUT | `/api/tools/{key}` | Replace all data of a tool; body: the fields of the tool | `200` the tool | `404` unknown or deleted key, `422` a rule is broken |
+| DELETE | `/api/tools/{key}` | Mark a tool as deleted | `204` | `404` unknown or already deleted key |
 
 The list is not paginated while it holds few tools; pagination is added when it grows. The
 frontend of the first slice uses only the list; the detail endpoint is available for later use.

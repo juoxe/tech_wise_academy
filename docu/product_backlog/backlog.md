@@ -16,7 +16,7 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-6](#epic-twa-6--statistics) | Statistics | MS 2 | IN PROGRESS |
 | [TWA-7](#epic-twa-7--knowledge-games) | Knowledge Games | MS 2 | IN PROGRESS |
 | [TWA-8](#epic-twa-8--interview-preparation) | Interview Preparation | MS 2 | IN PROGRESS |
-| [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | IN PROGRESS |
+| [TWA-9](#epic-twa-9--generalised-overview-with-create-edit-delete-and-detail-view) | Generalised Overview with Create, Edit, Delete and Detail View | MS 2 | DONE |
 | [TWA-10](#epic-twa-10--tool-extraction-from-text) | Tool Extraction from Text | MS 2 | TODO |
 | [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
 | [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
@@ -1535,7 +1535,7 @@ better approach the interview sets are of little use. See
 
 ## Epic TWA-9 – Generalised Overview with Create, Edit, Delete and Detail View
 
-**Status:** IN PROGRESS · **Milestone:** MS 2 – Playable MVP
+**Status:** DONE · **Milestone:** MS 2 – Playable MVP
 
 **Description**
 
@@ -1552,8 +1552,10 @@ component.
 
 **Note:** today the tab "Toolübersicht" (`frontend/src/features/tools/pages/data-sets-tab.tsx`,
 `components/terms-list.tsx`) only lists the tools read-only. The tools can only be changed through
-the seed file and migrations. TWA-9.3 and TWA-9.4 depend on an open decision about authentication
-and editing rights (TD-17); no technology is decided here. J assigned the epic to MS 2.
+the seed file and migrations. TWA-9.3 and TWA-9.4 are done after J's decision of 2026-11-06 (see below). J assigned the epic to MS 2. J decided on 2026-11-06: until the login
+(TD-17) everyone may create, edit and delete tools; the database is the source of truth after the
+migration (the seed file only delivers the start data); deleting is a soft delete (the tool is
+marked as deleted and hidden everywhere, so no reference dangles).
 
 ---
 
@@ -1625,18 +1627,19 @@ a tool there. The detailed card `ToolOverviewCard` exists only in the feature `g
 
 ### TWA-9.3 – Create and Edit
 
-**Status:** TODO · **Depends on:** TWA-9.2
+**Status:** DONE · **Depends on:** TWA-9.2
+
+**Result:** implemented: `POST /api/tools` and `PUT /api/tools/{key}` in `backend/src/tech_wise_academy/learning_content/` (api, service with the rules `check_draft`, repository), form `frontend/src/features/tools/components/tool-form.tsx` and `data-sets-tab.tsx` ("Neues Tool", "Bearbeiten"). Decision of J (2026-11-06): everyone may edit until the login (TD-17), the database is the source of truth. The API rejects a hint that contains the name of its tool (422, German message shown in the form), unknown or repeated alternatives and a taken key (409); alternatives count from both sides (the pair is stored with the smaller ID first, found by the check in the real database). The learning content of the card is not edited in the form and is sent back unchanged. Checked: backend ruff, ty, import-linter and 53 unit tests pass (12 new in `tests/unit/test_tool_editing.py`); frontend typecheck, lint and format check pass; design-token-checker found no violation; in the browser against the real database a tool was created (the rule error was shown first), edited and its alternative appeared on both sides; the test tool was removed again. API documentation, data model and game-play.md (section Tools maintain) are updated.
 
 **Problem Description**
 
 Tools can only be changed through the seed file and migrations, so every correction or new tool
-needs a code change. Who may edit (login, TD-17) and whether the seed file stays the source of truth
-are not decided.
+needs a code change. J decided on 2026-11-06: everyone may edit until the login (TD-17); the
+database is the source of truth.
 
 **Action Steps**
 
-1. Decide with J who may create and edit tools (login, TD-17) and whether the seed file stays the
-   source of truth; record the decision in an ADR if it concerns a technology.
+1. Decision with J (2026-11-06, see above).
 2. Add backend endpoints in the feature `learning_content` to create and change a tool, including
    the German summary, hints, examples and alternatives.
 3. Validate the seed rules: a hint must not contain the name of its tool, and alternatives are
@@ -1658,18 +1661,19 @@ are not decided.
 
 ### TWA-9.4 – Delete
 
-**Status:** TODO · **Depends on:** TWA-9.3
+**Status:** DONE · **Depends on:** TWA-9.3
+
+**Result:** implemented as a soft delete: migration `0011_tool_soft_delete.py` adds `tool.deleted_at`, `DELETE /api/tools/{key}` marks the tool, the API, the games, the statistics and the interview sets no longer see it, and the confirmation in `data-sets-tab.tsx` ("Löschen" – "Ja, löschen"). Decision of J (2026-11-06): soft delete, so saved progress, embeddings and sets keep their reference and nothing dangles; the key of a deleted tool stays taken (409 on create). The answers of a deleted tool are no longer counted in the Statistik. Checked in the browser against the real database after the confirmation: the tool left the list (307 tools again), Docker lost it as an alternative, creating the key again gave 409; the migration ran on the existing database. API documentation and data model describe the endpoint and the handling of references.
 
 **Problem Description**
 
 A tool cannot be removed without a migration. Saved progress, embeddings and sets refer to a tool
 only by its plain key, without a foreign key, so deleting a tool would leave dangling references.
-Who may delete is not decided.
+J decided on 2026-11-06: everyone may delete until the login (TD-17), and deleting is a soft delete.
 
 **Action Steps**
 
-1. Decide with J who may delete tools (same decision as in TWA-9.3) and what happens to saved
-   progress, embeddings and sets that refer to the tool.
+1. Decision with J (2026-11-06, see above).
 2. Add a backend endpoint to delete a tool.
 3. Apply the decided handling of progress, embeddings and sets.
 4. Add a delete function with a confirmation to the UI.

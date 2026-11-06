@@ -83,8 +83,11 @@ export function summarize(
   tools: readonly ToolSummary[],
   entries: readonly ProgressEntry[],
 ): GameSummary {
-  const correct = entries.reduce((sum, entry) => sum + entry.correct_total, 0);
-  const wrong = entries.reduce((sum, entry) => sum + entry.wrong_total, 0);
+  /* Answers of a deleted tool are kept in the database but no longer counted. */
+  const keys = new Set(tools.map((tool) => tool.key));
+  const live = entries.filter((entry) => keys.has(entry.tool_key));
+  const correct = live.reduce((sum, entry) => sum + entry.correct_total, 0);
+  const wrong = live.reduce((sum, entry) => sum + entry.wrong_total, 0);
   return {
     ...shareOf(tools, entries),
     correct,

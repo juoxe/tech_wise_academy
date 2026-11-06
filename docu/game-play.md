@@ -17,7 +17,7 @@ The app has a menu bar with three tabs, in this order:
 |-----|---------|
 | Game | The choice of the game ("Welches Game willst du spielen?"), then the game. |
 | Statistik | The saved progress of the two knowledge games and the results of the other three games (see Statistik). |
-| Toolübersicht | All tools as a list over the full width of the screen. |
+| Toolübersicht | All tools as a list over the full width of the screen. A click on a row opens the detail view with "Bearbeiten", "Löschen" and "Schließen"; "Neues Tool" opens the form to create a tool (see Tools maintain). |
 
 ## Sets
 
@@ -286,6 +286,26 @@ which tools need repeating.
   failed save does not stop the game.
 - The results are stored by the backend (`POST` and `GET /api/training/results`, table `round_results`).
 - The code is in `frontend/src/features/statistics/`.
+
+## Tools maintain
+
+**Goal:** the tools can be changed in the app, without a migration. J decided on 2026-11-06: until
+the login (TD-17) everyone may do it; the database is the source of truth.
+
+- **Neues Tool:** the button above the table opens a form: key, name, area, level, icon, link to the
+  documentation, summary, hints (one per line), examples (separated by a line with `---`) and
+  alternatives (chosen by the name of an existing tool).
+- **Bearbeiten:** the detail view of a tool offers "Bearbeiten" with the same form. The key cannot be
+  changed. The learning content of the card (overview, use cases, key concepts) is not edited in the
+  form; it is kept as it is.
+- **Rules:** a hint must not contain the name of its tool; the key is new; alternatives exist. A broken
+  rule is shown above the buttons of the form and nothing is saved.
+- **Löschen:** after a confirmation the tool is marked as deleted. It disappears from the overview, the
+  games, the statistics and the interview sets. Saved progress is kept in the database but no longer
+  counted; the key of a deleted tool stays taken.
+- Alternatives count from both sides: if Docker is added as an alternative of a new tool, Docker shows
+  the new tool as its alternative.
+- The rules of the data are in the [API documentation](api/learning-content-api.md).
 
 ## Übersichtskarte
 

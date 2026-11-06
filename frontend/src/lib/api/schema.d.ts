@@ -14,7 +14,8 @@ export interface paths {
         /** List Tools */
         get: operations["list_tools_api_tools_get"];
         put?: never;
-        post?: never;
+        /** Create Tool */
+        post: operations["create_tool_api_tools_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -30,9 +31,11 @@ export interface paths {
         };
         /** Get Tool */
         get: operations["get_tool_api_tools__key__get"];
-        put?: never;
+        /** Update Tool */
+        put: operations["update_tool_api_tools__key__put"];
         post?: never;
-        delete?: never;
+        /** Delete Tool */
+        delete: operations["delete_tool_api_tools__key__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -272,6 +275,30 @@ export interface components {
              */
             played_at: string;
         };
+        /**
+         * ToolBody
+         * @description All editable data of a tool; the texts are German. Used to replace a tool as a whole.
+         */
+        ToolBody: {
+            /** Name */
+            name: string;
+            category: components["schemas"]["Category"];
+            /** Level */
+            level: number;
+            /** Documentation Url */
+            documentation_url: string;
+            /** Icon */
+            icon?: string | null;
+            /** Summary */
+            summary: string;
+            /** Hints */
+            hints?: string[];
+            /** Examples */
+            examples?: string[];
+            /** Alternatives */
+            alternatives?: string[];
+            content?: components["schemas"]["ToolContentOut"] | null;
+        };
         /** ToolContentOut */
         ToolContentOut: {
             /** Overview */
@@ -286,6 +313,29 @@ export interface components {
             when_not_to_use: string;
             /** Good To Know */
             good_to_know: string[];
+        };
+        /** ToolCreate */
+        ToolCreate: {
+            /** Name */
+            name: string;
+            category: components["schemas"]["Category"];
+            /** Level */
+            level: number;
+            /** Documentation Url */
+            documentation_url: string;
+            /** Icon */
+            icon?: string | null;
+            /** Summary */
+            summary: string;
+            /** Hints */
+            hints?: string[];
+            /** Examples */
+            examples?: string[];
+            /** Alternatives */
+            alternatives?: string[];
+            content?: components["schemas"]["ToolContentOut"] | null;
+            /** Key */
+            key: string;
         };
         /** ToolDetailOut */
         ToolDetailOut: {
@@ -381,6 +431,39 @@ export interface operations {
             };
         };
     };
+    create_tool_api_tools_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ToolCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_tool_api_tools__key__get: {
         parameters: {
             query?: {
@@ -402,6 +485,70 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ToolDetailOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_tool_api_tools__key__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ToolBody"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_tool_api_tools__key__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

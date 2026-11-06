@@ -23,7 +23,8 @@ from tech_wise_academy.training.service import TrainingService
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = load_settings()
     engine = create_async_engine(settings.database_url)
-    tool_service = ToolService(ToolRepository(engine))
+    tool_repository = ToolRepository(engine)
+    tool_service = ToolService(tool_repository, tool_repository)
     app.state.tool_service = tool_service
     app.state.training_service = TrainingService(TrainingRepository(engine))
     app.state.interview_service = InterviewService(

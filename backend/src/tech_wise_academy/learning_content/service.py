@@ -1,5 +1,6 @@
 """Use cases of the learning content: list and detail of the tools."""
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Protocol
@@ -9,13 +10,68 @@ from tech_wise_academy.learning_content.model import (
     Category,
     Tool,
     ToolContent,
+    ToolDraft,
 )
+
+KEY_PATTERN = re.compile(r"[a-z0-9][a-z0-9._+#-]*")
 
 
 class ToolReader(Protocol):
     async def load_tools(self) -> tuple[Tool, ...]: ...
 
     async def load_alternative_pairs(self) -> tuple[tuple[str, str], ...]: ...
+
+
+class ToolWriter(Protocol):
+    async def key_exists(self, key: str) -> bool: ...
+
+    async def create_tool(self, draft: ToolDraft) -> None: ...
+
+    async def update_tool(self, draft: ToolDraft) -> bool: ...
+
+    async def delete_tool(self, key: str) -> bool: ...
+
+
+class ToolRuleError(Exception):
+    """The data of a tool breaks a rule; the message names the rule (German, shown in the UI)."""
+
+
+class ToolKeyTakenError(Exception):
+    """A tool with this key exists already (a deleted tool keeps its key)."""
+
+
+class ToolNotFoundError(Exception):
+    """There is no tool with this key."""
+
+
+def check_draft(draft: ToolDraft, known_keys: set[str]) -> None:
+    """The rules of the seed data, applied to every tool that is created or changed.
+
+    `known_keys` are the keys of all tools that exist and are not deleted.
+    """
+    if not KEY_PATTERN.fullmatch(draft.key):
+        raise ToolRuleError("Der Key darf nur aus Kleinbuchstaben, Ziffern und . _ + # - bestehen.")
+    if not draft.name.strip():
+        raise ToolRuleError("Der Name darf nicht leer sein.")
+    if not draft.summary.strip():
+        raise ToolRuleError("Die Zusammenfassung darf nicht leer sein.")
+    if not 1 <= draft.level <= 3:
+        raise ToolRuleError("Das Level muss 1, 2 oder 3 sein.")
+    if not draft.documentation_url.startswith(("http://", "https://")):
+        raise ToolRuleError("Der Dokumentationslink muss mit http:// oder https:// beginnen.")
+    name = draft.name.casefold()
+    for hint in draft.hints:
+        if not hint.strip():
+            raise ToolRuleError("Ein Hinweis darf nicht leer sein.")
+        if name in hint.casefold():
+            raise ToolRuleError(f"Der Hinweis nennt den Namen des Tools: {hint}")
+    if len(set(draft.alternatives)) != len(draft.alternatives):
+        raise ToolRuleError("Eine Alternative ist doppelt angegeben.")
+    if draft.key in draft.alternatives:
+        raise ToolRuleError("Ein Tool kann nicht seine eigene Alternative sein.")
+    unknown = [key for key in draft.alternatives if key not in known_keys]
+    if unknown:
+        raise ToolRuleError(f"Unbekannte Alternative: {', '.join(unknown)}")
 
 
 @dataclass(frozen=True)
@@ -75,8 +131,39 @@ def _hints_in_language(hints: Mapping[str, tuple[str, ...]], language: str) -> t
 
 
 class ToolService:
-    def __init__(self, reader: ToolReader) -> None:
+    def __init__(self, reader: ToolReader, writer: ToolWriter | None = None) -> None:
         self._reader = reader
+        self._writer = writer
+
+    def _require_writer(self) -> ToolWriter:
+        if self._writer is None:
+            raise RuntimeError("This service was created without write access")
+        return self._writer
+
+    async def create_tool(self, draft: ToolDraft) -> ToolDetail:
+        writer = self._require_writer()
+        check_draft(draft, {tool.key for tool in await self._reader.load_tools()})
+        if await writer.key_exists(draft.key):
+            raise ToolKeyTakenError(draft.key)
+        await writer.create_tool(draft)
+        return await self._detail_or_fail(draft.key)
+
+    async def update_tool(self, draft: ToolDraft) -> ToolDetail:
+        writer = self._require_writer()
+        check_draft(draft, {tool.key for tool in await self._reader.load_tools()})
+        if not await writer.update_tool(draft):
+            raise ToolNotFoundError(draft.key)
+        return await self._detail_or_fail(draft.key)
+
+    async def delete_tool(self, key: str) -> None:
+        if not await self._require_writer().delete_tool(key):
+            raise ToolNotFoundError(key)
+
+    async def _detail_or_fail(self, key: str) -> ToolDetail:
+        detail = await self.get_tool(key, DEFAULT_LANGUAGE)
+        if detail is None:
+            raise ToolNotFoundError(key)
+        return detail
 
     async def list_tools(self, language: str) -> list[ToolSummary]:
         tools = await self._reader.load_tools()

@@ -1,8 +1,24 @@
 /** A failed request; the status lets a feature show a more specific message. */
 export class ApiError extends Error {
-  constructor(readonly status: number) {
-    super(`Die Anfrage ist fehlgeschlagen (Status ${status}).`);
+  /* `detail` is the text of a broken rule (status 422) or conflict (409) from the backend. */
+  constructor(
+    readonly status: number,
+    readonly detail?: string,
+  ) {
+    super(detail ?? `Die Anfrage ist fehlgeschlagen (Status ${status}).`);
   }
+}
+
+async function failure(response: Response): Promise<ApiError> {
+  try {
+    const body = (await response.json()) as { detail?: unknown };
+    if (typeof body.detail === "string") {
+      return new ApiError(response.status, body.detail);
+    }
+  } catch {
+    // The answer has no JSON body; the status is enough.
+  }
+  return new ApiError(response.status);
 }
 
 /** Minimal JSON client for the backend API. Paths are relative (`/api/...`) and go through the dev proxy. */
@@ -35,7 +51,20 @@ export async function postJson<T>(
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new ApiError(response.status);
+    throw await failure(response);
+  }
+  return (await response.json()) as T;
+}
+
+/** Replaces a resource with a JSON body and returns the JSON answer. */
+export async function putJson<T>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(path, {
+    method: "PUT",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw await failure(response);
   }
   return (await response.json()) as T;
 }
