@@ -136,8 +136,9 @@ alternative to Docker, Docker is an alternative to Podman. Each pair is stored *
 
 ## Category
 
-The main category of a tool: one of **five areas**, the same five as the learning paths of the Tech
-Tool Trainer. **One value per tool** (decided by J); stored as text with a check against the allowed
+The main category of a tool: one of **six areas** (the five learning paths of the Tech Tool Trainer and,
+since migration 0015, the area for development tools and knowledge) or the area of the programming
+languages. **One value per tool** (decided by J); stored as text with a check against the allowed
 values. The names and the category icons belong to the frontend. New values are added with a
 migration.
 
@@ -148,6 +149,7 @@ migration.
 | `FRONTEND` | Frontend development |
 | `SECURITY` | Security (DevSecOps) |
 | `AI_DATA` | AI and data |
+| `DEV_ENV` | Development tools and knowledge: editors and IDEs, database and API clients, note and diagram tools, design and browser tools, development environments (migration 0015, TWA-12.7) |
 | `LANGUAGE` | Programming languages: an area of their own (migration 0013, TWA-7.11) |
 
 The second set, the **programming languages**, is the area `LANGUAGE`. What sorts the languages is
@@ -213,6 +215,7 @@ Two alternative pairs, stored once each.
 | Date | Decision |
 |------|----------|
 | 2026-10-25 | One enum `category`, one value per tool (option A of four considered) |
+| 2026-11-06 | A sixth area `DEV_ENV` "Entwicklung & Wissen" for tools of the types that are no area of their own (migration 0015, TWA-12.7); a programming language is never a tool of an area: it belongs to `LANGUAGE` only (Mermaid and Sass count as tools) |
 | 2026-10-25 | The five categories of the Tech Tool Trainer (DevOps, backend, frontend, security, AI and data); the twelve type categories are dropped |
 | 2026-10-25 | One main category per tool; several categories can be added later with a table `tool_category`, without changing the existing data |
 | 2026-10-27 | One level `1` to `3` per tool, taken from the Tech Tool Trainer sets (lowest set over the paths); a column `tool.level` (migration 0004), not a table, because each tool has exactly one level |

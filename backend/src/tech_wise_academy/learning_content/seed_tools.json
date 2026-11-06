@@ -4837,7 +4837,7 @@
       "level": 3,
       "documentation_url": "https://hashcat.net/wiki/",
       "icon": "hashcat",
-      "summary_de": "Schnellster Werkzeug zum Knacken von Passwort-Hashes, nutzt Grafikkarten für enorme Geschwindigkeit.",
+      "summary_de": "Schnellstes Werkzeug zum Knacken von Passwort-Hashes, nutzt Grafikkarten für enorme Geschwindigkeit.",
       "hints_de": [
         "Ich probiere Passwort-Hashes mit enormer Geschwindigkeit durch.",
         "Ich nutze die Leistung von Grafikkarten, um viele Kandidaten gleichzeitig zu prüfen.",

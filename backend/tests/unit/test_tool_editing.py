@@ -145,6 +145,18 @@ def test_the_default_priority_must_be_on_the_scale() -> None:
     asyncio.run(service.create_tool(_draft(default_priority=0)))
 
 
+def test_a_tool_of_the_development_area_has_no_paradigm() -> None:
+    service, _ = _service()
+
+    asyncio.run(service.create_tool(_draft("obsidian", "Obsidian", category=Category.DEV_ENV)))
+    with pytest.raises(ToolRuleError):
+        asyncio.run(
+            service.create_tool(
+                _draft("vim", "Vim", category=Category.DEV_ENV, paradigm=Paradigm.PROCEDURAL)
+            )
+        )
+
+
 def test_an_alternative_must_exist_and_not_be_the_tool_itself() -> None:
     service, _ = _service()
 

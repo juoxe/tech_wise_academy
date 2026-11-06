@@ -858,6 +858,7 @@
           "FRONTEND",
           "SECURITY",
           "AI_DATA",
+          "DEV_ENV",
           "LANGUAGE"
         ],
         "title": "Category"

@@ -11,7 +11,7 @@ import {
   type ToolSummary,
 } from "@/features/tools";
 
-/* The five areas of the tools; the programming languages are an area of their own ("LANGUAGE"). */
+/* The six areas of the tools; the programming languages are an area of their own ("LANGUAGE"). */
 export type Category = Exclude<ToolSummary["category"], "LANGUAGE">;
 
 export const CATEGORIES: readonly Category[] = [
@@ -20,6 +20,7 @@ export const CATEGORIES: readonly Category[] = [
   "FRONTEND",
   "SECURITY",
   "AI_DATA",
+  "DEV_ENV",
 ];
 
 /* The floor of the set of the programming languages: the languages are sorted by paradigm. */

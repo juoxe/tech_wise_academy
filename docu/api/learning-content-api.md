@@ -50,7 +50,7 @@ frontend of the first slice uses only the list; the detail endpoint is available
 |-------|-------------|
 | key | Readable short name |
 | name | Display name |
-| category | Category (area) code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY`, `AI_DATA` or `LANGUAGE` (programming languages) |
+| category | Category (area) code: `DEVOPS`, `BACKEND`, `FRONTEND`, `SECURITY`, `AI_DATA`, `DEV_ENV` (development tools and knowledge) or `LANGUAGE` (programming languages) |
 | paradigm | Paradigm of a language: `OBJECT_ORIENTED`, `FUNCTIONAL`, `PROCEDURAL`, `DECLARATIVE` or `MULTI_PARADIGM`; `null` for every tool that is not a language |
 | default_priority | Default importance score of the tool: `0` (Ausblenden) to `4` (Kern), see [Default priority](../data_model/learning-content-data-model.md#default-priority); it replaced the level |
 | summary | One sentence: what is it? (in the selected language) |

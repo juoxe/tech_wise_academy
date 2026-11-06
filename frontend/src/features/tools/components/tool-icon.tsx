@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Shapes,
   Sigma,
+  Wrench,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -27,6 +28,7 @@ const CATEGORY_ICONS: Readonly<
   FRONTEND: LayoutDashboard,
   SECURITY: ShieldCheck,
   AI_DATA: Brain,
+  DEV_ENV: Wrench,
   LANGUAGE: Code,
 };
 

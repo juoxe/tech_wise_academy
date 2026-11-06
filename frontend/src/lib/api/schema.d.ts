@@ -179,7 +179,7 @@ export interface components {
          * Category
          * @enum {string}
          */
-        Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA" | "LANGUAGE";
+        Category: "DEVOPS" | "BACKEND" | "FRONTEND" | "SECURITY" | "AI_DATA" | "DEV_ENV" | "LANGUAGE";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */

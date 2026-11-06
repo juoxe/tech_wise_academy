@@ -27,12 +27,12 @@ set. SQL-Bausteine and Code beurteilen do not use a set.
 
 | Set | Cards | Sorted by | Rounds |
 |-----|-------|-----------|--------|
-| Tools | all tools except the programming languages | the five areas | one pool, drawn by priority |
-| Programmiersprachen | 23 common programming languages (the area "Programmiersprachen") | their paradigm, a feature of each language: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | one pool, drawn by priority |
+| Tools | all tools except the programming languages | the six areas (DevOps, Backend, Frontend, Security, KI & Daten, Entwicklung & Wissen) | one pool, drawn by priority |
+| Sprachen | the languages (23 at the start: the area "Sprachen") | their paradigm, a feature of each language: objektorientiert, funktional, prozedural, deklarativ, multiparadigma | one pool, drawn by priority |
 | Mein Tech-Stack | all tools and languages the player gave the importance score "Hoch" or "Kern" (see Priority); the set changes with the scores | the five areas; a stack with languages gets a sixth area "Sprachen" | one pool, drawn by priority |
 | Eigene Sets | the cards of a set the player made; so far the interview preparation: a job advertisement is pasted into the Game tab and gives a set of the matching tools | the five areas; a set with languages gets a sixth area "Sprachen" | one pool, drawn by priority |
 
-Each tool or language belongs to exactly one of the sets Tools and Programmiersprachen. There is no
+Each tool or language belongs to exactly one of the sets Tools and Sprachen. There is no
 unlocking: every set is always open, and its progress bar counts the learned cards of the set. In
 the Wissens-Check the paradigms take the place of the areas on the floor; in Karten abräumen the hints
 name the language.
@@ -107,7 +107,7 @@ The default priority of a tool can be changed in the form of the tool.
 
 ## Level 0 – Knowledge Check
 
-**Goal:** find out how well the player knows the tools of each of the five areas. Level 0 only
+**Goal:** find out how well the player knows the tools of each of the six areas. Level 0 only
 checks; it does not teach. There are no levels: the round plays the cards of the chosen set.
 
 **Round**
@@ -291,7 +291,7 @@ rules from the Tech Tool Trainer ("Karten abräumen", Level 2 there).
   tools with the default priority "Hoch", Intermediate "Normal" and Expert "Niedrig"; if the set holds
   too few of them, the round is filled with the other cards of the set.
 - The cards come from the set chosen above the choice of the game: Tools (all tools except the
-  languages), Programmiersprachen or Eigene Sets. A round uses that many entries of the set that have
+  languages), Sprachen or Eigene Sets. A round uses that many entries of the set that have
   a description, drawn at random; if the set has fewer, the round is smaller.
 - Each entry gives two cards: one with the **name** and one with the **description** (summary).
 - The player turns two cards per move. A pair matches when both cards belong to the same entry and

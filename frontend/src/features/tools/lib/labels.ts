@@ -11,7 +11,8 @@ const LABELS: Record<Category, string> = {
   FRONTEND: "Frontend",
   SECURITY: "Security",
   AI_DATA: "KI & Daten",
-  LANGUAGE: "Programmiersprachen",
+  DEV_ENV: "Entwicklung & Wissen",
+  LANGUAGE: "Sprachen",
 };
 
 const PARADIGM_LABELS: Record<Paradigm, string> = {
@@ -32,8 +33,7 @@ export function paradigmLabel(paradigm: Paradigm): string {
   return PARADIGM_LABELS[paradigm];
 }
 
-/* The area of a tool with its paradigm if it is a language, for example "Programmiersprachen ·
-   Objektorientiert". */
+/* The area of a tool with its paradigm if it is a language, for example "Sprachen · Objektorientiert". */
 export function areaWithParadigm(tool: {
   category: Category;
   paradigm?: Paradigm | null;

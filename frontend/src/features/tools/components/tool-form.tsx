@@ -21,6 +21,7 @@ const CATEGORIES: Category[] = [
   "FRONTEND",
   "SECURITY",
   "AI_DATA",
+  "DEV_ENV",
   "LANGUAGE",
 ];
 

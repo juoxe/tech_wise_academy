@@ -14,6 +14,7 @@ class Category(StrEnum):
     FRONTEND = "FRONTEND"
     SECURITY = "SECURITY"
     AI_DATA = "AI_DATA"
+    DEV_ENV = "DEV_ENV"
     LANGUAGE = "LANGUAGE"
 
 

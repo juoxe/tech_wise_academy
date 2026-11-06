@@ -57,7 +57,7 @@ const GAMES: { game: TrainingGame; name: string; description: string }[] = [
    one pool, and the priority of a tool decides how often it comes up. */
 const SETS = [
   { set: "tools", name: "Tools" },
-  { set: "languages", name: "Programmiersprachen" },
+  { set: "languages", name: "Sprachen" },
   { set: "stack", name: "Mein Tech-Stack" },
   { set: "interview", name: "Eigene Sets" },
 ] as const;
@@ -108,7 +108,7 @@ function statusOf(
     set === "tools"
       ? "Tools"
       : set === "languages"
-        ? "Programmiersprachen"
+        ? "Sprachen"
         : set === "stack"
           ? "Mein Tech-Stack"
           : interview.title;

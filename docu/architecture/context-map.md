@@ -38,7 +38,7 @@ flowchart LR
 | Term | Meaning |
 |------|---------|
 | Tool | A tool or technology that users learn about, e.g. Docker |
-| Category | One of five areas a tool belongs to: DevOps, backend, frontend, security, AI and data |
+| Category | One of six areas a tool belongs to: DevOps, backend, frontend, security, AI and data, development and knowledge; the programming languages are an area of their own |
 | Hint | A description of a tool that neither names it nor shows its icon; several per tool and language, in order |
 | Example | A typical command or code snippet of a tool |
 | Alternative | Another tool that can be used instead; the relation is symmetric |

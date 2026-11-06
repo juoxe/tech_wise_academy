@@ -2272,7 +2272,7 @@ documentation (data model, API documentation)
 **Note:** the hints stay in the data, because the game Karten abräumen needs them; they only leave
 the overview card. The content is written in German and reviewed by J. It is produced by Claude and
 may contain mistakes, so J's review is a story of its own
-([TWA-12.5](#twa-125--review-of-the-content-by-j)).
+([TWA-12.5](#twa-125--review-of-the-content-by-j)). J also renamed the area "Programmiersprachen" to "Sprachen" on 2026-11-06 (label only).
 
 ---
 
@@ -2448,6 +2448,73 @@ player sees it for the cards they got wrong.
 - A card of "Karten abräumen" counts as wrong with at least one mistake.
 - The rules are only in game-play.md.
 - Type check, lint and format check pass.
+
+---
+
+### TWA-12.7 – Sixth Area for Development Tools and Knowledge
+
+**Status:** DONE
+
+**Result:** implemented: migration `0015_dev_env_area.py` adds the category `DEV_ENV` ("Entwicklung & Wissen") and moves 13 tools into it: Obsidian, Mermaid, IntelliJ IDEA, Visual Studio Code, Postman, DBeaver, pgAdmin, Swagger UI, SDKMAN!, Dev Containers, Figma, Chrome DevTools and React Developer Tools (reversible: the downgrade puts each back into its former area, run both ways on the real database). The area has its own label and icon (`Wrench`) and appears in the floor of the Wissens-Check (six areas, seven in a mixed set), the tool form, the filter and the Statistik. Checked in the browser: the floor shows six areas, the area filter lists "Entwicklung & Wissen" with exactly the 13 tools, the Tools set still holds 284 cards; backend ruff, ty, import-linter and 63 tests pass; frontend typecheck, lint, format and build pass. Data model, API documentation, context map and game-play.md are updated. Why Obsidian was in Backend: the Tech Tool Trainer had the type "Wissen und Dokumentation" and this project filed such tools under the path where they appeared.
+
+J's review request of 2026-11-06: "Why is Obsidian backend? No programming languages in the tools. I
+never saw Flutter or FastAPI. Check the sentences, the categories and whether more is missing."
+Decided by J on 2026-11-06.
+
+**Problem Description**
+
+The Tech Tool Trainer had twelve tool types (among them "Wissen und Dokumentation"). This project
+keeps five areas, so tools of the other types were filed under the area of the path where they
+appeared: Obsidian and Mermaid (type knowledge), IDEs, API and database clients and similar tools sit
+in Backend, DevOps or Frontend although they are no area of their own. A learner sees Obsidian as a
+backend tool, which is wrong.
+
+**Action Steps**
+
+1. Add the new area `DEV_ENV` "Entwicklung & Wissen" (migration 0015): editors and IDEs, database
+   and API clients, note and diagram tools, design and browser tools, development environments.
+2. Move the matching tools into it: Obsidian, Mermaid, IntelliJ IDEA, Visual Studio Code, Postman,
+   DBeaver, pgAdmin, Swagger UI, SDKMAN!, Dev Containers, Figma, Chrome DevTools, React Developer
+   Tools.
+3. Make the area appear everywhere an area is used: floor of the Wissens-Check, tool form, filter,
+   statistics, icons.
+4. Update the data model, the API documentation and game-play.md.
+
+**Acceptance Criteria**
+
+- The area exists with its own label and icon.
+- The 13 tools are moved and no tool lost its other data.
+- The floor of the Wissens-Check has six areas (seven in a mixed set).
+- The migration runs on the existing database.
+- Type check, lint, format check and tests pass.
+
+---
+
+### TWA-12.8 – Wording Fix in the Summaries
+
+**Status:** DONE
+
+**Result:** implemented: the Hashcat summary reads "Schnellstes Werkzeug ..." (seed file and migration 0015, which replaces only the unchanged text). All 307 summaries were read: no missing punctuation, no English, none duplicated, one grammar error. No programming language is a tool of an area; all 23 are in `LANGUAGE`; Mermaid and Sass count as tools. The rule is written in the data model (decision of 2026-11-06). Open for J: whether HTML, CSS, SQL, Bash and Prolog stay in an area called "Programmiersprachen" or the area is renamed "Sprachen", and whether the names of the AI models (Gemma 4, Qwen 3.5 / 3.6, FLUX.2 Klein, Llama 3.3, Mistral Small / Ministral) are current.
+
+**Problem Description**
+
+The review of all 307 summaries found one grammar error (Hashcat: "Schnellster Werkzeug"). The rule
+for programming languages also needs a statement: a programming language is never a tool of the five
+areas.
+
+**Action Steps**
+
+1. Fix the Hashcat summary in the seed file and in the database (migration 0015 for existing
+   databases).
+2. State in the data model that the programming languages are only in the area LANGUAGE. List the
+   borderline cases Mermaid (a text-based diagram syntax) and Sass (a CSS extension) as tools, not
+   languages, and HTML, CSS, SQL, Bash and Prolog as languages in the broad sense.
+
+**Acceptance Criteria**
+
+- The Hashcat summary reads correctly, in the seed file and in the database.
+- The rule is written in the data model.
+- No language is in a tool area.
 
 ---
 

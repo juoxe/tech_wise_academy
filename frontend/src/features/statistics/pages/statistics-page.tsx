@@ -94,10 +94,7 @@ function GameStatistics({
         {byArea(tools, entries).map(({ area, share }) => (
           <ShareRow key={area} label={categoryLabel(area)} share={share} />
         ))}
-        <ShareRow
-          label="Programmiersprachen"
-          share={shareOf(languages, entries)}
-        />
+        <ShareRow label="Sprachen" share={shareOf(languages, entries)} />
       </div>
 
       <div className="flex flex-col gap-2">

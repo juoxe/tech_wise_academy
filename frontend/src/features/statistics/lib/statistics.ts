@@ -11,13 +11,14 @@ import {
   type Scores,
 } from "@/features/training";
 
-/* The five areas of the tools. Every other category is a programming language (sorted by paradigm). */
+/* The six areas of the tools. Every other category is a programming language (sorted by paradigm). */
 export const AREAS = [
   "DEVOPS",
   "BACKEND",
   "FRONTEND",
   "SECURITY",
   "AI_DATA",
+  "DEV_ENV",
 ] as const satisfies readonly ToolSummary["category"][];
 
 /* How many tools of a group are learned. */
