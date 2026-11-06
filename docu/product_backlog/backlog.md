@@ -21,8 +21,9 @@ issue and the machine-readable format are described in [CLAUDE.md](CLAUDE.md).
 | [TWA-11](#epic-twa-11--own-card-sets) | Own Card Sets | MS 2 | TODO |
 | [TWA-12](#epic-twa-12--learning-content-in-depth) | Learning Content in Depth | MS 2 | IN PROGRESS |
 | [TWA-13](#epic-twa-13--code-quality-and-security) | Code Quality and Security | – | TODO |
+| [TWA-14](#epic-twa-14--personal-card-priority) | Personal Card Priority | MS 2 | TODO |
 
-**Next free epic number: 14**
+**Next free epic number: 15**
 
 Order of the epics, milestones and their goals: see the [roadmap](roadmap.md).
 
@@ -2381,3 +2382,189 @@ exports.
 
 - The agreed rules run in the checks.
 - Every new finding is fixed in the same change.
+
+---
+
+## Epic TWA-14 – Personal Card Priority
+
+**Status:** TODO · **Milestone:** MS 2 – Playable MVP
+
+**Description**
+
+As a learner, we want to give every card a score for how important it is to us, so that we learn our
+own tech stack first and more intensively, and the games and statistics follow what matters to us.
+Today every tool counts the same: the games ask all tools of a level, and only the learning progress
+(learned, correct, wrong) is saved per player.
+
+**Affected components:** backend (feature `training`, new table), frontend (features `game`,
+`tools`, `statistics`), documentation (game-play.md, data model, API)
+
+**Working documents:** [game-play](../game-play.md)
+
+**Note:** J asked on 2026-11-06 to build this next. The score belongs to the profile of the browser
+(`X-Profile-Id`, like the progress) and becomes per user with the login (Keycloak, TD-17). No new
+library or technology is needed. Relation to [TWA-11](#epic-twa-11--own-card-sets) (own card sets):
+the score is a weight per card and per player, a set is a named list of cards; both can exist side
+by side, [TWA-14.1](#twa-141--decide-what-the-score-means) decides how the two meet.
+
+---
+
+### TWA-14.1 – Decide What the Score Means
+
+**Status:** TODO
+
+**Problem Description**
+
+It is not decided what the importance score is: how many values it has, what the default is, and how
+it changes the games. Without these rules backend, UI and games would each guess.
+
+**Action Steps**
+
+1. Propose to J the scale (proposal: 0 = hide/skip, 1 = low, 2 = normal (default), 3 = high, 4 =
+   core of my tech stack), the default for tools without a score, and whether the score is set per
+   tool only.
+2. Propose how the games use it (proposal: the weight of a card in the draw of Wissens-Check and
+   Karten abräumen grows with the score; a score of 0 removes the card from the round; learned cards
+   stay learned).
+3. Propose how it touches the unlocking of the levels (proposal: a card with score 0 does not block
+   the next level) and the statistics.
+4. Decide with J how the score and own sets (TWA-11) meet.
+5. Record the decisions in game-play.md (new section "Priority").
+
+**Acceptance Criteria**
+
+- Scale, default and meaning of every value are decided by J and written in game-play.md.
+- It is stated how the games, the unlocking of levels and the statistics use the score.
+- It is stated how the score and the own sets (TWA-11) relate.
+- No new technology is introduced.
+
+---
+
+### TWA-14.2 – Store the Score per Player and Tool
+
+**Status:** TODO · **Depends on:** TWA-14.1
+
+**Problem Description**
+
+The backend saves only the learning progress per player, game and tool; there is no place for a
+score, so a choice of the learner would be lost with every reload.
+
+**Action Steps**
+
+1. New table (profile ID, tool key, score) in the feature `training`, with Alembic migration 0011
+   and a check on the allowed values; tools without a row have the default score.
+2. Endpoints to list the scores of the player, to set the score of one tool, and to reset all scores
+   (follow the training API rules; no version in the path).
+3. Lean unit tests for the non-trivial rules (default score, allowed values, other players keep
+   their scores).
+4. Generate openapi.json and the frontend types again; describe the table and endpoints in the docs.
+
+**Acceptance Criteria**
+
+- The score of a tool is stored per profile and survives a reload.
+- A tool without a stored score reads as the default.
+- A value outside the scale is rejected.
+- Other profiles are not affected.
+- Backend format, ty, import-linter and the unit tests pass; the migration runs on the real
+  database.
+
+---
+
+### TWA-14.3 – Set the Score in the UI
+
+**Status:** TODO · **Depends on:** TWA-14.2
+
+**Problem Description**
+
+A learner cannot say which tools matter. There is no place in the app where a score can be set, and
+over 300 tools cannot be set one by one without help.
+
+**Action Steps**
+
+1. Show the score on the overview card of a tool and let the learner change it there.
+2. Show the score in the Toolübersicht and let the learner change it in the list; allow filtering
+   and sorting by score.
+3. Allow setting the score of many tools at once (select several tools, or a whole area) so that a
+   tech stack can be set up quickly.
+4. German UI texts; colours only as role tokens (design-token-checker).
+
+**Acceptance Criteria**
+
+- The score can be changed on the overview card and in the Toolübersicht.
+- The list can be filtered and sorted by score.
+- Several tools can get the same score in one action.
+- The change is saved and visible after a reload.
+- Type check, lint and format check pass; texts are German.
+
+---
+
+### TWA-14.4 – Use the Score in the Games
+
+**Status:** TODO · **Depends on:** TWA-14.1, TWA-14.2
+
+**Problem Description**
+
+Wissens-Check and Karten abräumen treat every card alike, so a learner who wants to learn their own
+tech stack meets many cards that do not matter to them.
+
+**Action Steps**
+
+1. Draw the cards of a round with a weight that depends on the score, as decided in 14.1.
+2. Leave out cards with the score that hides them.
+3. Add "Mein Tech-Stack" as a way to play only the tools with a high score (threshold decided in
+   14.1).
+4. Adjust the unlocking of the levels as decided in 14.1.
+5. Update game-play.md in the same change.
+
+**Acceptance Criteria**
+
+- Cards with a higher score come up more often than cards with a lower one.
+- Cards that are hidden are not played.
+- "Mein Tech-Stack" plays only the chosen high-score tools.
+- Level unlocking follows the rule of 14.1.
+- The rules are documented only in game-play.md; texts are German.
+
+---
+
+### TWA-14.5 – Use the Score in the Statistics
+
+**Status:** TODO · **Depends on:** TWA-14.2, TWA-6
+
+**Problem Description**
+
+The statistics show the progress over all tools, so the progress of the tools that matter to the
+learner is lost in the mass.
+
+**Action Steps**
+
+1. Show in the tab "Statistik" the progress per score (for example "Mein Tech-Stack: 12 von 20
+   gelernt").
+2. Weight or filter the list "Zum Wiederholen" by score, as decided in 14.1.
+3. Update game-play.md (section Statistik).
+
+**Acceptance Criteria**
+
+- The tab shows the learned tools per score value or for the tech stack.
+- The tools to repeat respect the score.
+- Without scores everything looks as before.
+- Rules are in game-play.md.
+
+---
+
+### TWA-14.6 – Suggest a Score from an Interview Set
+
+**Status:** IDEA · **Depends on:** TWA-8
+
+**Problem Description**
+
+A learner who generates a set from a job advertisement already gets tools ranked by similarity, but
+must still set the scores by hand.
+
+**Action Steps**
+
+1. Decide with J whether the ranking of an interview set may suggest scores.
+2. If yes, offer "Als Priorität übernehmen" on a set.
+
+**Acceptance Criteria**
+
+- To be written when the idea is planned.

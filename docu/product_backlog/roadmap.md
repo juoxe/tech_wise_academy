@@ -91,6 +91,10 @@ expected results and not yet cut into a planned epic table.
 - Learning content in depth: structured German content for all 307 entries (23 languages and 284
   tools) on the card of a tool or language instead of the hints of the games, reviewed by J
   ([TWA-12](backlog.md#epic-twa-12--learning-content-in-depth), `IN PROGRESS`).
+- Personal card priority: a score per card and player for how important a tool is to the learner,
+  set on the card and in the tool overview, used by the games (draw weight, "Mein Tech-Stack") and
+  the statistics ([TWA-14](backlog.md#epic-twa-14--personal-card-priority), `TODO`, next to be
+  built, J's priority). Relation to TWA-11 is decided in TWA-14.1.
 
 ---
 
