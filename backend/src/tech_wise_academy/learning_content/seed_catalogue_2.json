@@ -1,0 +1,2443 @@
+{
+  "tools": [
+    {
+      "key": "fastapi",
+      "name": "FastAPI",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://fastapi.tiangolo.com/",
+      "icon": "fastapi",
+      "summary_de": "Python-Framework für Web-APIs, das Type Hints nutzt, automatisch OpenAPI-Dokumentation erzeugt und asynchrone Endpunkte unterstützt.",
+      "hints_de": [
+        "Ich baue Web-APIs in Python und nutze dafür Type Hints.",
+        "Ich erzeuge aus dem Code automatisch eine interaktive API-Dokumentation.",
+        "Ich kann Anfragen asynchron mit async und await bearbeiten."
+      ],
+      "examples": [
+        "@app.get(\"/items/{item_id}\")"
+      ],
+      "alternatives": [
+        "flask",
+        "django"
+      ],
+      "content_de": {
+        "overview": "FastAPI ist ein modernes Python-Framework zum Bauen von Web-APIs. Eingaben und Ausgaben werden über Type Hints beschrieben und mit Pydantic geprüft. Aus dem Code entsteht automatisch eine OpenAPI-Beschreibung mit interaktiver Oberfläche. Endpunkte können synchron oder asynchron geschrieben werden. Das Framework baut auf Starlette auf und läuft auf einem ASGI-Server wie Uvicorn.",
+        "use_cases": [
+          "REST-APIs für Web- und Mobile-Anwendungen",
+          "Microservices mit klar beschriebenen Schnittstellen",
+          "Backends für Machine-Learning-Modelle",
+          "Schnelle Prototypen mit automatischer Dokumentation"
+        ],
+        "key_concepts": [
+          {
+            "term": "Path Operation",
+            "explanation": "Eine Funktion, die per Dekorator wie `@app.get` an einen Pfad und eine HTTP-Methode gebunden wird."
+          },
+          {
+            "term": "Type Hints",
+            "explanation": "Typen von Parametern und Rückgaben steuern Validierung und Dokumentation."
+          },
+          {
+            "term": "Dependency Injection",
+            "explanation": "Mit `Depends` werden gemeinsame Abhängigkeiten wie Datenbanksitzungen bereitgestellt."
+          },
+          {
+            "term": "Pydantic-Modelle",
+            "explanation": "Beschreiben Request- und Response-Daten und prüfen sie automatisch."
+          },
+          {
+            "term": "OpenAPI",
+            "explanation": "Die Schnittstelle wird automatisch beschrieben und unter `/docs` als Oberfläche angeboten."
+          }
+        ],
+        "when_to_use": "Wenn eine typisierte, gut dokumentierte API in Python entstehen soll.",
+        "when_not_to_use": "Wenn eine komplette Anwendung mit Admin-Oberfläche, Templates und ORM aus einem Guss gebraucht wird. Dann passt ein Full-Stack-Framework besser.",
+        "good_to_know": [
+          "Ein ASGI-Server wie Uvicorn führt die Anwendung aus.",
+          "Synchrone Endpunkte laufen in einem Thread-Pool und blockieren die Event Loop nicht.",
+          "Die erzeugte OpenAPI-Datei lässt sich für Client-Generatoren nutzen."
+        ]
+      }
+    },
+    {
+      "key": "flask",
+      "name": "Flask",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://flask.palletsprojects.com/",
+      "icon": "flask",
+      "summary_de": "Schlankes Python-Webframework, das nur den Kern mitbringt und sich über Erweiterungen nach Bedarf ausbauen lässt.",
+      "hints_de": [
+        "Ich bin ein kleines Python-Webframework mit überschaubarem Kern.",
+        "Ich lasse mich bei Bedarf durch Erweiterungen ergänzen.",
+        "Meine Routen definiere ich mit Dekoratoren an Funktionen."
+      ],
+      "examples": [
+        "@app.route(\"/hello\")"
+      ],
+      "alternatives": [
+        "fastapi",
+        "django"
+      ],
+      "content_de": {
+        "overview": "Flask ist ein Mikroframework für Webanwendungen in Python. Es liefert Routing, Request-Verarbeitung, Templates mit Jinja und einen Entwicklungsserver. Datenbankzugriff, Formulare oder Authentifizierung kommen über Erweiterungen oder eigene Wahl von Bibliotheken dazu. Dadurch bleibt der Einstieg einfach, und der Aufbau der Anwendung ist frei wählbar.",
+        "use_cases": [
+          "Kleine Webanwendungen und Prototypen",
+          "Einfache REST-Schnittstellen",
+          "Webseiten mit serverseitigen Templates",
+          "Dünne Oberflächen für Skripte und Werkzeuge"
+        ],
+        "key_concepts": [
+          {
+            "term": "Route",
+            "explanation": "Verbindet eine URL über `@app.route` mit einer Python-Funktion."
+          },
+          {
+            "term": "Blueprint",
+            "explanation": "Gruppiert zusammengehörige Routen, um größere Anwendungen zu gliedern."
+          },
+          {
+            "term": "Jinja-Templates",
+            "explanation": "Erzeugen HTML aus Vorlagen mit Variablen und Schleifen."
+          },
+          {
+            "term": "Request-Kontext",
+            "explanation": "Stellt Objekte wie `request` für die laufende Anfrage bereit."
+          },
+          {
+            "term": "Erweiterungen",
+            "explanation": "Zusatzpakete für Datenbanken, Login oder Formulare."
+          }
+        ],
+        "when_to_use": "Wenn eine kleine bis mittlere Anwendung mit viel Gestaltungsfreiheit gebaut werden soll.",
+        "when_not_to_use": "Wenn viele fertige Bausteine wie ORM und Admin-Oberfläche sofort mitgeliefert werden sollen.",
+        "good_to_know": [
+          "Flask basiert auf WSGI, für Produktion braucht es einen Server wie Gunicorn.",
+          "Es gibt keine feste Projektstruktur, das Team muss sie selbst festlegen.",
+          "Flask wird vom Pallets-Projekt gepflegt."
+        ]
+      }
+    },
+    {
+      "key": "django",
+      "name": "Django",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://docs.djangoproject.com/",
+      "icon": "django",
+      "summary_de": "Umfangreiches Python-Webframework mit ORM, Admin-Oberfläche, Authentifizierung und festen Konventionen für komplette Anwendungen.",
+      "hints_de": [
+        "Ich bringe viele Bausteine für komplette Webanwendungen mit.",
+        "Ich habe eine eingebaute Verwaltungsoberfläche für Datenbankinhalte.",
+        "Ich bilde Datenbanktabellen als Python-Klassen ab."
+      ],
+      "examples": [
+        "python manage.py runserver"
+      ],
+      "alternatives": [
+        "flask",
+        "fastapi"
+      ],
+      "content_de": {
+        "overview": "Django ist ein Python-Framework nach dem Prinzip „Batteries included“. Es bringt ORM, Migrationen, Authentifizierung, Formulare, Templates und eine automatisch erzeugte Admin-Oberfläche mit. Die Architektur folgt dem Muster Model, Template, View. Durch klare Konventionen lassen sich Projekte schnell aufbauen und im Team einheitlich pflegen.",
+        "use_cases": [
+          "Webanwendungen mit Datenbank und Benutzerverwaltung",
+          "Content-Management und interne Verwaltungswerkzeuge",
+          "Klassische serverseitig gerenderte Webseiten",
+          "APIs, oft zusammen mit dem Django REST Framework"
+        ],
+        "key_concepts": [
+          {
+            "term": "Model",
+            "explanation": "Eine Python-Klasse, die eine Datenbanktabelle beschreibt."
+          },
+          {
+            "term": "ORM",
+            "explanation": "Abfragen werden in Python formuliert statt in SQL."
+          },
+          {
+            "term": "Migrationen",
+            "explanation": "Änderungen an Modellen werden als Schema-Änderungen nachvollziehbar angewendet."
+          },
+          {
+            "term": "Admin",
+            "explanation": "Eine automatisch erzeugte Oberfläche zum Bearbeiten der Daten."
+          },
+          {
+            "term": "Apps",
+            "explanation": "Ein Projekt besteht aus wiederverwendbaren, getrennten Anwendungsteilen."
+          }
+        ],
+        "when_to_use": "Wenn eine datenbankgestützte Anwendung mit vielen Standardfunktionen zügig entstehen soll.",
+        "when_not_to_use": "Wenn nur ein sehr kleiner Dienst oder eine schlanke API gebraucht wird und der Umfang des Frameworks überwiegt.",
+        "good_to_know": [
+          "Django bringt eigene Sicherheitsmechanismen wie CSRF-Schutz mit.",
+          "Die Bausteine sind eng verzahnt, ein Austausch einzelner Teile ist aufwendiger.",
+          "Asynchrone Views werden unterstützt, der Großteil des ORM arbeitet aber synchron."
+        ]
+      }
+    },
+    {
+      "key": "pydantic",
+      "name": "Pydantic",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://docs.pydantic.dev/",
+      "icon": null,
+      "summary_de": "Python-Bibliothek zur Validierung von Daten und Einstellungen auf Basis von Type Hints, die Eingaben prüft und umwandelt.",
+      "hints_de": [
+        "Ich prüfe Daten anhand von Type Hints und wandle sie in passende Typen um.",
+        "Ich melde bei ungültigen Eingaben verständliche Fehler.",
+        "Ich lese auch Einstellungen aus Umgebungsvariablen und bringe sie in Form."
+      ],
+      "examples": [
+        "class User(BaseModel):\n    name: str\n    age: int"
+      ],
+      "alternatives": [
+        "zod"
+      ],
+      "content_de": {
+        "overview": "Pydantic validiert Daten in Python mithilfe von Type Hints. Man beschreibt die erwartete Struktur als Klasse, und beim Erzeugen einer Instanz werden Werte geprüft und wenn möglich umgewandelt. Fehler werden gesammelt und klar benannt. Der Kern ist in Rust geschrieben und daher schnell. Pydantic wird unter anderem von FastAPI genutzt.",
+        "use_cases": [
+          "Validierung von API-Eingaben und -Ausgaben",
+          "Laden und Prüfen von Konfiguration",
+          "Parsen von JSON in typisierte Objekte",
+          "Erzeugen von JSON Schema"
+        ],
+        "key_concepts": [
+          {
+            "term": "BaseModel",
+            "explanation": "Basisklasse, von der Datenmodelle mit typisierten Feldern abgeleitet werden."
+          },
+          {
+            "term": "Validierung",
+            "explanation": "Werte werden geprüft, bei Bedarf umgewandelt, Fehler als `ValidationError` gemeldet."
+          },
+          {
+            "term": "Field",
+            "explanation": "Fügt Feldern Regeln hinzu, etwa Längen, Grenzen oder Standardwerte."
+          },
+          {
+            "term": "Validator",
+            "explanation": "Eigene Prüfregeln, die über einfache Typen hinausgehen."
+          },
+          {
+            "term": "Settings",
+            "explanation": "Konfiguration aus Umgebungsvariablen lässt sich typisiert einlesen."
+          }
+        ],
+        "when_to_use": "Wenn Daten von außen, etwa aus Requests, Dateien oder Umgebung, geprüft und typisiert werden sollen.",
+        "when_not_to_use": "Für reine interne Datenhaltung ohne Prüfung, wofür eine Dataclass genügt.",
+        "good_to_know": [
+          "Seit Version 2 ist der Kern in Rust umgesetzt.",
+          "Die Einstellungsfunktion liegt in einem eigenen Paket namens pydantic-settings.",
+          "Standardmäßig wandelt Pydantic Werte im Lax-Modus um, der Strict-Modus ist strenger."
+        ]
+      }
+    },
+    {
+      "key": "sqlalchemy",
+      "name": "SQLAlchemy",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://docs.sqlalchemy.org/",
+      "icon": null,
+      "summary_de": "Datenbank-Toolkit und ORM für Python, das SQL-Abfragen aufbaut und Tabellen auf Python-Klassen abbildet.",
+      "hints_de": [
+        "Ich bilde Datenbanktabellen auf Python-Klassen ab.",
+        "Ich kann Abfragen in Python formulieren, ohne SQL von Hand zu schreiben.",
+        "Ich unterstütze viele verschiedene relationale Datenbanken."
+      ],
+      "examples": [
+        "select(User).where(User.name == \"Ada\")"
+      ],
+      "alternatives": [
+        "hibernate"
+      ],
+      "content_de": {
+        "overview": "SQLAlchemy besteht aus zwei Teilen. Der Core baut SQL-Ausdrücke und verwaltet Verbindungen, das ORM bildet Tabellen als Python-Klassen ab. Abfragen werden mit Python-Ausdrücken formuliert und für die jeweilige Datenbank in SQL übersetzt. Eine Session verfolgt Änderungen an Objekten und schreibt sie gesammelt in die Datenbank. Dabei werden viele relationale Datenbanken über Dialekte unterstützt.",
+        "use_cases": [
+          "Datenzugriff in Python-Backends",
+          "Abbildung von Beziehungen zwischen Tabellen",
+          "Datenbankunabhängige Abfragen",
+          "Komplexe Abfragen mit dem Core-Ausdrucksbaukasten"
+        ],
+        "key_concepts": [
+          {
+            "term": "Engine",
+            "explanation": "Verwaltet die Verbindung zur Datenbank."
+          },
+          {
+            "term": "Session",
+            "explanation": "Arbeitseinheit, die Objekte verfolgt und Änderungen per Commit speichert."
+          },
+          {
+            "term": "Declarative Mapping",
+            "explanation": "Klassen beschreiben Tabellen und Spalten."
+          },
+          {
+            "term": "Relationship",
+            "explanation": "Verknüpft Objekte über Fremdschlüssel."
+          },
+          {
+            "term": "Core",
+            "explanation": "Die untere Schicht für SQL-Ausdrücke ohne ORM."
+          }
+        ],
+        "when_to_use": "Wenn eine Python-Anwendung relationale Daten lesen und schreiben soll und dabei flexibel bleiben will.",
+        "when_not_to_use": "Wenn nur wenige einfache Abfragen nötig sind und ein direkter Datenbanktreiber genügt.",
+        "good_to_know": [
+          "Lazy Loading kann zu vielen Einzelabfragen führen (N+1-Problem).",
+          "Asynchrone Nutzung wird über `AsyncSession` unterstützt.",
+          "Schema-Migrationen übernimmt SQLAlchemy nicht, dafür gibt es Alembic."
+        ]
+      }
+    },
+    {
+      "key": "alembic",
+      "name": "Alembic",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://alembic.sqlalchemy.org/",
+      "icon": null,
+      "summary_de": "Migrationswerkzeug für Datenbankschemas, das Änderungen als versionierte Python-Skripte verwaltet und zusammen mit SQLAlchemy genutzt wird.",
+      "hints_de": [
+        "Ich verwalte Änderungen am Datenbankschema in versionierten Skripten.",
+        "Ich kann Änderungen anhand der Modelle vorschlagen.",
+        "Ich werde meist zusammen mit einem Python-ORM eingesetzt."
+      ],
+      "examples": [
+        "alembic upgrade head"
+      ],
+      "alternatives": [
+        "flyway",
+        "liquibase"
+      ],
+      "content_de": {
+        "overview": "Alembic ist das Migrationswerkzeug für SQLAlchemy. Schemaänderungen werden als Python-Skripte mit `upgrade` und `downgrade` abgelegt und bilden eine Kette von Revisionen. Mit dem Befehl `alembic upgrade head` wird die Datenbank auf den neuesten Stand gebracht. Über die Autogenerate-Funktion lassen sich Skripte aus den Unterschieden zwischen Modellen und Datenbank vorbereiten.",
+        "use_cases": [
+          "Schemaänderungen im Team nachvollziehbar verwalten",
+          "Datenbanken in Test und Produktion auf denselben Stand bringen",
+          "Änderungen bei Bedarf zurückrollen",
+          "Migrationen in der CI automatisch ausführen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Revision",
+            "explanation": "Ein Migrationsskript mit eindeutiger ID, das auf eine Vorgängerrevision verweist."
+          },
+          {
+            "term": "upgrade und downgrade",
+            "explanation": "Funktionen, die eine Änderung anwenden oder zurücknehmen."
+          },
+          {
+            "term": "head",
+            "explanation": "Die neueste Revision der Kette."
+          },
+          {
+            "term": "Autogenerate",
+            "explanation": "Erstellt Migrationsentwürfe aus dem Vergleich von Modell und Datenbank."
+          },
+          {
+            "term": "env.py",
+            "explanation": "Konfiguriert Verbindung und Metadaten für die Migrationen."
+          }
+        ],
+        "when_to_use": "Wenn eine Anwendung mit SQLAlchemy arbeitet und das Schema kontrolliert weiterentwickelt werden soll.",
+        "when_not_to_use": "Wenn ohne SQLAlchemy gearbeitet wird oder Migrationen als reine SQL-Dateien gepflegt werden sollen.",
+        "good_to_know": [
+          "Autogenerate erkennt nicht alles, die erzeugten Skripte müssen geprüft werden.",
+          "Bereits ausgelieferte Revisionen werden nicht verändert, sondern durch neue ergänzt.",
+          "Alembic wurde vom Autor von SQLAlchemy entwickelt."
+        ]
+      }
+    },
+    {
+      "key": "pytest",
+      "name": "pytest",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://docs.pytest.org/",
+      "icon": "pytest",
+      "summary_de": "Testframework für Python, das Tests als einfache Funktionen mit normalen assert-Anweisungen schreibt und Fixtures anbietet.",
+      "hints_de": [
+        "Ich führe Tests aus, die als einfache Python-Funktionen geschrieben sind.",
+        "Ich nutze normale assert-Anweisungen und zeige bei Fehlern genau den Vergleich.",
+        "Ich stelle mit Fixtures wiederverwendbare Testvorbereitung bereit."
+      ],
+      "examples": [
+        "def test_add():\n    assert 1 + 1 == 2"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "pytest ist das verbreitete Testframework für Python. Tests sind einfache Funktionen, deren Namen mit `test_` beginnen, und prüfen mit normalem `assert`. Bei Fehlschlägen zeigt pytest die verglichenen Werte im Detail. Mit Fixtures wird die Vorbereitung von Tests wiederverwendbar, und Parametrisierung führt einen Test mit mehreren Eingaben aus. Ein großes Plugin-Angebot erweitert den Funktionsumfang.",
+        "use_cases": [
+          "Unit-Tests für Python-Code",
+          "Integrationstests mit Datenbank oder API",
+          "Tests mit vielen Eingabevarianten",
+          "Automatisierte Tests in der CI"
+        ],
+        "key_concepts": [
+          {
+            "term": "Test Discovery",
+            "explanation": "Findet Dateien und Funktionen anhand ihrer Namen wie `test_*.py` automatisch."
+          },
+          {
+            "term": "Fixture",
+            "explanation": "Stellt Testdaten oder Ressourcen bereit und räumt sie wieder auf."
+          },
+          {
+            "term": "Parametrisierung",
+            "explanation": "Mit `@pytest.mark.parametrize` läuft ein Test mit mehreren Datensätzen."
+          },
+          {
+            "term": "Marker",
+            "explanation": "Kennzeichnen Tests, um sie gezielt auszuwählen oder zu überspringen."
+          },
+          {
+            "term": "Plugins",
+            "explanation": "Erweiterungen wie Coverage oder asynchrone Tests."
+          }
+        ],
+        "when_to_use": "Wenn Python-Code mit wenig Aufwand und gut lesbaren Tests abgesichert werden soll.",
+        "when_not_to_use": "Wenn ein Projekt bewusst bei der eingebauten Standardbibliothek bleiben soll.",
+        "good_to_know": [
+          "pytest führt auch Tests im unittest-Stil aus.",
+          "Die Datei `conftest.py` stellt Fixtures für mehrere Testdateien bereit.",
+          "Mit `-k` lassen sich Tests nach Namen filtern."
+        ]
+      }
+    },
+    {
+      "key": "celery",
+      "name": "Celery",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://docs.celeryq.dev/",
+      "icon": "celery",
+      "summary_de": "Verteilte Aufgabenwarteschlange für Python, die Arbeit im Hintergrund auf mehreren Workern ausführt und zeitgesteuerte Jobs erlaubt.",
+      "hints_de": [
+        "Ich führe langsame Aufgaben im Hintergrund aus, damit die Anwendung schnell antwortet.",
+        "Ich verteile Arbeit auf mehrere Worker-Prozesse.",
+        "Ich brauche einen Message Broker, um Aufgaben entgegenzunehmen."
+      ],
+      "examples": [
+        "celery -A proj worker --loglevel=info"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Celery ist eine verteilte Aufgabenwarteschlange für Python. Die Anwendung legt Aufgaben über einen Message Broker wie RabbitMQ oder Redis ab, und Worker-Prozesse arbeiten sie asynchron ab. So laufen lange oder aufwendige Arbeiten außerhalb der Anfrage. Celery unterstützt Wiederholungen bei Fehlern, Verkettung von Aufgaben und zeitgesteuerte Ausführung über Celery Beat.",
+        "use_cases": [
+          "Versand von E-Mails im Hintergrund",
+          "Verarbeitung von Uploads und Berichten",
+          "Regelmäßige Jobs nach Zeitplan",
+          "Verteilung rechenintensiver Aufgaben"
+        ],
+        "key_concepts": [
+          {
+            "term": "Task",
+            "explanation": "Eine Python-Funktion, die als Hintergrundaufgabe registriert wird."
+          },
+          {
+            "term": "Broker",
+            "explanation": "Vermittelt Nachrichten zwischen Anwendung und Workern, zum Beispiel RabbitMQ oder Redis."
+          },
+          {
+            "term": "Worker",
+            "explanation": "Prozess, der Aufgaben aus der Warteschlange abholt und ausführt."
+          },
+          {
+            "term": "Result Backend",
+            "explanation": "Speichert optional Ergebnisse und Status von Aufgaben."
+          },
+          {
+            "term": "Celery Beat",
+            "explanation": "Plant wiederkehrende Aufgaben nach Zeitplan."
+          }
+        ],
+        "when_to_use": "Wenn Python-Anwendungen Arbeit zuverlässig im Hintergrund oder nach Zeitplan erledigen sollen.",
+        "when_not_to_use": "Wenn eine kurze Aufgabe im selben Prozess genügt und ein Broker unnötigen Betriebsaufwand bedeutet.",
+        "good_to_know": [
+          "Aufgaben sollten idempotent sein, da sie mehrfach ausgeführt werden können.",
+          "Argumente werden serialisiert, daher nur einfache Daten übergeben.",
+          "Ohne laufenden Broker und Worker passiert nichts."
+        ]
+      }
+    },
+    {
+      "key": "express",
+      "name": "Express",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://expressjs.com/",
+      "icon": "express",
+      "summary_de": "Minimalistisches Webframework für Node.js, das Routing und Middleware für Webanwendungen und APIs bereitstellt.",
+      "hints_de": [
+        "Ich bin ein schlankes Webframework für Node.js.",
+        "Ich verarbeite Anfragen über eine Kette von Middleware-Funktionen.",
+        "Ich ordne URLs und HTTP-Methoden Handler-Funktionen zu."
+      ],
+      "examples": [
+        "app.get('/', (req, res) => res.send('Hello'));"
+      ],
+      "alternatives": [
+        "nestjs"
+      ],
+      "content_de": {
+        "overview": "Express ist ein minimalistisches Webframework für Node.js. Es bietet Routing, Middleware und Hilfen für Request und Response, ohne eine feste Struktur vorzugeben. Anfragen laufen durch eine Kette von Middleware-Funktionen, bis ein Handler antwortet. Das Framework ist weit verbreitet und bildet die Grundlage für viele andere Node.js-Werkzeuge.",
+        "use_cases": [
+          "REST-APIs mit Node.js",
+          "Kleine Webserver und Prototypen",
+          "Backends für Single-Page-Anwendungen",
+          "Proxy- und Hilfsdienste"
+        ],
+        "key_concepts": [
+          {
+            "term": "Routing",
+            "explanation": "Verbindet Pfad und HTTP-Methode mit einem Handler."
+          },
+          {
+            "term": "Middleware",
+            "explanation": "Funktionen mit Zugriff auf Request und Response, die per `next()` weiterreichen."
+          },
+          {
+            "term": "Request und Response",
+            "explanation": "Objekte mit Hilfsmethoden wie `res.json()`."
+          },
+          {
+            "term": "Router",
+            "explanation": "Gruppiert Routen in eigene Module."
+          },
+          {
+            "term": "Fehlerbehandlung",
+            "explanation": "Spezielle Middleware mit vier Parametern fängt Fehler ab."
+          }
+        ],
+        "when_to_use": "Wenn ein leichter und flexibler Node.js-Server mit eigenen Bausteinen gebaut werden soll.",
+        "when_not_to_use": "Wenn eine vorgegebene Architektur mit Dependency Injection und Modulen für ein großes Team gewünscht ist.",
+        "good_to_know": [
+          "Die Reihenfolge der Middleware bestimmt den Ablauf.",
+          "Express bringt keine Validierung oder Datenbankanbindung mit.",
+          "Ab Version 5 werden Fehler aus asynchronen Handlern automatisch weitergereicht."
+        ]
+      }
+    },
+    {
+      "key": "nestjs",
+      "name": "NestJS",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://docs.nestjs.com/",
+      "icon": "nestjs",
+      "summary_de": "Strukturiertes Node.js-Framework mit TypeScript, das Module, Dependency Injection und Dekoratoren für größere Backends nutzt.",
+      "hints_de": [
+        "Ich gebe Node.js-Backends eine klare Struktur aus Modulen.",
+        "Ich setze auf TypeScript und Dekoratoren.",
+        "Ich verwalte Abhängigkeiten per Dependency Injection."
+      ],
+      "examples": [
+        "nest new my-project"
+      ],
+      "alternatives": [
+        "express"
+      ],
+      "content_de": {
+        "overview": "NestJS ist ein Framework für serverseitige Anwendungen mit Node.js und TypeScript. Es gibt eine Architektur aus Modulen, Controllern und Providern vor und nutzt Dependency Injection. Dekoratoren beschreiben Routen und Metadaten. Unter der Haube arbeitet standardmäßig Express, alternativ Fastify. Das Konzept ähnelt Angular und eignet sich für größere, gut strukturierte Projekte.",
+        "use_cases": [
+          "Größere REST- oder GraphQL-Backends",
+          "Microservices mit mehreren Transportarten",
+          "Teamprojekte mit einheitlicher Struktur",
+          "Anwendungen mit gut testbaren Services"
+        ],
+        "key_concepts": [
+          {
+            "term": "Module",
+            "explanation": "Fassen zusammengehörige Controller und Provider zusammen."
+          },
+          {
+            "term": "Controller",
+            "explanation": "Nehmen Anfragen entgegen und geben Antworten zurück."
+          },
+          {
+            "term": "Provider",
+            "explanation": "Klassen wie Services, die per Dependency Injection bereitgestellt werden."
+          },
+          {
+            "term": "Guards und Pipes",
+            "explanation": "Prüfen Zugriff und validieren oder wandeln Eingaben um."
+          },
+          {
+            "term": "Dekoratoren",
+            "explanation": "Annotationen wie `@Controller()` und `@Get()` beschreiben Routen."
+          }
+        ],
+        "when_to_use": "Wenn ein Node.js-Backend in einem Team mit klarer Architektur und TypeScript entstehen soll.",
+        "when_not_to_use": "Wenn nur ein kleiner Dienst oder Prototyp gebraucht wird und die Struktur mehr Aufwand als Nutzen bringt.",
+        "good_to_know": [
+          "Die Struktur ähnelt Angular, was Frontend-Teams den Einstieg erleichtert.",
+          "Über Adapter lässt sich zwischen Express und Fastify wählen.",
+          "Eine Kommandozeile erzeugt Gerüste für Module und Controller."
+        ]
+      }
+    },
+    {
+      "key": "postgresql",
+      "name": "PostgreSQL",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://www.postgresql.org/docs/",
+      "icon": "postgresql",
+      "summary_de": "Quelloffene relationale Datenbank mit starkem SQL-Standard-Support, Transaktionen und vielen Erweiterungsmöglichkeiten.",
+      "hints_de": [
+        "Ich bin eine quelloffene relationale Datenbank.",
+        "Ich unterstütze Transaktionen und viele Datentypen wie JSON und Arrays.",
+        "Ich lasse mich durch Erweiterungen funktional ausbauen."
+      ],
+      "examples": [
+        "psql -h localhost -U postgres -d mydb"
+      ],
+      "alternatives": [
+        "mysql",
+        "sqlite"
+      ],
+      "content_de": {
+        "overview": "PostgreSQL ist ein quelloffenes relationales Datenbanksystem mit langer Geschichte und gutem Ruf für Zuverlässigkeit. Es setzt große Teile des SQL-Standards um und bietet Transaktionen mit ACID-Eigenschaften. Neben klassischen Datentypen unterstützt es JSON, Arrays und eigene Typen. Erweiterungen wie PostGIS oder pgvector ergänzen zusätzliche Fähigkeiten.",
+        "use_cases": [
+          "Hauptdatenbank für Webanwendungen",
+          "Komplexe Abfragen und Auswertungen",
+          "Dokumentartige Daten in JSONB",
+          "Geodaten mit der Erweiterung PostGIS"
+        ],
+        "key_concepts": [
+          {
+            "term": "MVCC",
+            "explanation": "Lesende und schreibende Zugriffe blockieren sich weitgehend nicht gegenseitig."
+          },
+          {
+            "term": "JSONB",
+            "explanation": "Binärer JSON-Typ, der sich indizieren und abfragen lässt."
+          },
+          {
+            "term": "Index",
+            "explanation": "Beschleunigt Abfragen, zum Beispiel B-Tree, GIN oder GiST."
+          },
+          {
+            "term": "Extensions",
+            "explanation": "Zusatzmodule, die Funktionen und Datentypen ergänzen."
+          },
+          {
+            "term": "Replikation",
+            "explanation": "Kopien der Daten für Ausfallsicherheit und Leselast."
+          }
+        ],
+        "when_to_use": "Wenn eine verlässliche, funktionsreiche relationale Datenbank gebraucht wird.",
+        "when_not_to_use": "Wenn eine winzige eingebettete Datenbank ohne Serverbetrieb genügt.",
+        "good_to_know": [
+          "Regelmäßiges Aufräumen mit VACUUM gehört zum Betrieb, meist übernimmt es Autovacuum.",
+          "Jede Verbindung ist ein eigener Prozess, daher helfen Connection Pools.",
+          "Die Standardschnittstelle für Administratoren ist das Programm psql."
+        ]
+      }
+    },
+    {
+      "key": "mysql",
+      "name": "MySQL",
+      "category": "BACKEND",
+      "default_priority": 3,
+      "documentation_url": "https://dev.mysql.com/doc/",
+      "icon": "mysql",
+      "summary_de": "Weit verbreitetes relationales Datenbanksystem, das häufig für Webanwendungen genutzt wird und SQL als Abfragesprache verwendet.",
+      "hints_de": [
+        "Ich bin eine weit verbreitete relationale Datenbank für Webanwendungen.",
+        "Ich speichere Daten in Tabellen und werde mit SQL abgefragt.",
+        "Ich unterstütze Transaktionen mit der Speicher-Engine InnoDB."
+      ],
+      "examples": [
+        "mysql -u root -p mydb"
+      ],
+      "alternatives": [
+        "postgresql",
+        "sqlite"
+      ],
+      "content_de": {
+        "overview": "MySQL ist ein relationales Datenbanksystem, das Daten in Tabellen speichert und mit SQL abgefragt wird. Es wird von Oracle weiterentwickelt und steht unter einer Open-Source-Lizenz sowie in kommerziellen Varianten zur Verfügung. Mit der Standard-Engine InnoDB werden Transaktionen und Fremdschlüssel unterstützt. MySQL ist ein Klassiker im Webumfeld und Teil vieler bekannter Hosting-Angebote.",
+        "use_cases": [
+          "Datenbank für Webanwendungen und CMS",
+          "Speicherung strukturierter Geschäftsdaten",
+          "Anwendungen mit hohem Leseanteil",
+          "Einsatz bei vielen Hosting-Anbietern"
+        ],
+        "key_concepts": [
+          {
+            "term": "InnoDB",
+            "explanation": "Standard-Speicher-Engine mit Transaktionen und Fremdschlüsseln."
+          },
+          {
+            "term": "Index",
+            "explanation": "Beschleunigt Abfragen auf bestimmten Spalten."
+          },
+          {
+            "term": "Replikation",
+            "explanation": "Kopiert Daten auf weitere Server für Ausfallsicherheit und Leselast."
+          },
+          {
+            "term": "Transaktion",
+            "explanation": "Fasst mehrere Änderungen zusammen, die ganz oder gar nicht gelten."
+          },
+          {
+            "term": "Storage Engine",
+            "explanation": "Austauschbare Schicht, die festlegt, wie Daten gespeichert werden."
+          }
+        ],
+        "when_to_use": "Wenn eine bewährte, überall verfügbare relationale Datenbank für Webprojekte gebraucht wird.",
+        "when_not_to_use": "Wenn sehr fortgeschrittene SQL-Funktionen oder besondere Datentypen im Vordergrund stehen. Dann ist PostgreSQL oft die Wahl.",
+        "good_to_know": [
+          "MariaDB ist ein aus MySQL entstandener Fork.",
+          "Das Verhalten hängt von den SQL-Modi ab, etwa bei ungültigen Werten.",
+          "Zeichensatz und Collation sollten bewusst gewählt werden, üblich ist utf8mb4."
+        ]
+      }
+    },
+    {
+      "key": "sqlite",
+      "name": "SQLite",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://www.sqlite.org/docs.html",
+      "icon": "sqlite",
+      "summary_de": "Eingebettete relationale Datenbank, die alle Daten in einer einzigen Datei speichert und ohne eigenen Server auskommt.",
+      "hints_de": [
+        "Ich speichere eine ganze Datenbank in einer einzigen Datei.",
+        "Ich laufe direkt in der Anwendung und brauche keinen eigenen Server.",
+        "Ich verstehe SQL und unterstütze Transaktionen."
+      ],
+      "examples": [
+        "sqlite3 app.db \"SELECT count(*) FROM users;\""
+      ],
+      "alternatives": [
+        "postgresql",
+        "mysql"
+      ],
+      "content_de": {
+        "overview": "SQLite ist eine kleine relationale Datenbank-Bibliothek, die direkt in die Anwendung eingebunden wird. Die gesamte Datenbank liegt in einer einzigen Datei, es gibt keinen Serverprozess und keine Konfiguration. Trotzdem werden SQL und Transaktionen unterstützt. SQLite steckt in vielen Mobilgeräten, Browsern und Desktop-Programmen.",
+        "use_cases": [
+          "Lokaler Speicher in Mobil- und Desktop-Apps",
+          "Entwicklung und Tests ohne Datenbankserver",
+          "Kleine Anwendungen mit wenigen gleichzeitigen Schreibzugriffen",
+          "Dateiformat für den Austausch strukturierter Daten"
+        ],
+        "key_concepts": [
+          {
+            "term": "Einzelne Datei",
+            "explanation": "Die Datenbank lässt sich leicht kopieren, sichern und verteilen."
+          },
+          {
+            "term": "Serverlos",
+            "explanation": "Die Bibliothek läuft im Prozess der Anwendung."
+          },
+          {
+            "term": "Dynamische Typisierung",
+            "explanation": "Spalten haben eine Typ-Affinität, Werte sind flexibler als in anderen Systemen."
+          },
+          {
+            "term": "WAL-Modus",
+            "explanation": "Write-Ahead Logging erlaubt gleichzeitiges Lesen während des Schreibens."
+          },
+          {
+            "term": ":memory:",
+            "explanation": "Eine Datenbank, die nur im Arbeitsspeicher existiert."
+          }
+        ],
+        "when_to_use": "Wenn eine einfache, wartungsarme Datenbank ohne Serverbetrieb gebraucht wird.",
+        "when_not_to_use": "Wenn viele Clients gleichzeitig schreiben oder die Datenbank über das Netzwerk geteilt werden soll.",
+        "good_to_know": [
+          "Es gibt nur einen Schreibzugriff zur gleichen Zeit.",
+          "Fremdschlüssel müssen mit `PRAGMA foreign_keys = ON` aktiviert werden.",
+          "Die Python-Standardbibliothek enthält das Modul sqlite3."
+        ]
+      }
+    },
+    {
+      "key": "graphql",
+      "name": "GraphQL",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://graphql.org/learn/",
+      "icon": "graphql",
+      "summary_de": "Abfragesprache und Laufzeitumgebung für APIs, bei der Clients genau die Felder anfordern, die sie brauchen.",
+      "hints_de": [
+        "Ich lasse Clients genau die Felder anfordern, die sie brauchen.",
+        "Ich beschreibe die verfügbaren Daten in einem typisierten Schema.",
+        "Ich biete meist einen einzigen Endpunkt für alle Abfragen an."
+      ],
+      "examples": [
+        "query { user(id: 1) { name email } }"
+      ],
+      "alternatives": [
+        "grpc"
+      ],
+      "content_de": {
+        "overview": "GraphQL ist eine Abfragesprache für APIs und eine Laufzeit, die diese Abfragen beantwortet. Ein Schema beschreibt Typen und Felder der verfügbaren Daten. Clients formulieren Abfragen, die genau die gewünschten Felder enthalten, und erhalten eine Antwort in derselben Form. Dadurch lassen sich mehrere Ressourcen in einer Anfrage laden. Meist gibt es einen einzigen HTTP-Endpunkt.",
+        "use_cases": [
+          "APIs für Frontends mit wechselnden Datenbedürfnissen",
+          "Mobile Apps mit begrenzter Bandbreite",
+          "Zusammenführen mehrerer Datenquellen hinter einer Schnittstelle",
+          "Live-Updates über Subscriptions"
+        ],
+        "key_concepts": [
+          {
+            "term": "Schema",
+            "explanation": "Beschreibt Typen, Felder und mögliche Abfragen."
+          },
+          {
+            "term": "Query",
+            "explanation": "Liest Daten und gibt nur die angeforderten Felder zurück."
+          },
+          {
+            "term": "Mutation",
+            "explanation": "Ändert Daten auf dem Server."
+          },
+          {
+            "term": "Resolver",
+            "explanation": "Funktion, die den Wert eines Feldes liefert."
+          },
+          {
+            "term": "Subscription",
+            "explanation": "Liefert Ereignisse fortlaufend an den Client."
+          }
+        ],
+        "when_to_use": "Wenn Clients flexibel genau die Daten brauchen, die für ihre Ansicht nötig sind.",
+        "when_not_to_use": "Wenn eine einfache API mit wenigen festen Ressourcen genügt, bei der REST weniger Aufwand bedeutet.",
+        "good_to_know": [
+          "Caching über HTTP ist schwieriger als bei REST.",
+          "Verschachtelte Abfragen können das N+1-Problem verursachen, Batching hilft.",
+          "Fehler werden oft mit Status 200 und einem Fehlerfeld in der Antwort geliefert."
+        ]
+      }
+    },
+    {
+      "key": "grpc",
+      "name": "gRPC",
+      "category": "BACKEND",
+      "default_priority": 2,
+      "documentation_url": "https://grpc.io/docs/",
+      "icon": null,
+      "summary_de": "Leistungsfähiges RPC-Framework, das Schnittstellen in Protocol Buffers beschreibt und Aufrufe effizient über HTTP/2 überträgt.",
+      "hints_de": [
+        "Ich rufe Funktionen auf anderen Servern auf, als wären sie lokal.",
+        "Ich beschreibe Schnittstellen in Protocol Buffers und erzeuge daraus Code.",
+        "Ich übertrage Daten kompakt über HTTP/2 und kann Datenströme senden."
+      ],
+      "examples": [
+        "protoc --go_out=. --go-grpc_out=. service.proto"
+      ],
+      "alternatives": [
+        "graphql"
+      ],
+      "content_de": {
+        "overview": "gRPC ist ein Framework für Remote Procedure Calls, das ursprünglich von Google entwickelt wurde. Schnittstellen und Nachrichten werden in `.proto`-Dateien mit Protocol Buffers beschrieben. Daraus entsteht Code für Client und Server in vielen Sprachen. Die Übertragung läuft über HTTP/2 in einem kompakten Binärformat. Neben einfachen Aufrufen sind auch Streams in eine oder beide Richtungen möglich.",
+        "use_cases": [
+          "Kommunikation zwischen Microservices",
+          "Schnittstellen zwischen Diensten in verschiedenen Sprachen",
+          "Streaming von Daten in Echtzeit",
+          "Leichtgewichtige Verbindungen zu mobilen Clients"
+        ],
+        "key_concepts": [
+          {
+            "term": "Protocol Buffers",
+            "explanation": "Sprachneutrales Format, um Nachrichten und Dienste zu beschreiben."
+          },
+          {
+            "term": "Service",
+            "explanation": "Eine Gruppe von Methoden, die in der `.proto`-Datei definiert wird."
+          },
+          {
+            "term": "Stub",
+            "explanation": "Erzeugter Client-Code, mit dem Methoden aufgerufen werden."
+          },
+          {
+            "term": "Streaming",
+            "explanation": "Server-, Client- oder bidirektionale Datenströme."
+          },
+          {
+            "term": "Deadline",
+            "explanation": "Zeitgrenze, nach der ein Aufruf abgebrochen wird."
+          }
+        ],
+        "when_to_use": "Wenn Dienste untereinander schnell und streng typisiert kommunizieren sollen.",
+        "when_not_to_use": "Wenn Browser direkt ohne Zusatzschicht zugreifen sollen oder eine menschenlesbare, einfach testbare API gewünscht ist.",
+        "good_to_know": [
+          "Browser brauchen für den Zugriff gRPC-Web und einen Proxy.",
+          "Die Binärnachrichten lassen sich nicht ohne Werkzeug lesen.",
+          "Neue Felder in Nachrichten bekommen eindeutige Nummern, die nicht wiederverwendet werden dürfen."
+        ]
+      }
+    },
+    {
+      "key": "docker-compose",
+      "name": "Docker Compose",
+      "category": "DEVOPS",
+      "default_priority": 3,
+      "documentation_url": "https://docs.docker.com/compose/",
+      "icon": null,
+      "summary_de": "Beschreibt mehrere zusammengehörige Container in einer YAML-Datei und startet sie mit einem einzigen Befehl.",
+      "hints_de": [
+        "Ich beschreibe Dienste, Netzwerke und Volumes deklarativ in einer einzigen YAML-Datei.",
+        "Ich starte und stoppe den ganzen Verbund aus Containern mit je einem Befehl.",
+        "Ich nutze es vor allem für lokale Entwicklungsumgebungen mit Datenbank und weiteren Diensten."
+      ],
+      "examples": [
+        "docker compose up -d"
+      ],
+      "alternatives": [
+        "podman",
+        "kubernetes"
+      ],
+      "content_de": {
+        "overview": "Docker Compose beschreibt eine Anwendung aus mehreren Containern in einer Datei, meist compose.yaml. Dort stehen Dienste, Netzwerke, Volumes und Umgebungsvariablen. Mit `docker compose up` wird alles gemeinsam gestartet, mit `docker compose down` wieder entfernt. Dadurch lassen sich komplette Umgebungen mit App, Datenbank und weiteren Diensten reproduzierbar aufsetzen.",
+        "use_cases": [
+          "Lokale Entwicklungsumgebung mit Datenbank, Cache und Backend",
+          "Integrationstests mit mehreren Diensten in der CI",
+          "Kleine Anwendungen auf einem einzelnen Server betreiben",
+          "Beispiel- und Demo-Setups einfach weitergeben"
+        ],
+        "key_concepts": [
+          {
+            "term": "Service",
+            "explanation": "Ein Baustein der Anwendung, der aus einem Image oder einem Build entsteht und als Container läuft."
+          },
+          {
+            "term": "compose.yaml",
+            "explanation": "Die Datei, in der alle Dienste und ihre Einstellungen beschrieben werden."
+          },
+          {
+            "term": "Netzwerk",
+            "explanation": "Dienste im selben Compose-Projekt erreichen sich untereinander über ihren Dienstnamen."
+          },
+          {
+            "term": "Volume",
+            "explanation": "Dauerhafter Speicher, damit Daten wie die einer Datenbank einen Neustart überleben."
+          },
+          {
+            "term": "depends_on",
+            "explanation": "Legt die Startreihenfolge der Dienste fest."
+          }
+        ],
+        "when_to_use": "Wenn mehrere Container zusammen entwickelt, getestet oder auf einem einzelnen Rechner betrieben werden sollen.",
+        "when_not_to_use": "Für verteilten Betrieb über viele Server mit Skalierung und Ausfallsicherheit. Dafür ist ein Orchestrator wie Kubernetes besser geeignet.",
+        "good_to_know": [
+          "Der Befehl heißt in neueren Versionen `docker compose`, ältere Installationen nutzen noch `docker-compose`.",
+          "Mit `docker compose down -v` werden auch die Volumes gelöscht, die Daten sind dann weg.",
+          "Zugangsdaten gehören nicht fest in die Datei, sondern in Umgebungsvariablen oder eine .env-Datei."
+        ]
+      }
+    },
+    {
+      "key": "github",
+      "name": "GitHub",
+      "category": "DEVOPS",
+      "default_priority": 3,
+      "documentation_url": "https://docs.github.com/",
+      "icon": "github",
+      "summary_de": "Plattform rund um Git-Repositories mit Pull Requests, Issues und Code Review für die Zusammenarbeit im Team.",
+      "hints_de": [
+        "Ich hoste damit Git-Repositories und arbeite über Pull Requests mit anderen zusammen.",
+        "Ich verwalte Aufgaben und Fehler als Issues und diskutiere Änderungen im Code Review.",
+        "Ich automatisiere Builds und Tests mit Workflows, die direkt im Repository liegen."
+      ],
+      "examples": [
+        "git clone https://github.com/OWNER/REPO.git"
+      ],
+      "alternatives": [
+        "gitlab"
+      ],
+      "content_de": {
+        "overview": "GitHub ist eine Plattform, die Git-Repositories hostet und die Zusammenarbeit darum organisiert. Änderungen werden in Branches entwickelt und über Pull Requests geprüft und zusammengeführt. Dazu kommen Issues, Projekte, Code Review und mit GitHub Actions auch Automatisierung. Es ist die am weitesten verbreitete Plattform für Open Source.",
+        "use_cases": [
+          "Quellcode hosten und im Team versionieren",
+          "Änderungen per Pull Request prüfen und zusammenführen",
+          "Aufgaben und Fehler als Issues verwalten",
+          "Open-Source-Projekte veröffentlichen und Beiträge annehmen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Repository",
+            "explanation": "Der Speicherort eines Projekts mit Code und der gesamten Git-Historie."
+          },
+          {
+            "term": "Pull Request",
+            "explanation": "Ein Vorschlag, Änderungen aus einem Branch zu übernehmen, inklusive Diskussion und Review."
+          },
+          {
+            "term": "Issue",
+            "explanation": "Ein Eintrag für eine Aufgabe, einen Fehler oder eine Idee."
+          },
+          {
+            "term": "Fork",
+            "explanation": "Eine eigene Kopie eines fremden Repositories, in der man Änderungen vorbereiten kann."
+          },
+          {
+            "term": "GitHub Actions",
+            "explanation": "Automatisierte Workflows, die bei Ereignissen wie einem Push Builds und Tests ausführen."
+          }
+        ],
+        "when_to_use": "Für gemeinsame Entwicklung mit Git, besonders mit Code Review und in Open-Source-Projekten.",
+        "when_not_to_use": "Wenn Code aus Datenschutz- oder Compliance-Gründen im eigenen Rechenzentrum liegen muss und eine selbst betriebene Plattform vorgeschrieben ist.",
+        "good_to_know": [
+          "Git und GitHub sind nicht dasselbe: Git ist das Versionsverwaltungswerkzeug, GitHub ein Dienst darum herum.",
+          "Geschützte Branches erzwingen Reviews und erfolgreiche Prüfungen vor dem Zusammenführen.",
+          "Geheimnisse wie Tokens gehören nie ins Repository, auch nicht in alte Commits."
+        ]
+      }
+    },
+    {
+      "key": "gitlab",
+      "name": "GitLab",
+      "category": "DEVOPS",
+      "default_priority": 2,
+      "documentation_url": "https://docs.gitlab.com/",
+      "icon": "gitlab",
+      "summary_de": "Git-Plattform mit integrierter CI/CD, Issue-Tracking und Code Review in einer einzigen Anwendung.",
+      "hints_de": [
+        "Ich verwalte Repositories, Aufgaben und Merge Requests in einer gemeinsamen Anwendung.",
+        "Ich beschreibe Pipelines in einer Datei im Repository, die direkt auf der Plattform laufen.",
+        "Ich kann die Plattform auch auf eigenen Servern selbst betreiben."
+      ],
+      "examples": [
+        "stages:\n  - test\n\ntest-job:\n  stage: test\n  script:\n    - echo \"Tests laufen\""
+      ],
+      "alternatives": [
+        "github",
+        "gitlab-ci"
+      ],
+      "content_de": {
+        "overview": "GitLab ist eine DevOps-Plattform, die Git-Repositories, Issue-Tracking, Code Review und CI/CD in einer Anwendung vereint. Änderungen werden über Merge Requests geprüft, Pipelines werden in einer `.gitlab-ci.yml` im Repository beschrieben. GitLab gibt es als Dienst im Web und als Software, die man selbst betreiben kann.",
+        "use_cases": [
+          "Quellcode hosten und per Merge Request prüfen",
+          "Build-, Test- und Deployment-Pipelines betreiben",
+          "Aufgaben und Fehler im selben System verwalten",
+          "Eine Plattform auf eigener Infrastruktur betreiben"
+        ],
+        "key_concepts": [
+          {
+            "term": "Merge Request",
+            "explanation": "Ein Vorschlag, Änderungen eines Branches zu übernehmen, mit Diskussion und Review."
+          },
+          {
+            "term": "Pipeline",
+            "explanation": "Eine Folge von Schritten wie Build, Test und Deployment, die bei Änderungen automatisch läuft."
+          },
+          {
+            "term": "Runner",
+            "explanation": "Der Agent, der die Jobs einer Pipeline ausführt."
+          },
+          {
+            "term": ".gitlab-ci.yml",
+            "explanation": "Die Datei im Repository, die Stages und Jobs der Pipeline beschreibt."
+          },
+          {
+            "term": "Self-managed",
+            "explanation": "GitLab lässt sich auf eigenen Servern installieren und selbst verwalten."
+          }
+        ],
+        "when_to_use": "Wenn Code, Aufgaben und CI/CD aus einer Hand kommen sollen, oder wenn die Plattform selbst betrieben werden soll.",
+        "when_not_to_use": "Wenn ein Projekt vor allem von der Reichweite und Community einer anderen Plattform lebt, etwa bei Open Source mit vielen externen Beiträgen.",
+        "good_to_know": [
+          "Die CI/CD ist fest eingebaut, es wird kein zusätzlicher Dienst benötigt.",
+          "Runner können auf eigenen Maschinen laufen und sind unabhängig vom Server.",
+          "Der Funktionsumfang hängt vom gewählten Tarif ab."
+        ]
+      }
+    },
+    {
+      "key": "aws",
+      "name": "AWS",
+      "category": "DEVOPS",
+      "default_priority": 3,
+      "documentation_url": "https://docs.aws.amazon.com/",
+      "icon": null,
+      "summary_de": "Die größte Cloud-Plattform mit Diensten für Rechenleistung, Speicher, Netzwerk, Datenbanken und Sicherheit.",
+      "hints_de": [
+        "Ich miete Rechenleistung, Speicher und Datenbanken nach Verbrauch statt eigene Server zu kaufen.",
+        "Ich steuere Zugriffe über Rollen und Berechtigungen, die möglichst klein gehalten werden.",
+        "Ich behalte die Kosten im Blick, weil laufende Ressourcen auch ungenutzt Geld kosten."
+      ],
+      "examples": [
+        "aws s3 ls"
+      ],
+      "alternatives": [
+        "azure",
+        "google-cloud"
+      ],
+      "content_de": {
+        "overview": "Amazon Web Services ist der größte Cloud-Anbieter mit einem sehr breiten Angebot an Diensten. Dazu gehören virtuelle Server (EC2), Objektspeicher (S3), Identitäts- und Rechteverwaltung (IAM) und serverlose Funktionen (Lambda). Abgerechnet wird nach Nutzung. Die Dienste lassen sich über Konsole, Kommandozeile oder Infrastructure as Code steuern.",
+        "use_cases": [
+          "Anwendungen auf virtuellen Servern oder Containern betreiben",
+          "Dateien und Backups im Objektspeicher ablegen",
+          "Serverlose Funktionen für ereignisgesteuerte Aufgaben ausführen",
+          "Managed-Datenbanken und Netzwerke aufbauen"
+        ],
+        "key_concepts": [
+          {
+            "term": "EC2",
+            "explanation": "Virtuelle Server, die man nach Bedarf startet und stoppt."
+          },
+          {
+            "term": "S3",
+            "explanation": "Objektspeicher für beliebige Dateien in sogenannten Buckets."
+          },
+          {
+            "term": "IAM",
+            "explanation": "Verwaltet Benutzer, Rollen und Berechtigungen für alle Dienste."
+          },
+          {
+            "term": "Lambda",
+            "explanation": "Führt Code serverlos aus, ohne dass man Server verwaltet."
+          },
+          {
+            "term": "Region",
+            "explanation": "Ein geografischer Standort, in dem Ressourcen betrieben werden."
+          }
+        ],
+        "when_to_use": "Wenn Infrastruktur flexibel, skalierbar und ohne eigene Hardware betrieben werden soll und ein großes Dienstangebot gebraucht wird.",
+        "when_not_to_use": "Für kleine, konstante Lasten, bei denen ein einfacher Server günstiger ist, oder wenn Daten das eigene Rechenzentrum nicht verlassen dürfen.",
+        "good_to_know": [
+          "Das Modell der geteilten Verantwortung gilt: Der Anbieter sichert die Plattform, Konfiguration und Daten sichert man selbst.",
+          "Öffentlich zugängliche Buckets und zu weite Berechtigungen sind häufige Ursachen für Sicherheitsvorfälle.",
+          "Budgets und Kostenwarnungen helfen, unerwartete Rechnungen zu vermeiden."
+        ]
+      }
+    },
+    {
+      "key": "azure",
+      "name": "Microsoft Azure",
+      "category": "DEVOPS",
+      "default_priority": 2,
+      "documentation_url": "https://learn.microsoft.com/azure/",
+      "icon": null,
+      "summary_de": "Die Cloud-Plattform von Microsoft mit Diensten für Rechenleistung, Daten und Identitäten, eng verzahnt mit dem Microsoft-Umfeld.",
+      "hints_de": [
+        "Ich betreibe Anwendungen, Datenbanken und Netzwerke als Dienste in der Cloud von Microsoft.",
+        "Ich verknüpfe sie leicht mit bestehenden Microsoft-Werkzeugen und der zentralen Benutzerverwaltung.",
+        "Ich gliedere Ressourcen in Gruppen und Abonnements, um Kosten und Rechte zu steuern."
+      ],
+      "examples": [
+        "az group list"
+      ],
+      "alternatives": [
+        "aws",
+        "google-cloud"
+      ],
+      "content_de": {
+        "overview": "Microsoft Azure ist die Cloud-Plattform von Microsoft. Sie bietet virtuelle Maschinen, Container, Datenbanken, Speicher und viele weitere Dienste. Besonders eng ist die Anbindung an die Microsoft-Welt mit Windows-Servern und der Benutzerverwaltung über Microsoft Entra ID. Ressourcen lassen sich über das Portal, die Kommandozeile `az` oder Infrastructure as Code verwalten.",
+        "use_cases": [
+          "Anwendungen und Container in der Cloud betreiben",
+          "Bestehende Microsoft-Umgebungen in die Cloud erweitern",
+          "Benutzer und Zugriffe zentral über Microsoft Entra ID steuern",
+          "Daten speichern und mit Managed-Datenbanken arbeiten"
+        ],
+        "key_concepts": [
+          {
+            "term": "Subscription",
+            "explanation": "Ein Abonnement, dem Ressourcen und Kosten zugeordnet werden."
+          },
+          {
+            "term": "Resource Group",
+            "explanation": "Ein Container, der zusammengehörige Ressourcen bündelt und gemeinsam verwaltet."
+          },
+          {
+            "term": "Microsoft Entra ID",
+            "explanation": "Der Identitätsdienst für Benutzer, Anwendungen und Zugriffe."
+          },
+          {
+            "term": "Azure CLI",
+            "explanation": "Die Kommandozeile `az` zum Verwalten von Ressourcen per Skript."
+          },
+          {
+            "term": "Region",
+            "explanation": "Ein geografischer Standort, in dem Ressourcen betrieben werden."
+          }
+        ],
+        "when_to_use": "Wenn bereits viel Microsoft-Technik im Einsatz ist oder Anwendungen auf .NET und Windows aufbauen.",
+        "when_not_to_use": "Wenn man keine Bindung an das Microsoft-Umfeld hat und mit einem anderen Anbieter besser vertraut ist oder günstigere Angebote findet.",
+        "good_to_know": [
+          "Die Rechteverwaltung läuft über rollenbasierte Zugriffskontrolle (RBAC).",
+          "Ressourcen einer Resource Group lassen sich gemeinsam löschen, das spart Aufräumarbeit.",
+          "Kostenwarnungen helfen, ungenutzte Ressourcen rechtzeitig zu bemerken."
+        ]
+      }
+    },
+    {
+      "key": "google-cloud",
+      "name": "Google Cloud",
+      "category": "DEVOPS",
+      "default_priority": 2,
+      "documentation_url": "https://cloud.google.com/docs",
+      "icon": "googlecloud",
+      "summary_de": "Die Cloud-Plattform von Google mit Diensten für Rechenleistung, Container, Daten und Machine Learning.",
+      "hints_de": [
+        "Ich betreibe Anwendungen, Container und Datenbanken als Dienste auf der Infrastruktur von Google.",
+        "Ich gruppiere Ressourcen in Projekten, die auch Rechte und Abrechnung bündeln.",
+        "Ich nutze besonders gern die Angebote für Datenanalyse und Machine Learning."
+      ],
+      "examples": [
+        "gcloud projects list"
+      ],
+      "alternatives": [
+        "aws",
+        "azure"
+      ],
+      "content_de": {
+        "overview": "Google Cloud ist die Cloud-Plattform von Google. Sie bietet virtuelle Maschinen (Compute Engine), Objektspeicher (Cloud Storage), verwaltetes Kubernetes (GKE) und Dienste für Datenanalyse wie BigQuery. Die Stärken liegen in Container-Technik, Daten und Machine Learning. Gesteuert wird über die Konsole, die Kommandozeile `gcloud` oder Infrastructure as Code.",
+        "use_cases": [
+          "Container-Anwendungen mit verwaltetem Kubernetes betreiben",
+          "Große Datenmengen mit BigQuery auswerten",
+          "Dateien im Objektspeicher ablegen",
+          "Machine-Learning-Dienste nutzen und Modelle betreiben"
+        ],
+        "key_concepts": [
+          {
+            "term": "Projekt",
+            "explanation": "Die Grundeinheit, der Ressourcen, Rechte und Abrechnung zugeordnet sind."
+          },
+          {
+            "term": "Compute Engine",
+            "explanation": "Virtuelle Maschinen nach Bedarf."
+          },
+          {
+            "term": "Cloud Storage",
+            "explanation": "Objektspeicher für beliebige Dateien in Buckets."
+          },
+          {
+            "term": "BigQuery",
+            "explanation": "Ein Data Warehouse, um große Datenmengen mit SQL auszuwerten."
+          },
+          {
+            "term": "IAM",
+            "explanation": "Verwaltet Rollen und Berechtigungen für Benutzer und Dienstkonten."
+          }
+        ],
+        "when_to_use": "Wenn Container, Datenanalyse oder Machine Learning im Mittelpunkt stehen oder bereits andere Google-Dienste genutzt werden.",
+        "when_not_to_use": "Wenn ein Team schon tief in einem anderen Anbieter verankert ist und der Wechsel mehr kostet, als er nützt.",
+        "good_to_know": [
+          "Ohne Abrechnungskonto lassen sich viele Dienste in einem Projekt nicht nutzen.",
+          "Dienstkonten sollten nur die Rechte erhalten, die sie wirklich brauchen.",
+          "Budgetwarnungen helfen, die Kosten im Blick zu behalten."
+        ]
+      }
+    },
+    {
+      "key": "bandit",
+      "name": "Bandit",
+      "category": "SECURITY",
+      "default_priority": 2,
+      "documentation_url": "https://bandit.readthedocs.io/",
+      "icon": null,
+      "summary_de": "Sicherheits-Linter für Python-Code, der typische unsichere Muster per statischer Analyse im Quelltext findet.",
+      "hints_de": [
+        "Ich prüfe Python-Quellcode statisch auf bekannte unsichere Muster, ohne ihn auszuführen.",
+        "Ich melde Funde mit Schweregrad und Zuverlässigkeit, damit ich sie einordnen kann.",
+        "Ich binde es in die Pipeline ein, damit riskanter Code früh auffällt."
+      ],
+      "examples": [
+        "bandit -r src/"
+      ],
+      "alternatives": [
+        "semgrep"
+      ],
+      "content_de": {
+        "overview": "Bandit ist ein Sicherheits-Linter für Python. Es analysiert den Quellcode statisch und sucht nach typischen Sicherheitsproblemen, etwa schwachen Hash-Verfahren, fest eingetragenen Passwörtern oder dem Aufruf von Shell-Befehlen. Jeder Fund hat einen Schweregrad und eine Zuverlässigkeit. Das Werkzeug läuft lokal und in der CI und braucht keine Ausführung des Codes.",
+        "use_cases": [
+          "Python-Projekte auf unsichere Muster prüfen",
+          "Sicherheitsprüfung automatisch in der Pipeline ausführen",
+          "Fest eingetragene Passwörter und schwache Kryptografie finden",
+          "Gefährliche Aufrufe wie `eval` oder Shell-Befehle aufspüren"
+        ],
+        "key_concepts": [
+          {
+            "term": "Statische Analyse",
+            "explanation": "Der Code wird gelesen und untersucht, ohne ihn auszuführen."
+          },
+          {
+            "term": "Test-ID",
+            "explanation": "Jede Regel hat eine Kennung wie B101, über die man sie gezielt steuern kann."
+          },
+          {
+            "term": "Severity",
+            "explanation": "Gibt an, wie schwer ein möglicher Fund wiegt: LOW, MEDIUM oder HIGH."
+          },
+          {
+            "term": "Confidence",
+            "explanation": "Gibt an, wie sicher sich das Werkzeug bei einem Fund ist."
+          },
+          {
+            "term": "# nosec",
+            "explanation": "Ein Kommentar, mit dem eine Zeile bewusst von der Prüfung ausgenommen wird."
+          }
+        ],
+        "when_to_use": "Bei jedem Python-Projekt als schnelle, automatische erste Sicherheitsprüfung.",
+        "when_not_to_use": "Als einzige Sicherheitsmaßnahme oder für andere Sprachen. Es findet bekannte Muster, aber keine Logikfehler und keine verwundbaren Abhängigkeiten.",
+        "good_to_know": [
+          "Es gibt Fehlalarme, Funde müssen deshalb bewertet werden.",
+          "Mit `# nosec` ausgenommene Stellen sollten kurz begründet werden.",
+          "Verwundbare Abhängigkeiten prüft ein anderes Werkzeug, etwa ein Dependency-Scanner."
+        ]
+      }
+    },
+    {
+      "key": "auth0",
+      "name": "Auth0",
+      "category": "SECURITY",
+      "default_priority": 2,
+      "documentation_url": "https://auth0.com/docs",
+      "icon": "auth0",
+      "summary_de": "Gehosteter Identitäts- und Login-Dienst, der Anmeldung, Registrierung und Zugriffsrechte für Anwendungen übernimmt.",
+      "hints_de": [
+        "Ich lagere Anmeldung und Registrierung an einen Dienst aus, statt sie selbst zu bauen.",
+        "Ich binde Logins über soziale Netzwerke oder Firmenkonten per Standardprotokoll an.",
+        "Ich bekomme von dem Dienst Tokens, die meine Anwendung prüft."
+      ],
+      "examples": [],
+      "alternatives": [
+        "keycloak"
+      ],
+      "content_de": {
+        "overview": "Auth0 ist ein gehosteter Dienst für Identitäts- und Zugriffsverwaltung. Er übernimmt Anmeldung, Registrierung, Passwort-Zurücksetzen und weitere Login-Abläufe für Anwendungen. Er arbeitet mit Standards wie OAuth 2.0 und OpenID Connect und kann Logins über soziale Netzwerke oder Firmenkonten anbinden. Die Anwendung erhält nach der Anmeldung Tokens und muss selbst keine Passwörter speichern.",
+        "use_cases": [
+          "Login und Registrierung für Web- und Mobile-Apps",
+          "Anmeldung über soziale Netzwerke oder Firmenkonten",
+          "Mehrfaktor-Authentifizierung ergänzen",
+          "APIs mit Access Tokens absichern"
+        ],
+        "key_concepts": [
+          {
+            "term": "Tenant",
+            "explanation": "Die eigene Umgebung im Dienst mit allen Einstellungen und Benutzern."
+          },
+          {
+            "term": "Application",
+            "explanation": "Die Anwendung, die den Login nutzt, mit eigener Client-ID."
+          },
+          {
+            "term": "OpenID Connect",
+            "explanation": "Ein Standard für die Anmeldung auf Basis von OAuth 2.0."
+          },
+          {
+            "term": "Access Token",
+            "explanation": "Ein Token, mit dem eine Anwendung auf eine geschützte API zugreift."
+          },
+          {
+            "term": "Connection",
+            "explanation": "Die Quelle der Benutzer, etwa eine eigene Datenbank oder ein sozialer Login."
+          }
+        ],
+        "when_to_use": "Wenn Anmeldung schnell und sicher umgesetzt werden soll, ohne eine eigene Benutzerverwaltung zu betreiben.",
+        "when_not_to_use": "Wenn Benutzerdaten das eigene System nicht verlassen dürfen oder der laufende Preis bei vielen Benutzern zu hoch wird. Dann ist ein selbst betriebener Dienst wie Keycloak eine Option.",
+        "good_to_know": [
+          "Man hängt von einem externen Dienst ab, ein Ausfall betrifft auch den Login der eigenen Anwendung.",
+          "Tokens müssen von der Anwendung geprüft werden, die Signatur allein reicht nicht.",
+          "Geheimnisse wie das Client Secret gehören nie in Frontend-Code."
+        ]
+      }
+    },
+    {
+      "key": "owasp-juice-shop",
+      "name": "OWASP Juice Shop",
+      "category": "SECURITY",
+      "default_priority": 2,
+      "documentation_url": "https://owasp.org/www-project-juice-shop/",
+      "icon": null,
+      "summary_de": "Absichtlich unsichere Webanwendung, an der man Angriffe und Verteidigung realistisch üben kann.",
+      "hints_de": [
+        "Ich übe an einer bewusst verwundbaren Webanwendung, ohne echte Systeme zu gefährden.",
+        "Ich finde Schwachstellen wie Injection oder kaputte Zugriffskontrolle und löse dazu Aufgaben.",
+        "Ich starte sie lokal, zum Beispiel als Container."
+      ],
+      "examples": [
+        "docker run --rm -p 3000:3000 bkimminich/juice-shop"
+      ],
+      "alternatives": [
+        "burp-suite",
+        "zap"
+      ],
+      "content_de": {
+        "overview": "OWASP Juice Shop ist eine absichtlich unsichere Webanwendung in Form eines Online-Shops. Sie enthält viele Schwachstellen aus den bekannten Top-Listen der Websicherheit und eignet sich zum Üben und für Schulungen. Die Anwendung bringt Aufgaben mit Schwierigkeitsgraden und eine Punkteübersicht mit. Sie darf ausschließlich in einer geschützten Übungsumgebung betrieben werden.",
+        "use_cases": [
+          "Schwachstellen wie Injection und XSS praktisch kennenlernen",
+          "Schulungen und Capture-the-Flag-Wettbewerbe durchführen",
+          "Sicherheitswerkzeuge wie Proxys und Scanner testen",
+          "Entwickler für sicheres Programmieren sensibilisieren"
+        ],
+        "key_concepts": [
+          {
+            "term": "Challenge",
+            "explanation": "Eine Aufgabe, bei der eine bestimmte Schwachstelle gefunden und ausgenutzt werden soll."
+          },
+          {
+            "term": "Score Board",
+            "explanation": "Eine Übersicht aller Aufgaben mit Schwierigkeit und Fortschritt."
+          },
+          {
+            "term": "Injection",
+            "explanation": "Eingaben, die als Befehl interpretiert werden, zum Beispiel bei SQL."
+          },
+          {
+            "term": "XSS",
+            "explanation": "Cross-Site Scripting: Schadcode wird in eine Seite eingeschleust und im Browser ausgeführt."
+          },
+          {
+            "term": "Broken Access Control",
+            "explanation": "Fehlende oder fehlerhafte Zugriffsprüfungen, durch die man auf fremde Daten zugreift."
+          }
+        ],
+        "when_to_use": "Zum Lernen und Üben von Webangriffen und Abwehr in einer sicheren, selbst betriebenen Umgebung.",
+        "when_not_to_use": "Nie öffentlich im Internet oder in einem Netz mit echten Daten betreiben, da sie absichtlich angreifbar ist.",
+        "good_to_know": [
+          "Die Anwendung enthält Schwachstellen mit Absicht, sie ist kein Beispiel für guten Code.",
+          "Angriffe üben darf man nur an eigenen Systemen oder mit ausdrücklicher Erlaubnis.",
+          "Zusammen mit einem Proxy wie ZAP oder Burp Suite lernt man den Umgang mit Prüfwerkzeugen."
+        ]
+      }
+    },
+    {
+      "key": "flutter",
+      "name": "Flutter",
+      "category": "FRONTEND",
+      "default_priority": 3,
+      "documentation_url": "https://docs.flutter.dev/",
+      "icon": "flutter",
+      "summary_de": "UI-Toolkit von Google, mit dem aus einer Codebasis in Dart Apps für Mobilgeräte, Web und Desktop entstehen.",
+      "hints_de": [
+        "Ich bin ein UI-Toolkit von Google, mit dem eine Codebasis auf Mobilgeräten, im Web und auf dem Desktop läuft.",
+        "Ich zeichne die Oberfläche selbst, statt die Elemente des Betriebssystems zu verwenden.",
+        "Man schreibt mich in der Sprache Dart, und meine Oberfläche besteht aus verschachtelten Widgets."
+      ],
+      "examples": [
+        "class Hallo extends StatelessWidget { const Hallo({super.key}); @override Widget build(BuildContext context) => const Text('Hallo'); }"
+      ],
+      "alternatives": [
+        "react-native"
+      ],
+      "content_de": {
+        "overview": "Flutter ist ein UI-Toolkit von Google für Apps auf Mobilgeräten, im Web und auf dem Desktop. Die Apps werden in der Sprache Dart geschrieben und aus einer gemeinsamen Codebasis gebaut. Die Oberfläche besteht aus Widgets, die Flutter mit einer eigenen Rendering-Engine selbst zeichnet. Dadurch sieht die App auf allen Plattformen gleich aus.",
+        "use_cases": [
+          "Mobile Apps für Android und iOS aus einer Codebasis",
+          "Apps mit stark angepasster, einheitlicher Oberfläche",
+          "Desktop- und Web-Anwendungen mit gemeinsamem Code",
+          "Prototypen, die schnell auf mehreren Geräten laufen sollen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Widget",
+            "explanation": "Der Baustein jeder Oberfläche; Layout, Text und Schaltflächen sind Widgets."
+          },
+          {
+            "term": "StatelessWidget und StatefulWidget",
+            "explanation": "Widgets ohne oder mit veränderlichem Zustand."
+          },
+          {
+            "term": "Hot Reload",
+            "explanation": "Codeänderungen erscheinen in der laufenden App, ohne sie neu zu starten."
+          },
+          {
+            "term": "Dart",
+            "explanation": "Die Programmiersprache, in der Flutter-Apps geschrieben werden."
+          },
+          {
+            "term": "pub.dev",
+            "explanation": "Das Paketverzeichnis für Dart- und Flutter-Bibliotheken."
+          }
+        ],
+        "when_to_use": "Wenn eine App auf mehreren Plattformen mit einer Codebasis und einer einheitlichen Oberfläche entstehen soll.",
+        "when_not_to_use": "Wenn das Team schon stark in Webtechnologie arbeitet und keine Dart-Kenntnisse aufbauen will oder wenn die App sich eng an das native Aussehen jeder Plattform halten muss.",
+        "good_to_know": [
+          "Flutter bringt eigene Widgets mit, die sich nicht automatisch wie native Elemente verhalten.",
+          "Für Zustandsverwaltung gibt es mehrere Ansätze und Pakete; es ist keiner fest vorgegeben.",
+          "Die Sprache Dart muss neu gelernt werden, auch wenn sie anderen Sprachen ähnelt."
+        ]
+      }
+    },
+    {
+      "key": "react-native",
+      "name": "React Native",
+      "category": "FRONTEND",
+      "default_priority": 3,
+      "documentation_url": "https://reactnative.dev/docs/getting-started",
+      "icon": null,
+      "summary_de": "Framework für mobile Apps mit React und JavaScript oder TypeScript, das echte native Oberflächenelemente statt einer Webansicht verwendet.",
+      "hints_de": [
+        "Ich erlaube es, mobile Apps mit React und JavaScript zu schreiben.",
+        "Meine Komponenten werden auf echte Oberflächenelemente von Android und iOS abgebildet.",
+        "Ich laufe nicht in einer Webansicht, sondern spreche über eine Brücke mit dem Betriebssystem."
+      ],
+      "examples": [
+        "import { Text } from 'react-native';\n\nexport default function App() { return <Text>Hallo</Text>; }"
+      ],
+      "alternatives": [
+        "flutter"
+      ],
+      "content_de": {
+        "overview": "React Native ist ein Framework, mit dem man mobile Apps für Android und iOS mit React schreibt. Die Komponenten werden nicht in einer Webansicht dargestellt, sondern in echte native Oberflächenelemente übersetzt. Die Logik läuft in JavaScript oder TypeScript. Wer React kennt, kann sein Wissen über Komponenten, Props und Hooks weiterverwenden.",
+        "use_cases": [
+          "Mobile Apps für Android und iOS mit gemeinsamem Code",
+          "Apps in Teams, die bereits React einsetzen",
+          "Apps mit nativem Aussehen und nativem Verhalten",
+          "Wiederverwendung von Logik zwischen Web und Mobilgerät"
+        ],
+        "key_concepts": [
+          {
+            "term": "Core Components",
+            "explanation": "Grundbausteine wie View, Text und Image, die auf native Elemente abgebildet werden."
+          },
+          {
+            "term": "Props und State",
+            "explanation": "Wie in React fließen Daten über Props und Zustand in die Komponenten."
+          },
+          {
+            "term": "StyleSheet",
+            "explanation": "Stile werden als JavaScript-Objekte angegeben und nutzen Flexbox fürs Layout."
+          },
+          {
+            "term": "Native Module",
+            "explanation": "Erlauben den Zugriff auf Funktionen des Betriebssystems, die React Native nicht selbst anbietet."
+          },
+          {
+            "term": "Metro",
+            "explanation": "Der Bundler, der den JavaScript-Code für die App bereitstellt."
+          }
+        ],
+        "when_to_use": "Wenn das Team React kennt und eine mobile App mit nativem Aussehen für beide Plattformen bauen will.",
+        "when_not_to_use": "Wenn die App sehr viel plattformspezifischen nativen Code braucht oder höchste Grafik-Performance verlangt.",
+        "good_to_know": [
+          "Es werden keine HTML-Elemente verwendet, sondern eigene Komponenten wie View und Text.",
+          "Für viele Geräte-Funktionen werden zusätzliche Bibliotheken oder native Module gebraucht.",
+          "Für den Einstieg wird häufig ein Framework drumherum genutzt, das Einrichtung und Build vereinfacht."
+        ]
+      }
+    },
+    {
+      "key": "expo",
+      "name": "Expo",
+      "category": "FRONTEND",
+      "default_priority": 2,
+      "documentation_url": "https://docs.expo.dev/",
+      "icon": "expo",
+      "summary_de": "Framework und Werkzeuge rund um React Native, die Einrichtung, Navigation, Gerätefunktionen und Builds für mobile Apps vereinfachen.",
+      "hints_de": [
+        "Ich setze auf einem mobilen React-Framework auf und nehme dem Team viel Einrichtungsarbeit ab.",
+        "Ich bringe Bibliotheken für Kamera, Standort und weitere Gerätefunktionen mit.",
+        "Mit mir lässt sich eine App auf dem eigenen Handy testen, ohne zuerst native Entwicklungswerkzeuge einzurichten."
+      ],
+      "examples": [
+        "npx create-expo-app@latest"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Expo ist ein Framework mit Werkzeugen, das auf React Native aufbaut. Es nimmt viel Konfigurationsarbeit ab und bringt Bibliotheken für häufige Gerätefunktionen wie Kamera oder Standort mit. Mit Expo Router gibt es dateibasierte Navigation, und über Expo Application Services lassen sich Apps bauen und veröffentlichen. Ein neues Projekt startet man mit einem einzigen Befehl.",
+        "use_cases": [
+          "Schneller Start eines neuen React-Native-Projekts",
+          "Apps, die gängige Gerätefunktionen über fertige Bibliotheken nutzen",
+          "Navigation mit dateibasiertem Routing",
+          "Builds und Veröffentlichung in den App-Stores über einen Dienst"
+        ],
+        "key_concepts": [
+          {
+            "term": "Expo SDK",
+            "explanation": "Sammlung von Bibliotheken für Gerätefunktionen wie Kamera, Dateien und Sensoren."
+          },
+          {
+            "term": "Expo Router",
+            "explanation": "Dateibasiertes Routing, bei dem die Ordnerstruktur die Navigation bestimmt."
+          },
+          {
+            "term": "Expo Go",
+            "explanation": "Eine App zum schnellen Ausprobieren von Projekten auf dem eigenen Gerät."
+          },
+          {
+            "term": "Development Build",
+            "explanation": "Eine eigene Entwicklungsversion der App, die auch native Bibliotheken einbinden kann."
+          },
+          {
+            "term": "EAS",
+            "explanation": "Die Expo Application Services zum Bauen, Einreichen und Aktualisieren von Apps."
+          }
+        ],
+        "when_to_use": "Wenn man eine mobile App mit React Native baut und Einrichtung und Build möglichst einfach halten will.",
+        "when_not_to_use": "Wenn man keine mobile App mit React Native baut oder jeden Schritt der nativen Projekte selbst kontrollieren will.",
+        "good_to_know": [
+          "Expo Go unterstützt nicht jede native Bibliothek; dafür braucht man einen Development Build.",
+          "Der Cloud-Dienst für Builds ist ein Angebot des Herstellers und kann je nach Umfang kostenpflichtig sein.",
+          "Die Dokumentation empfiehlt Expo als Einstieg für neue React-Native-Projekte."
+        ]
+      }
+    },
+    {
+      "key": "electron",
+      "name": "Electron",
+      "category": "FRONTEND",
+      "default_priority": 2,
+      "documentation_url": "https://www.electronjs.org/docs/latest/",
+      "icon": "electron",
+      "summary_de": "Framework für Desktop-Anwendungen unter Windows, macOS und Linux, die mit HTML, CSS und JavaScript gebaut und mit Chromium und Node.js ausgeliefert werden.",
+      "hints_de": [
+        "Mit mir entstehen Desktop-Anwendungen aus HTML, CSS und JavaScript.",
+        "Ich bringe eine Browser-Engine und eine JavaScript-Laufzeit gleich mit, deshalb sind meine Programme recht groß.",
+        "Bei mir laufen ein Hauptprozess und mehrere Fenster-Prozesse, die Nachrichten austauschen."
+      ],
+      "examples": [
+        "const { app, BrowserWindow } = require('electron');\n\napp.whenReady().then(() => new BrowserWindow().loadFile('index.html'));"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Electron ist ein Framework für Desktop-Anwendungen, die mit Webtechnologie gebaut werden. Eine App besteht aus Chromium zur Darstellung und Node.js für den Zugriff auf das System. Dadurch lassen sich Windows, macOS und Linux mit einer Codebasis bedienen. Bekannte Programme wie Visual Studio Code nutzen diesen Ansatz.",
+        "use_cases": [
+          "Desktop-Versionen bestehender Webanwendungen",
+          "Plattformübergreifende Werkzeuge für Entwickler",
+          "Anwendungen mit Zugriff auf Dateisystem und Systemfunktionen",
+          "Apps mit Benachrichtigungen, Tray-Symbol und Menüs"
+        ],
+        "key_concepts": [
+          {
+            "term": "Main Process",
+            "explanation": "Der Hauptprozess, der die App startet und Fenster verwaltet."
+          },
+          {
+            "term": "Renderer Process",
+            "explanation": "Der Prozess, der die Webseite eines Fensters darstellt."
+          },
+          {
+            "term": "BrowserWindow",
+            "explanation": "Die Klasse, die ein Anwendungsfenster erzeugt."
+          },
+          {
+            "term": "IPC",
+            "explanation": "Nachrichtenaustausch zwischen Haupt- und Renderer-Prozess."
+          },
+          {
+            "term": "Preload-Skript",
+            "explanation": "Läuft vor der Webseite und stellt ihr gezielt ausgewählte Funktionen bereit."
+          }
+        ],
+        "when_to_use": "Wenn eine Desktop-App mit vorhandenem Webwissen und einer gemeinsamen Codebasis für mehrere Systeme entstehen soll.",
+        "when_not_to_use": "Wenn Dateigröße und Speicherverbrauch sehr klein sein müssen oder eine rein native Oberfläche gefordert ist.",
+        "good_to_know": [
+          "Jede App enthält ihren eigenen Browser und ist deshalb größer als eine native Anwendung.",
+          "Die Sicherheit der Renderer-Prozesse muss beachtet werden, da dort Webinhalte laufen.",
+          "Aktualisierungen von Chromium und Node.js kommen mit neuen Electron-Versionen und müssen eingeplant werden."
+        ]
+      }
+    },
+    {
+      "key": "bootstrap",
+      "name": "Bootstrap",
+      "category": "FRONTEND",
+      "default_priority": 2,
+      "documentation_url": "https://getbootstrap.com/docs/",
+      "icon": "bootstrap",
+      "summary_de": "CSS-Framework mit vorgefertigten Komponenten, einem Raster-System und Hilfsklassen für responsive Webseiten.",
+      "hints_de": [
+        "Ich liefere vorgefertigte Bausteine wie Buttons, Karten und Navigationsleisten für Webseiten.",
+        "Mit einem zwölfspaltigen Raster ordne ich Inhalte auf verschiedenen Bildschirmgrößen an.",
+        "Man bindet mich mit Klassennamen im HTML ein und kann mein Aussehen mit Variablen anpassen."
+      ],
+      "examples": [
+        "<button class=\"btn btn-primary\">Speichern</button>"
+      ],
+      "alternatives": [
+        "tailwind-css"
+      ],
+      "content_de": {
+        "overview": "Bootstrap ist ein CSS-Framework mit fertigen Komponenten wie Buttons, Formularen, Karten und Navigation. Mit einem Raster-System und Breakpoints lassen sich Layouts für unterschiedliche Bildschirmgrößen aufbauen. Man verwendet die Bausteine über Klassen im HTML und passt das Erscheinungsbild über Sass-Variablen oder CSS-Variablen an. Für interaktive Elemente wie Modals bringt es auch JavaScript mit.",
+        "use_cases": [
+          "Schnelle Prototypen und interne Werkzeuge",
+          "Responsive Layouts mit dem Raster-System",
+          "Einheitliche Formulare und Navigationen",
+          "Webseiten, bei denen kein eigenes Designsystem nötig ist"
+        ],
+        "key_concepts": [
+          {
+            "term": "Grid",
+            "explanation": "Raster aus Zeilen und Spalten, das sich an die Bildschirmbreite anpasst."
+          },
+          {
+            "term": "Breakpoints",
+            "explanation": "Festgelegte Bildschirmbreiten, ab denen sich das Layout ändert."
+          },
+          {
+            "term": "Komponenten",
+            "explanation": "Fertige Bausteine wie Buttons, Karten, Modals und Alerts."
+          },
+          {
+            "term": "Utility-Klassen",
+            "explanation": "Kleine Klassen für Abstände, Farben und Anordnung."
+          },
+          {
+            "term": "Sass-Variablen",
+            "explanation": "Über sie lassen sich Farben, Schriften und Abstände zentral anpassen."
+          }
+        ],
+        "when_to_use": "Wenn man schnell ein brauchbares, responsives Erscheinungsbild ohne eigenes Design aufbauen will.",
+        "when_not_to_use": "Wenn die Oberfläche ein ganz eigenes Aussehen haben soll, das sich deutlich vom bekannten Standard unterscheidet.",
+        "good_to_know": [
+          "Ohne Anpassung sehen viele Seiten sich ähnlich.",
+          "Die JavaScript-Teile sind optional und werden nur für interaktive Komponenten gebraucht.",
+          "Bei der Anpassung ist es besser, Variablen zu überschreiben, als die Stile der Komponenten zu ersetzen."
+        ]
+      }
+    },
+    {
+      "key": "material-ui",
+      "name": "Material UI",
+      "category": "FRONTEND",
+      "default_priority": 2,
+      "documentation_url": "https://mui.com/material-ui/getting-started/",
+      "icon": "mui",
+      "summary_de": "React-Komponentenbibliothek, die Googles Designsprache Material Design umsetzt und fertige Bausteine für Oberflächen bereitstellt.",
+      "hints_de": [
+        "Ich bin eine Sammlung fertiger React-Komponenten nach Googles Designsprache.",
+        "Mit einem zentralen Theme lege ich Farben, Schriften und Abstände für alle Komponenten fest.",
+        "Einzelne Komponenten passe ich über die sx-Eigenschaft oder durch Überschreiben ihrer Stile an."
+      ],
+      "examples": [
+        "import Button from '@mui/material/Button';\n\n<Button variant=\"contained\">Speichern</Button>"
+      ],
+      "alternatives": [
+        "radix-ui",
+        "shadcn-ui"
+      ],
+      "content_de": {
+        "overview": "Material UI ist eine Bibliothek mit React-Komponenten, die Googles Designsprache Material Design umsetzt. Sie bietet viele fertige Bausteine wie Buttons, Formularfelder, Tabellen, Dialoge und Navigation. Über ein Theme werden Farben, Typografie und Abstände zentral festgelegt. Die Komponenten sind barrierefrei gedacht und lassen sich über Eigenschaften und Stile anpassen.",
+        "use_cases": [
+          "Geschäftsanwendungen und Dashboards mit vielen Formularen",
+          "Schneller Aufbau konsistenter React-Oberflächen",
+          "Anwendungen mit einheitlichem Theme und Dark Mode",
+          "Interne Werkzeuge ohne eigenes Designsystem"
+        ],
+        "key_concepts": [
+          {
+            "term": "Komponenten",
+            "explanation": "Fertige React-Bausteine wie Button, TextField, Dialog und Table."
+          },
+          {
+            "term": "Theme",
+            "explanation": "Zentrale Einstellungen für Farben, Typografie, Abstände und Breakpoints."
+          },
+          {
+            "term": "sx-Eigenschaft",
+            "explanation": "Erlaubt Stile direkt an einer Komponente anzugeben, mit Zugriff auf das Theme."
+          },
+          {
+            "term": "Variant",
+            "explanation": "Eine Ausprägung einer Komponente, zum Beispiel ein gefüllter oder umrandeter Button."
+          },
+          {
+            "term": "Grid und Stack",
+            "explanation": "Komponenten für Layout und Anordnung von Inhalten."
+          }
+        ],
+        "when_to_use": "Wenn man in React schnell eine einheitliche, gut ausgestattete Oberfläche mit vielen fertigen Komponenten braucht.",
+        "when_not_to_use": "Wenn die Oberfläche ein stark abweichendes eigenes Design haben soll oder die Bundle-Größe sehr knapp ist.",
+        "good_to_know": [
+          "Ohne Theme-Anpassung sieht die Oberfläche deutlich nach Material Design aus.",
+          "Komponenten sollten einzeln importiert werden, damit die Bundle-Größe klein bleibt.",
+          "Es gibt eigene Pakete für zusätzliche Komponenten, etwa für Datentabellen."
+        ]
+      }
+    },
+    {
+      "key": "openai-api",
+      "name": "OpenAI API",
+      "category": "AI_DATA",
+      "default_priority": 3,
+      "documentation_url": "https://platform.openai.com/docs",
+      "icon": null,
+      "summary_de": "Programmierschnittstelle, über die Anwendungen die GPT-Modelle von OpenAI für Text, Bilder und Werkzeugaufrufe per HTTP oder SDK nutzen.",
+      "hints_de": [
+        "Ich bin eine Programmierschnittstelle, über die Anwendungen die Sprachmodelle eines KI-Anbieters aus den USA nutzen.",
+        "Man spricht mich mit einem API-Schlüssel an und schickt Nachrichten an ein ausgewähltes Modell.",
+        "Ich rechne nach verarbeiteten Token ab, und die Antwort kann als Datenstrom ankommen."
+      ],
+      "examples": [
+        "from openai import OpenAI\n\nclient = OpenAI()\nresponse = client.responses.create(model=\"MODELLNAME\", input=\"Hallo\")\nprint(response.output_text)"
+      ],
+      "alternatives": [
+        "claude-api",
+        "google-gemini-api"
+      ],
+      "content_de": {
+        "overview": "Die OpenAI API ist eine Programmierschnittstelle, mit der Anwendungen die Modelle von OpenAI nutzen. Man schickt Eingaben an ein Modell und erhält Text zurück; je nach Modell sind auch Bilder, Audio und strukturierte Ausgaben möglich. Der Zugriff erfolgt per HTTP oder über offizielle Bibliotheken, zum Beispiel für Python und JavaScript. Die Abrechnung richtet sich nach der Menge der verarbeiteten Token.",
+        "use_cases": [
+          "Chatbots und Assistenten in eigenen Anwendungen",
+          "Zusammenfassen, Übersetzen und Klassifizieren von Text",
+          "Strukturierte Daten aus Freitext extrahieren",
+          "Werkzeugaufrufe, mit denen das Modell eigene Funktionen anstößt"
+        ],
+        "key_concepts": [
+          {
+            "term": "API-Schlüssel",
+            "explanation": "Geheimer Schlüssel, der Anfragen einem Konto zuordnet."
+          },
+          {
+            "term": "Modell",
+            "explanation": "Das ausgewählte Sprachmodell, das die Anfrage beantwortet."
+          },
+          {
+            "term": "Token",
+            "explanation": "Texteinheiten, nach denen Eingabe, Ausgabe und Kosten bemessen werden."
+          },
+          {
+            "term": "Prompt",
+            "explanation": "Die Eingabe und Anweisung, mit der das Modell gesteuert wird."
+          },
+          {
+            "term": "Tool Calling",
+            "explanation": "Das Modell fordert den Aufruf einer vorgegebenen Funktion mit Argumenten an."
+          }
+        ],
+        "when_to_use": "Wenn eine Anwendung leistungsfähige Sprachmodelle nutzen soll, ohne sie selbst zu betreiben.",
+        "when_not_to_use": "Wenn Daten die eigene Umgebung nicht verlassen dürfen oder die Kosten pro Anfrage nicht tragbar sind.",
+        "good_to_know": [
+          "Der API-Schlüssel gehört nicht in Frontend-Code oder in ein Repository.",
+          "Modelle und Preise ändern sich; der Modellname sollte konfigurierbar sein.",
+          "Antworten können fehlerhaft sein und sollten bei wichtigen Aufgaben geprüft werden."
+        ]
+      }
+    },
+    {
+      "key": "google-gemini-api",
+      "name": "Google Gemini API",
+      "category": "AI_DATA",
+      "default_priority": 2,
+      "documentation_url": "https://ai.google.dev/gemini-api/docs",
+      "icon": "googlegemini",
+      "summary_de": "Programmierschnittstelle für Googles Gemini-Modelle, mit der Anwendungen Text, Bilder, Audio und Video verarbeiten und Antworten erzeugen.",
+      "hints_de": [
+        "Ich bin eine Programmierschnittstelle zu den KI-Modellen eines Suchmaschinen-Konzerns.",
+        "Ich kann neben Text auch Bilder, Audio und Video als Eingabe verarbeiten.",
+        "Man nutzt mich mit einem API-Schlüssel, entweder per HTTP oder über eine offizielle Bibliothek."
+      ],
+      "examples": [
+        "from google import genai\n\nclient = genai.Client()\nresponse = client.models.generate_content(model=\"MODELLNAME\", contents=\"Hallo\")\nprint(response.text)"
+      ],
+      "alternatives": [
+        "claude-api",
+        "openai-api"
+      ],
+      "content_de": {
+        "overview": "Die Gemini API ist die Programmierschnittstelle zu den Gemini-Modellen von Google. Anwendungen schicken Text, Bilder, Audio oder Video an ein Modell und erhalten eine generierte Antwort. Der Zugriff funktioniert per HTTP oder über offizielle Bibliotheken, und einen API-Schlüssel erstellt man in Google AI Studio. Die Schnittstelle unterstützt unter anderem Chat, strukturierte Ausgaben und Funktionsaufrufe.",
+        "use_cases": [
+          "Chat- und Assistenzfunktionen in eigenen Anwendungen",
+          "Analyse von Bildern, Audio und Dokumenten",
+          "Zusammenfassen und Extrahieren von Informationen aus Text",
+          "Funktionsaufrufe, mit denen das Modell eigene Werkzeuge nutzt"
+        ],
+        "key_concepts": [
+          {
+            "term": "API-Schlüssel",
+            "explanation": "Geheimer Schlüssel, der Anfragen einem Projekt zuordnet."
+          },
+          {
+            "term": "Modell",
+            "explanation": "Das ausgewählte Gemini-Modell, das die Anfrage beantwortet."
+          },
+          {
+            "term": "Multimodalität",
+            "explanation": "Ein Modell verarbeitet mehrere Eingabearten wie Text, Bild und Audio."
+          },
+          {
+            "term": "Token",
+            "explanation": "Texteinheiten, nach denen Eingabe, Ausgabe und Kosten bemessen werden."
+          },
+          {
+            "term": "Function Calling",
+            "explanation": "Das Modell fordert den Aufruf einer vorgegebenen Funktion mit Argumenten an."
+          }
+        ],
+        "when_to_use": "Wenn eine Anwendung Modelle nutzen soll, die auch Bilder, Audio oder Video verstehen, ohne sie selbst zu betreiben.",
+        "when_not_to_use": "Wenn Daten die eigene Umgebung nicht verlassen dürfen oder ein Modell lokal laufen soll.",
+        "good_to_know": [
+          "Der API-Schlüssel gehört nicht in Frontend-Code oder in ein Repository.",
+          "Modelle, Limits und Preise ändern sich; der Modellname sollte konfigurierbar sein.",
+          "Antworten können fehlerhaft sein und sollten bei wichtigen Aufgaben geprüft werden."
+        ]
+      }
+    },
+    {
+      "key": "transformers",
+      "name": "Transformers",
+      "category": "AI_DATA",
+      "default_priority": 2,
+      "documentation_url": "https://huggingface.co/docs/transformers",
+      "icon": "huggingface",
+      "summary_de": "Python-Bibliothek von Hugging Face, mit der sich vortrainierte Modelle für Text, Bild und Audio laden, ausführen und feinabstimmen lassen.",
+      "hints_de": [
+        "Ich bin eine Python-Bibliothek, die vortrainierte Modelle von einer bekannten Plattform lädt.",
+        "Mit einer einzigen Hilfsfunktion löse ich Aufgaben wie Textklassifikation oder Übersetzung in wenigen Zeilen.",
+        "Ich zerlege Text zuerst in Token und gebe sie dann an das Modell weiter."
+      ],
+      "examples": [
+        "from transformers import pipeline\n\nclassifier = pipeline(\"sentiment-analysis\")\nprint(classifier(\"Das Tool ist super\"))"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Transformers ist eine Python-Bibliothek von Hugging Face zum Laden und Ausführen vortrainierter Modelle. Sie deckt Aufgaben mit Text, Bildern und Audio ab und lädt Modelle vom Hugging Face Hub. Mit der Pipeline-Schnittstelle genügen wenige Zeilen, um ein Modell zu verwenden. Für eigene Anpassungen lassen sich Modelle feinabstimmen, etwa mit der Trainer-Klasse.",
+        "use_cases": [
+          "Textklassifikation, Übersetzung und Zusammenfassung",
+          "Modelle lokal ausführen, ohne einen Dienst zu nutzen",
+          "Modelle auf eigenen Daten feinabstimmen",
+          "Embeddings für Suche und Ähnlichkeitsvergleiche erzeugen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Pipeline",
+            "explanation": "Einfache Schnittstelle, die Vorverarbeitung, Modell und Nachverarbeitung bündelt."
+          },
+          {
+            "term": "Tokenizer",
+            "explanation": "Zerlegt Text in Token, die das Modell verarbeiten kann."
+          },
+          {
+            "term": "AutoModel",
+            "explanation": "Klassen, die zu einem Modellnamen die passende Architektur laden."
+          },
+          {
+            "term": "Hub",
+            "explanation": "Die Plattform, von der Modelle und Tokenizer heruntergeladen werden."
+          },
+          {
+            "term": "Trainer",
+            "explanation": "Hilfsklasse zum Training und Feinabstimmen von Modellen."
+          }
+        ],
+        "when_to_use": "Wenn man vortrainierte Modelle direkt in Python nutzen oder auf eigenen Daten anpassen will.",
+        "when_not_to_use": "Wenn eine gehostete Schnittstelle ausreicht und der Betrieb eigener Modelle zu aufwendig wäre.",
+        "good_to_know": [
+          "Große Modelle brauchen viel Speicher und laufen oft nur mit einer GPU in brauchbarer Zeit.",
+          "Beim ersten Aufruf werden Modelle heruntergeladen und lokal zwischengespeichert.",
+          "Die Lizenz eines Modells muss vor der Nutzung geprüft werden."
+        ]
+      }
+    },
+    {
+      "key": "pycharm",
+      "name": "PyCharm",
+      "category": "DEV_ENV",
+      "default_priority": 3,
+      "documentation_url": "https://www.jetbrains.com/help/pycharm/",
+      "icon": "pycharm",
+      "summary_de": "Entwicklungsumgebung von JetBrains für Python mit Debugger, Refactoring, Testunterstützung und Verwaltung virtueller Umgebungen.",
+      "hints_de": [
+        "Ich bin eine Entwicklungsumgebung von JetBrains, die auf eine bestimmte Skriptsprache zugeschnitten ist.",
+        "Ich verwalte für jedes Projekt eine eigene Umgebung mit den passenden Paketen.",
+        "Ich biete einen Debugger, Refactorings und einen Testrunner direkt in der Oberfläche."
+      ],
+      "examples": [
+        "Strg+Umschalt+F10 (aktuelle Datei ausführen)"
+      ],
+      "alternatives": [
+        "intellij-idea",
+        "visual-studio-code"
+      ],
+      "content_de": {
+        "overview": "PyCharm ist eine integrierte Entwicklungsumgebung (IDE) von JetBrains für Python. Sie versteht den Code des Projekts und bietet Autovervollständigung, Navigation, Refactorings und Codeprüfungen. Debugger, Testrunner und Verwaltung von virtuellen Umgebungen sind direkt eingebaut. Es gibt eine kostenlose Community-Edition und eine Professional-Edition mit zusätzlichen Funktionen für Web- und Datenbankarbeit.",
+        "use_cases": [
+          "Python-Projekte entwickeln und debuggen",
+          "Tests mit pytest direkt in der IDE ausführen",
+          "Code sicher umbenennen und umstrukturieren",
+          "Virtuelle Umgebungen und Abhängigkeiten verwalten"
+        ],
+        "key_concepts": [
+          {
+            "term": "Python Interpreter",
+            "explanation": "Legt fest, mit welcher Python-Installation oder virtuellen Umgebung ein Projekt läuft."
+          },
+          {
+            "term": "Run/Debug Configuration",
+            "explanation": "Gespeicherte Startvorgaben für Skripte, Tests oder Server samt Parametern und Umgebungsvariablen."
+          },
+          {
+            "term": "Debugger",
+            "explanation": "Hält das Programm an Breakpoints an und zeigt Variablen und Aufrufstapel."
+          },
+          {
+            "term": "Refactoring",
+            "explanation": "Automatische Umbauten wie Umbenennen oder Methode extrahieren, die alle Verwendungen mitziehen."
+          },
+          {
+            "term": "Inspections",
+            "explanation": "Laufende Codeprüfungen, die Fehler und Stilprobleme direkt im Editor markieren."
+          }
+        ],
+        "when_to_use": "Für größere Python-Projekte, in denen Navigation, Refactoring und Debugging im Alltag Zeit sparen.",
+        "when_not_to_use": "Für schnelle Änderungen an einzelnen Dateien oder auf sehr schwacher Hardware, wo ein leichter Editor genügt.",
+        "good_to_know": [
+          "Die Community-Edition ist kostenlos, die Professional-Edition ist kostenpflichtig.",
+          "Die IDE teilt sich Bedienung und Tastenkürzel mit anderen JetBrains-Produkten wie IntelliJ IDEA.",
+          "Die erste Indizierung eines Projekts kann einen Moment dauern."
+        ]
+      }
+    },
+    {
+      "key": "vim",
+      "name": "Vim",
+      "category": "DEV_ENV",
+      "default_priority": 2,
+      "documentation_url": "https://www.vim.org/docs.php",
+      "icon": "vim",
+      "summary_de": "Modaler Texteditor für das Terminal, der sich vollständig über die Tastatur bedienen lässt und auf fast jedem Server verfügbar ist.",
+      "hints_de": [
+        "Ich bin ein Texteditor, der je nach Modus Tasten unterschiedlich deutet.",
+        "Ich lasse mich komplett ohne Maus bedienen und laufe auch auf entfernten Servern im Terminal.",
+        "Wer mich zum ersten Mal öffnet, sucht oft verzweifelt den Weg zum Beenden."
+      ],
+      "examples": [
+        ":wq"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Vim ist ein Texteditor für das Terminal, der auf dem älteren vi aufbaut. Das Besondere sind Modi: Im Normal-Modus sind Tasten Befehle zum Bewegen und Bearbeiten, im Insert-Modus tippt man Text. Dadurch lässt sich fast alles ohne Maus erledigen. Vim ist auf vielen Servern vorinstalliert und lässt sich über Konfigurationsdateien und Plugins anpassen.",
+        "use_cases": [
+          "Konfigurationsdateien auf Servern bearbeiten",
+          "Schnelle Änderungen im Terminal",
+          "Git-Commit-Nachrichten schreiben",
+          "Effizientes Bearbeiten großer Textdateien"
+        ],
+        "key_concepts": [
+          {
+            "term": "Normal-Modus",
+            "explanation": "Standardmodus, in dem Tasten Befehle zum Navigieren und Bearbeiten auslösen."
+          },
+          {
+            "term": "Insert-Modus",
+            "explanation": "Modus zum Tippen von Text, erreichbar mit `i` und verlassen mit `Esc`."
+          },
+          {
+            "term": "Befehlszeile",
+            "explanation": "Mit `:` eingegebene Befehle wie `:w` zum Speichern oder `:q` zum Beenden."
+          },
+          {
+            "term": "Motions und Operatoren",
+            "explanation": "Kombinationen wie `d2w` löschen zwei Wörter: Operator plus Bewegung."
+          },
+          {
+            "term": "Register und Makros",
+            "explanation": "Zwischenspeicher für Text und aufgezeichnete Tastenfolgen, die sich wiederholen lassen."
+          }
+        ],
+        "when_to_use": "Wenn man im Terminal oder auf entfernten Rechnern Text bearbeitet und die Tastatur konsequent nutzen möchte.",
+        "when_not_to_use": "Wenn man eine vollständige IDE mit Debugger und komfortabler Projektnavigation erwartet, ohne sich einzuarbeiten.",
+        "good_to_know": [
+          "`vimtutor` ist eine eingebaute Einführung, die in rund 30 Minuten durch die Grundlagen führt.",
+          "Beenden ohne Speichern geht mit `:q!`.",
+          "Eine moderne Weiterentwicklung ist Neovim."
+        ]
+      }
+    },
+    {
+      "key": "curl",
+      "name": "curl",
+      "category": "DEV_ENV",
+      "default_priority": 3,
+      "documentation_url": "https://curl.se/docs/",
+      "icon": "curl",
+      "summary_de": "Kommandozeilenwerkzeug, um Daten über viele Protokolle zu übertragen und HTTP-Schnittstellen direkt aus dem Terminal aufzurufen.",
+      "hints_de": [
+        "Ich rufe Webadressen aus dem Terminal auf und zeige die Antwort an.",
+        "Ich kann mit Optionen Methode, Header und Daten einer Anfrage genau festlegen.",
+        "Ich eigne mich gut für Skripte, weil ich ohne Oberfläche auskomme."
+      ],
+      "examples": [
+        "curl -X GET https://example.com/api/items -H \"Accept: application/json\""
+      ],
+      "alternatives": [
+        "postman"
+      ],
+      "content_de": {
+        "overview": "curl ist ein Kommandozeilenwerkzeug, um Daten von oder zu einem Server zu übertragen. Es unterstützt viele Protokolle, am häufigsten wird es für HTTP und HTTPS genutzt. Mit Optionen legt man Methode, Header, Daten und Authentifizierung fest. Weil es ohne Oberfläche auskommt, eignet es sich gut für Skripte und für schnelle Tests von Schnittstellen.",
+        "use_cases": [
+          "HTTP-Schnittstellen schnell ausprobieren",
+          "Dateien herunterladen oder hochladen",
+          "Healthchecks und Tests in Skripten",
+          "Fehler bei Anfragen mit ausführlicher Ausgabe untersuchen"
+        ],
+        "key_concepts": [
+          {
+            "term": "`-X` und `-d`",
+            "explanation": "Legen die HTTP-Methode und die gesendeten Daten fest."
+          },
+          {
+            "term": "`-H`",
+            "explanation": "Setzt einen Header, zum Beispiel `Content-Type` oder `Authorization`."
+          },
+          {
+            "term": "`-i` und `-v`",
+            "explanation": "Zeigen Antwort-Header beziehungsweise den kompletten Ablauf einer Anfrage."
+          },
+          {
+            "term": "`-L`",
+            "explanation": "Folgt Weiterleitungen, die der Server schickt."
+          },
+          {
+            "term": "`-o` und `-O`",
+            "explanation": "Speichern die Antwort in einer Datei, statt sie auszugeben."
+          }
+        ],
+        "when_to_use": "Für schnelle Aufrufe von Schnittstellen, für Skripte und auf Servern, auf denen keine grafischen Werkzeuge laufen.",
+        "when_not_to_use": "Wenn man viele Anfragen in Sammlungen organisieren, teilen und mit Variablen pflegen möchte.",
+        "good_to_know": [
+          "In der Windows PowerShell ist `curl` ein Alias für `Invoke-WebRequest`, das echte Programm startet man mit `curl.exe`.",
+          "Mit `-k` wird die Zertifikatsprüfung abgeschaltet, das sollte nie in Produktion genutzt werden.",
+          "Zugangsdaten in Befehlen landen leicht in der Shell-History."
+        ]
+      }
+    },
+    {
+      "key": "jq",
+      "name": "jq",
+      "category": "DEV_ENV",
+      "default_priority": 2,
+      "documentation_url": "https://jqlang.github.io/jq/manual/",
+      "icon": null,
+      "summary_de": "Kommandozeilenprogramm, das JSON liest, filtert und umformt, ähnlich wie sed oder grep für Textdaten.",
+      "hints_de": [
+        "Ich lese JSON von der Standardeingabe und gebe nur die Teile aus, die du auswählst.",
+        "Ich forme Daten mit einer kleinen Filtersprache um, die sich mit Pipes verketten lässt.",
+        "Ich mache lange, unleserliche Antworten von Schnittstellen übersichtlich."
+      ],
+      "examples": [
+        "echo '{\"name\":\"Ada\",\"age\":36}' | jq '.name'"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "jq ist ein Kommandozeilenprogramm zum Verarbeiten von JSON. Es liest JSON ein, wendet einen Filter an und gibt das Ergebnis aus. Die Filtersprache erlaubt es, Felder auszuwählen, Listen zu durchlaufen, Werte zu ändern und neue Strukturen aufzubauen. Typisch ist die Kombination mit curl in einer Pipe.",
+        "use_cases": [
+          "Antworten von Schnittstellen lesbar formatieren",
+          "Einzelne Felder aus JSON extrahieren",
+          "Listen filtern und umformen",
+          "JSON-Dateien in Skripten verarbeiten"
+        ],
+        "key_concepts": [
+          {
+            "term": "Filter",
+            "explanation": "Ein Ausdruck wie `.name`, der einen Wert aus der Eingabe auswählt oder berechnet."
+          },
+          {
+            "term": "Pipe `|`",
+            "explanation": "Verkettet Filter, sodass die Ausgabe des einen zur Eingabe des nächsten wird."
+          },
+          {
+            "term": "`.[]`",
+            "explanation": "Durchläuft alle Elemente einer Liste oder eines Objekts."
+          },
+          {
+            "term": "`select`",
+            "explanation": "Behält nur die Elemente, für die eine Bedingung gilt, zum Beispiel `select(.age > 30)`."
+          },
+          {
+            "term": "`-r`",
+            "explanation": "Gibt Texte ohne Anführungszeichen aus, praktisch für die Weiterverarbeitung in der Shell."
+          }
+        ],
+        "when_to_use": "Für schnelles Untersuchen und Umformen von JSON im Terminal und in Shell-Skripten.",
+        "when_not_to_use": "Für komplexe Logik, die in einer richtigen Programmiersprache mit Tests besser aufgehoben ist.",
+        "good_to_know": [
+          "Mit `jq .` wird beliebiges JSON formatiert ausgegeben und gleichzeitig auf Gültigkeit geprüft.",
+          "jq arbeitet zeilenweise streamend mit mehreren JSON-Werten hintereinander.",
+          "Die Filtersprache hat eine eigene Syntax, die man erst lernen muss."
+        ]
+      }
+    },
+    {
+      "key": "jira",
+      "name": "Jira",
+      "category": "DEV_ENV",
+      "default_priority": 2,
+      "documentation_url": "https://support.atlassian.com/jira-software-cloud/",
+      "icon": "jira",
+      "summary_de": "Ticket- und Projektwerkzeug von Atlassian, um Aufgaben, Fehler und Sprints im Team zu planen und zu verfolgen.",
+      "hints_de": [
+        "Ich halte Aufgaben und Fehler als Tickets fest und zeige, in welchem Zustand sie sind.",
+        "Ich stelle Arbeit auf einem Board mit Spalten dar, die den Ablauf eines Teams abbilden.",
+        "Ich werde oft mit Sprints und Backlogs in agilen Teams eingesetzt."
+      ],
+      "examples": [
+        "project = TWA AND status = \"In Progress\" ORDER BY updated DESC"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Jira ist ein Werkzeug von Atlassian, um Arbeit in Teams zu planen und zu verfolgen. Aufgaben, Fehler und Ideen werden als Tickets (Issues) angelegt und durchlaufen einen Workflow. Boards zeigen den Stand, etwa als Kanban oder als Scrum-Sprint. Mit der Abfragesprache JQL lassen sich Tickets gezielt suchen und filtern.",
+        "use_cases": [
+          "Backlog pflegen und Sprints planen",
+          "Fehler erfassen und verfolgen",
+          "Fortschritt auf Kanban- oder Scrum-Boards sichtbar machen",
+          "Tickets mit Commits und Pull Requests verknüpfen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Issue",
+            "explanation": "Ein Ticket, zum Beispiel Story, Task, Bug oder Epic."
+          },
+          {
+            "term": "Workflow",
+            "explanation": "Die Zustände eines Tickets und die erlaubten Übergänge, etwa To Do, In Progress, Done."
+          },
+          {
+            "term": "Board",
+            "explanation": "Übersicht der Tickets in Spalten als Kanban- oder Scrum-Board."
+          },
+          {
+            "term": "Sprint",
+            "explanation": "Ein Zeitraum in Scrum, für den ein Team eine Auswahl an Tickets umsetzt."
+          },
+          {
+            "term": "JQL",
+            "explanation": "Jira Query Language, um Tickets mit Bedingungen zu suchen und zu filtern."
+          }
+        ],
+        "when_to_use": "Wenn ein Team Aufgaben nachvollziehbar planen, verteilen und mit Entwicklungswerkzeugen verknüpfen möchte.",
+        "when_not_to_use": "Für sehr kleine Projekte oder Einzelpersonen, bei denen eine einfache Liste ausreicht.",
+        "good_to_know": [
+          "Jira lässt sich stark anpassen, zu viele Felder und Zustände machen es aber schnell unübersichtlich.",
+          "Es gibt eine Cloud-Variante und Varianten zum Selbstbetrieb.",
+          "Ticketnummern im Commit können Änderungen mit Tickets verknüpfen."
+        ]
+      }
+    },
+    {
+      "key": "dart",
+      "name": "Dart",
+      "category": "LANGUAGE",
+      "paradigm": "OBJECT_ORIENTED",
+      "default_priority": 2,
+      "documentation_url": "https://dart.dev/guides",
+      "icon": "dart",
+      "summary_de": "Statisch typisierte, objektorientierte Sprache von Google, die für Oberflächen optimiert ist und die Grundlage von Flutter bildet.",
+      "hints_de": [
+        "Ich bin eine statisch typisierte Sprache von Google, die für Oberflächen auf mehreren Plattformen gedacht ist.",
+        "Ich bin die Sprache hinter dem UI-Framework Flutter.",
+        "Ich kann zu schnellem Maschinencode oder zu JavaScript übersetzt werden."
+      ],
+      "examples": [
+        "void main() {\n  final names = ['Ada', 'Linus'];\n  for (final name in names) {\n    print('Hallo $name');\n  }\n}"
+      ],
+      "alternatives": [
+        "kotlin",
+        "swift",
+        "typescript"
+      ],
+      "content_de": {
+        "overview": "Dart ist eine statisch typisierte, objektorientierte Sprache, die von Google entwickelt wird. Sie ist auf Anwendungen mit Oberflächen ausgelegt und bildet die Grundlage des UI-Frameworks Flutter. Dart ist null-sicher: Ob ein Wert null sein darf, steht im Typ. Der Code kann für die Entwicklung in einer virtuellen Maschine laufen und für die Auslieferung zu nativem Code oder zu JavaScript übersetzt werden.",
+        "use_cases": [
+          "Apps für Mobilgeräte, Web und Desktop mit Flutter",
+          "Kommandozeilenwerkzeuge",
+          "Serveranwendungen",
+          "Gemeinsamer Code für mehrere Plattformen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Null Safety",
+            "explanation": "Typen wie `String?` erlauben null, ein normaler `String` nie."
+          },
+          {
+            "term": "Klassen und Mixins",
+            "explanation": "Objektorientierung mit Klassen, wobei Mixins Verhalten ohne Vererbung wiederverwendbar machen."
+          },
+          {
+            "term": "Future und async/await",
+            "explanation": "Beschreiben Ergebnisse, die erst später vorliegen, und erlauben lesbaren asynchronen Code."
+          },
+          {
+            "term": "Isolates",
+            "explanation": "Getrennte Ausführungseinheiten mit eigenem Speicher, die per Nachrichten kommunizieren."
+          },
+          {
+            "term": "pub",
+            "explanation": "Paketverwaltung mit der Datei `pubspec.yaml` und dem Verzeichnis pub.dev."
+          }
+        ],
+        "when_to_use": "Für plattformübergreifende Oberflächen mit Flutter und für Projekte, die eine typsichere, gut ausgestattete Sprache brauchen.",
+        "when_not_to_use": "Für Aufgaben, in denen das Ökosystem anderer Sprachen deutlich größer ist, etwa in Datenanalyse oder Systemprogrammierung.",
+        "good_to_know": [
+          "Mit Hot Reload sieht man Codeänderungen in Flutter-Apps fast sofort.",
+          "Die Syntax ähnelt Java und JavaScript, der Einstieg fällt dadurch leicht.",
+          "Außerhalb von Flutter wird Dart deutlich seltener eingesetzt."
+        ]
+      }
+    },
+    {
+      "key": "r",
+      "name": "R (Programmiersprache)",
+      "category": "LANGUAGE",
+      "paradigm": "MULTI_PARADIGM",
+      "default_priority": 2,
+      "documentation_url": "https://www.r-project.org/",
+      "icon": "r",
+      "summary_de": "Sprache und Umgebung für Statistik und Datenanalyse mit einem großen Angebot an Paketen und eingebauter Grafikausgabe.",
+      "hints_de": [
+        "Ich wurde für Statistik und Datenanalyse entwickelt und bin an Hochschulen weit verbreitet.",
+        "Bei mir sind Vektoren und Tabellen (Data Frames) die zentralen Datenstrukturen.",
+        "Über ein zentrales Paketarchiv namens CRAN erhältst du tausende Erweiterungen."
+      ],
+      "examples": [
+        "zahlen <- c(2, 4, 6, 8)\nmean(zahlen)"
+      ],
+      "alternatives": [
+        "python"
+      ],
+      "content_de": {
+        "overview": "R ist eine Sprache und Umgebung für Statistik und Datenanalyse. Ihre zentralen Datenstrukturen sind Vektoren und Data Frames, und viele statistische Verfahren sind direkt oder über Pakete verfügbar. Zuweisungen werden meist mit dem Pfeil `<-` geschrieben. Pakete kommen aus dem Archiv CRAN, Grafiken lassen sich mit Bordmitteln oder Paketen wie ggplot2 erstellen.",
+        "use_cases": [
+          "Statistische Auswertungen und Tests",
+          "Explorative Datenanalyse",
+          "Grafiken und Berichte für Veröffentlichungen",
+          "Forschung in Biologie, Medizin und Sozialwissenschaften"
+        ],
+        "key_concepts": [
+          {
+            "term": "Vektor",
+            "explanation": "Grundlegende Datenstruktur, die mehrere Werte gleichen Typs enthält, etwa `c(1, 2, 3)`."
+          },
+          {
+            "term": "Data Frame",
+            "explanation": "Tabelle mit benannten Spalten, die verschiedene Typen haben können."
+          },
+          {
+            "term": "Vektorisierung",
+            "explanation": "Operationen wirken auf ganze Vektoren auf einmal, oft ohne Schleife."
+          },
+          {
+            "term": "Pakete und CRAN",
+            "explanation": "Erweiterungen, die mit `install.packages()` installiert und mit `library()` geladen werden."
+          },
+          {
+            "term": "tidyverse",
+            "explanation": "Sammlung von Paketen wie dplyr und ggplot2 für Datenaufbereitung und Grafiken."
+          }
+        ],
+        "when_to_use": "Für statistische Analysen, Auswertungen von Studien und Grafiken, besonders in der Forschung.",
+        "when_not_to_use": "Für Webanwendungen, Systemprogrammierung und Aufgaben, die vor allem Allzweck-Software erfordern.",
+        "good_to_know": [
+          "RStudio ist eine verbreitete Entwicklungsumgebung für diese Sprache.",
+          "Indizes beginnen bei 1, nicht bei 0.",
+          "Der Einzelbuchstabe als Name erschwert die Suche im Netz."
+        ]
+      }
+    },
+    {
+      "key": "julia",
+      "name": "Julia",
+      "category": "LANGUAGE",
+      "paradigm": "MULTI_PARADIGM",
+      "default_priority": 2,
+      "documentation_url": "https://docs.julialang.org/",
+      "icon": "julia",
+      "summary_de": "Dynamisch typisierte Sprache für numerisches und wissenschaftliches Rechnen, die durch Just-in-Time-Kompilierung sehr schnell ist.",
+      "hints_de": [
+        "Ich werde beim ersten Aufruf einer Funktion zu Maschinencode übersetzt und laufe dadurch schnell.",
+        "Ich wähle die Variante einer Funktion anhand der Typen aller Argumente aus.",
+        "Ich verbinde die einfache Schreibweise einer Skriptsprache mit der Geschwindigkeit kompilierter Sprachen."
+      ],
+      "examples": [
+        "squares = [x^2 for x in 1:5]\nprintln(sum(squares))"
+      ],
+      "alternatives": [
+        "python"
+      ],
+      "content_de": {
+        "overview": "Julia ist eine dynamisch typisierte Sprache für numerisches und wissenschaftliches Rechnen. Sie wird zur Laufzeit per Just-in-Time-Kompilierung in Maschinencode übersetzt und erreicht dadurch Geschwindigkeiten, die sonst kompilierten Sprachen vorbehalten sind. Zentral ist Multiple Dispatch: Welche Methode läuft, hängt von den Typen aller Argumente ab. Die Syntax ist für Mathematik und Arrays angenehm lesbar.",
+        "use_cases": [
+          "Numerische Simulationen",
+          "Wissenschaftliches Rechnen und Optimierung",
+          "Datenanalyse und Machine Learning",
+          "Lineare Algebra mit großen Matrizen"
+        ],
+        "key_concepts": [
+          {
+            "term": "Multiple Dispatch",
+            "explanation": "Die passende Methode wird anhand der Typen aller Argumente gewählt."
+          },
+          {
+            "term": "JIT-Kompilierung",
+            "explanation": "Funktionen werden beim ersten Aufruf für die konkreten Typen zu Maschinencode übersetzt."
+          },
+          {
+            "term": "Arrays",
+            "explanation": "Mehrdimensionale Felder mit eingebauter Unterstützung für Matrizen und Broadcasting."
+          },
+          {
+            "term": "Typen und `struct`",
+            "explanation": "Eigene Datentypen mit optionalen Typangaben, die schnellen Code ermöglichen."
+          },
+          {
+            "term": "Pkg",
+            "explanation": "Eingebaute Paketverwaltung mit getrennten Umgebungen je Projekt."
+          }
+        ],
+        "when_to_use": "Für rechenintensive wissenschaftliche Aufgaben, bei denen man Lesbarkeit und hohe Geschwindigkeit in einer Sprache möchte.",
+        "when_not_to_use": "Für kurze Skripte, bei denen die Startzeit stört, und für klassische Webentwicklung.",
+        "good_to_know": [
+          "Der erste Aufruf einer Funktion dauert wegen der Kompilierung länger als spätere.",
+          "Indizes beginnen bei 1, nicht bei 0.",
+          "Das Ökosystem ist kleiner als das von Python."
+        ]
+      }
+    },
+    {
+      "key": "lua",
+      "name": "Lua",
+      "category": "LANGUAGE",
+      "paradigm": "MULTI_PARADIGM",
+      "default_priority": 2,
+      "documentation_url": "https://www.lua.org/manual/5.4/",
+      "icon": "lua",
+      "summary_de": "Kleine, schnelle Skriptsprache, die sich leicht in andere Programme einbetten lässt und oft für Spiele und Erweiterungen dient.",
+      "hints_de": [
+        "Ich bin sehr klein und lasse mich leicht in andere Programme einbetten.",
+        "Ich habe nur eine zentrale Datenstruktur, die sowohl Listen als auch Wörterbücher abdeckt.",
+        "Ich werde oft für Skripte in Spielen und für Erweiterungen von Editoren genutzt."
+      ],
+      "examples": [
+        "local names = { \"Ada\", \"Linus\" }\nfor i, name in ipairs(names) do\n  print(i, name)\nend"
+      ],
+      "alternatives": [],
+      "content_de": {
+        "overview": "Lua ist eine kleine, schnelle und dynamisch typisierte Skriptsprache. Sie wurde dafür entworfen, in andere Programme eingebettet zu werden, und besteht aus einem sehr kompakten Kern. Die einzige zusammengesetzte Datenstruktur ist die Table, mit der Listen, Wörterbücher und Objekte gebaut werden. Lua unterstützt prozedurale und funktionale Programmierung sowie objektorientierte Muster über Metatables.",
+        "use_cases": [
+          "Skripte und Modding in Spielen",
+          "Konfiguration und Erweiterungen von Programmen",
+          "Plugins für Editoren wie Neovim",
+          "Eingebettete Systeme mit wenig Speicher"
+        ],
+        "key_concepts": [
+          {
+            "term": "Table",
+            "explanation": "Die zentrale Datenstruktur, die als Liste, Wörterbuch und Objekt dient."
+          },
+          {
+            "term": "Metatables",
+            "explanation": "Legen fest, wie sich eine Table bei Operationen verhält, und ermöglichen Vererbung."
+          },
+          {
+            "term": "Funktionen als Werte",
+            "explanation": "Funktionen sind normale Werte und können Variablen zugewiesen und übergeben werden."
+          },
+          {
+            "term": "Coroutines",
+            "explanation": "Funktionen, die ihre Ausführung unterbrechen und später fortsetzen können."
+          },
+          {
+            "term": "`local`",
+            "explanation": "Variablen sind standardmäßig global, mit `local` gelten sie nur im aktuellen Block."
+          }
+        ],
+        "when_to_use": "Wenn eine Anwendung eine leichtgewichtige Skriptsprache für Erweiterungen und Konfiguration braucht.",
+        "when_not_to_use": "Für große eigenständige Anwendungen, die eine umfangreiche Standardbibliothek brauchen.",
+        "good_to_know": [
+          "Indizes in Listen beginnen standardmäßig bei 1, nicht bei 0.",
+          "Die Standardbibliothek ist bewusst klein gehalten.",
+          "LuaJIT ist eine schnelle alternative Implementierung."
+        ]
+      }
+    }
+  ]
+}

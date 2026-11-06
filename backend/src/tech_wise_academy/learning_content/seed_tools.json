@@ -15922,25 +15922,25 @@
     },
     {
       "key": "llama",
-      "name": "Meta Llama 3.3",
+      "name": "Meta Llama 4",
       "category": "AI_DATA",
       "level": 1,
       "documentation_url": "https://www.llama.com/",
       "icon": null,
-      "summary_de": "Sprachmodell mit offenen Gewichten von Meta, das Texte versteht, schreibt und Code erzeugt.",
+      "summary_de": "Modellfamilie mit offenen Gewichten von Meta (Llama 4 Scout und Maverick), die Texte und Bilder versteht und Code erzeugt.",
       "hints_de": [
         "Ich bin ein Sprachmodell mit offenen Gewichten und kann Texte schreiben und zusammenfassen.",
         "Ich stamme von einem großen Technologieunternehmen und lasse mich lokal ausführen.",
         "Ich erzeuge auch Code und beantworte Fragen in mehreren Sprachen."
       ],
       "examples": [
-        "ollama run llama3.3"
+        "ollama run llama4"
       ],
       "alternatives": [
         "gemma"
       ],
       "content_de": {
-        "overview": "Meta Llama 3.3 ist ein Sprachmodell von Meta mit offenen Gewichten. Es versteht und erzeugt Texte, beantwortet Fragen, fasst zusammen und schreibt Code. Die Gewichte kann man herunterladen und selbst betreiben, die Lizenz erlaubt eine breite Nutzung mit Bedingungen. Das Modell ist mehrsprachig und für Anweisungen im Dialog trainiert, braucht wegen seiner Größe aber viel Speicher.",
+        "overview": "Meta Llama 4 ist eine Modellfamilie von Meta mit offenen Gewichten, zu der Llama 4 Scout und Llama 4 Maverick gehören. Die Modelle verstehen und erzeugen Texte, verarbeiten auch Bilder, beantworten Fragen, fassen zusammen und schreiben Code. Die Gewichte kann man herunterladen und selbst betreiben, die Lizenz erlaubt eine breite Nutzung mit Bedingungen. Sie nutzen eine Mixture-of-Experts-Architektur und brauchen wegen ihrer Größe viel Speicher.",
         "use_cases": [
           "Chat-Assistenten und Textaufgaben im eigenen Betrieb",
           "Zusammenfassen, Übersetzen und Klassifizieren",

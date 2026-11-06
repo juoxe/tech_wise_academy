@@ -187,7 +187,10 @@ in level 1, 94 in level 2 and 90 in level 3. Migration 0004 stores the level in 
 (check: `1` to `3`); the value per tool is in the seed data. Migration 0006 adds eight AI models and
 media tools of J's own choice (Llama, Gemma, Qwen, Mistral, FLUX.2 Klein, SDXL, Whisper, ComfyUI) with
 a level each. Together with the 23 programming languages of migration 0007 (level 1, own set) the
-seed has 307 tools: 94 tools in level 1, 97 in level 2 and 93 in level 3, plus the languages.
+seed has 307 tools: 94 tools in level 1, 97 in level 2 and 93 in level 3, plus the languages. Migration 0016
+(TWA-12.10) added the core set of the [catalogue proposal](../catalogue-proposal.md): 38 tools and 4 languages
+(file `seed_catalogue_2.json`, which migration 0016 reads like 0007 read the languages), so the catalogue has 349
+entries: 322 tools in six areas and 27 languages. The same migration renamed "Meta Llama 3.3" to "Meta Llama 4".
 
 ## Seed Data (proposal)
 

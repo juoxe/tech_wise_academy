@@ -49,3 +49,45 @@ def test_every_tool_has_complete_learning_content() -> None:
         assert content["when_to_use"].strip(), f"{tool['key']} when to use"
         assert content["when_not_to_use"].strip(), f"{tool['key']} when not to use"
         assert 2 <= len(content["good_to_know"]) <= 3, f"{tool['key']} good to know"
+
+
+def _catalogue_2() -> list[dict]:
+    """The core set added by migration 0016 (TWA-12.10)."""
+    text = resources.files("tech_wise_academy.learning_content").joinpath("seed_catalogue_2.json")
+    return json.loads(text.read_text(encoding="utf-8"))["tools"]
+
+
+def test_the_added_catalogue_follows_the_seed_rules() -> None:
+    old_keys = {tool["key"] for tool in _seed_tools()}
+    added = _catalogue_2()
+    keys = [tool["key"] for tool in added]
+    assert len(keys) == len(set(keys)), "a key is used twice"
+    assert not set(keys) & old_keys, "a key exists in the first seed file"
+    by_key = {tool["key"]: tool for tool in added}
+    for tool in added:
+        name = tool["name"].casefold()
+        for hint in tool["hints_de"]:
+            assert name not in hint.casefold(), f"hint of {tool['key']} names the tool: {hint}"
+        assert len(tool["hints_de"]) == 3, f"{tool['key']} needs three hints"
+        for other in tool.get("alternatives", []):
+            assert other in old_keys or other in by_key, f"{tool['key']} refers to {other}"
+            if other in by_key:
+                assert tool["key"] in by_key[other]["alternatives"], (
+                    f"{tool['key']} lists {other}, but {other} does not list {tool['key']}"
+                )
+        assert 0 <= tool["default_priority"] <= 4, tool["key"]
+        assert (tool["category"] == "LANGUAGE") == (tool.get("paradigm") is not None), tool["key"]
+
+
+def test_every_added_entry_has_complete_learning_content() -> None:
+    for tool in _catalogue_2():
+        content = tool["content_de"]
+        assert list(content) == CONTENT_FIELDS, f"{tool['key']} has wrong content fields"
+        assert content["overview"].strip(), f"{tool['key']} has an empty overview"
+        assert 3 <= len(content["use_cases"]) <= 4, f"{tool['key']} use cases"
+        assert 3 <= len(content["key_concepts"]) <= 5, f"{tool['key']} key concepts"
+        for concept in content["key_concepts"]:
+            assert concept["term"].strip() and concept["explanation"].strip(), tool["key"]
+        assert content["when_to_use"].strip(), f"{tool['key']} when to use"
+        assert content["when_not_to_use"].strip(), f"{tool['key']} when not to use"
+        assert 2 <= len(content["good_to_know"]) <= 3, f"{tool['key']} good to know"

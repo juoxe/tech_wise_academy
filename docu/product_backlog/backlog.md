@@ -2518,6 +2518,59 @@ areas.
 
 ---
 
+### TWA-12.9 – Proposal: What Is Missing in the Catalogue
+
+**Status:** DONE
+
+**Result:** the proposal is written in [catalogue-proposal.md](../catalogue-proposal.md): 66 tools and 10 languages missing, none of them in the catalogue (checked by name and key), with a recommended core set of 38 tools and 4 languages (FastAPI, Flask, Django, Pydantic, SQLAlchemy, Alembic, pytest, Celery, Express, NestJS, PostgreSQL, MySQL, SQLite, GraphQL, gRPC, Docker Compose, GitHub, GitLab, AWS, Azure, Google Cloud, Flutter, React Native, Expo, Electron, Bootstrap, Material UI, Bandit, Auth0, OWASP Juice Shop, OpenAI API, Google Gemini API, Transformers, PyCharm, Vim, curl, jq, Jira; Dart, R, Julia, Lua). J chose the recommended core set on 2026-11-06 ("okay, dann bitte updaten"); the other rows of the proposal stay in the list for a later round.
+
+**Problem Description**
+
+The catalogue has gaps: the backend is Java-centred (about 45 of 58 tools), there are no databases
+like PostgreSQL, MySQL or SQLite, no Python or Node.js frameworks (FastAPI, Django, Flask, Express,
+NestJS), no mobile tools (Flutter, React Native), no cloud providers, no Docker Compose and no tools
+that this project itself uses (FastAPI, SQLAlchemy, Alembic, pytest, uv, Ruff).
+
+**Action Steps**
+
+1. Check the catalogue against the stack of this project and against common interview topics.
+2. Write a proposal list per area with a recommended core set, in docu/catalogue-proposal.md.
+3. J chooses what is added.
+
+**Acceptance Criteria**
+
+- The proposal exists per area and per language.
+- Every proposed entry is checked against the catalogue (no duplicates).
+- J has chosen.
+
+---
+
+### TWA-12.10 – Add the Chosen Tools
+
+**Status:** IN PROGRESS · **Depends on:** TWA-12.9, TWA-12.7
+
+**Result:** implemented: migration `0016_catalogue_core_set.py` adds 38 tools and 4 languages from the file `backend/src/tech_wise_academy/learning_content/seed_catalogue_2.json` (it skips a key that exists already) and renames "Meta Llama 3.3" to "Meta Llama 4" (checked on the web: the open successor of Meta; Gemma 4, Qwen 3.5 / 3.6, FLUX.2 [klein] and Mistral Small 4 / Ministral 3 are current). Added: Backend: FastAPI, Flask, Django, Pydantic, SQLAlchemy, Alembic, pytest, Celery, Express, NestJS, PostgreSQL, MySQL, SQLite, GraphQL, gRPC; DevOps: Docker Compose, GitHub, GitLab, AWS, Microsoft Azure, Google Cloud; Frontend: Flutter, React Native, Expo, Electron, Bootstrap, Material UI; Security: Bandit, Auth0, OWASP Juice Shop; AI and data: OpenAI API, Google Gemini API, Transformers; Development and knowledge: PyCharm, Vim, curl, jq, Jira; languages: Dart, R, Julia, Lua. The entries were written by four sub-agents from one specification and checked by a script (key, area, paradigm only for languages, three hints that never contain the name, complete learning content, alternatives that exist and are symmetric) and by new seed tests (65 backend tests pass). The migration runs on the existing database and is reversible (run both ways: 349 entries). Checked in the browser: the Tools set holds 322 cards, the set Sprachen 27, FastAPI and Flutter have their detail view, Flutter and React Native are alternatives of each other. Not verified: the code examples were not run and 12 Simple Icons slugs are empty or unknown, so those entries show the icon of their area. **Open:** J reviews the 42 new texts (like TWA-12.5) and the AI model names; the story is DONE after that.
+
+**Problem Description**
+
+The tools J chooses from the proposal need complete content (summary, at least three hints without
+the name, example, alternatives, documentation link, learning content) before they can be played. The list of what is added comes from the choice of J in docu/catalogue-proposal.md.
+
+**Action Steps**
+
+1. Write the entries for the chosen tools and languages in German, following the rules of the seed
+   data.
+2. Insert them through a migration or through the tool form.
+3. J reviews the content like in TWA-12.5.
+
+**Acceptance Criteria**
+
+- Every chosen entry is complete and passes the seed rules (a hint never names its tool,
+  alternatives are symmetric).
+- J has reviewed the texts.
+
+---
+
 ## Epic TWA-13 – Code Quality and Security
 
 **Status:** TODO
